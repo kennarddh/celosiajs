@@ -77,8 +77,7 @@ class CelosiaResponse<Body = JSON> extends TypedEmitter<CelosiaResponseEvents> {
 
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-		return (this.expressResponse.app as any).__EXPRESS_FRAMEWORK__
-			.instance as CelosiaInstance<boolean>
+		return (this.expressResponse.app as any).__CELOSIAJS__.instance as CelosiaInstance<boolean>
 	}
 
 	/**

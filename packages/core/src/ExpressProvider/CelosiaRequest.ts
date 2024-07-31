@@ -89,8 +89,7 @@ class CelosiaRequest<
 
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-		return (this.expressRequest.app as any).__EXPRESS_FRAMEWORK__
-			.instance as CelosiaInstance<boolean>
+		return (this.expressRequest.app as any).__CELOSIAJS__.instance as CelosiaInstance<boolean>
 	}
 
 	public get body(): Body {
