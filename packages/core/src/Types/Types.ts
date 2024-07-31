@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
-import { BaseController, BaseMiddleware, EmptyObject, ExpressRequest } from '../'
+import { BaseController, BaseMiddleware, CelosiaRequest, EmptyObject } from '../'
 
 export interface IListenOptions {
 	port?: number
@@ -13,10 +13,10 @@ export interface IListenOptions {
 
 export type MiddlewareArray = BaseMiddleware<any, any, any, any>[]
 
-export type NoInputMiddleware = BaseMiddleware<ExpressRequest>
+export type NoInputMiddleware = BaseMiddleware<CelosiaRequest>
 
 // & EmptyObject is used so that `{ x: string } extends EmptyObject` become true, because EmptyObject has it's own brand symbol.
-export type IControllerRequest<Controller extends BaseController<any, any, any>> = ExpressRequest<
+export type IControllerRequest<Controller extends BaseController<any, any, any>> = CelosiaRequest<
 	{} extends z.infer<Controller['body']>
 		? EmptyObject
 		: z.infer<Controller['body']> & EmptyObject,

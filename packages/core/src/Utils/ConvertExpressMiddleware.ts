@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 
-import { BaseMiddleware, EmptyObject, ExpressRequest, ExpressResponse } from '../'
+import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject } from '..'
 
 /**
  * deferToNext in the expressMiddleware NextFunction is ignored
@@ -9,8 +9,8 @@ const ConvertExpressMiddleware = (expressMiddleware: RequestHandler) => {
 	return class extends BaseMiddleware {
 		public override async index(
 			_: EmptyObject,
-			request: ExpressRequest,
-			response: ExpressResponse<JSON>,
+			request: CelosiaRequest,
+			response: CelosiaResponse<JSON>,
 		): Promise<EmptyObject> {
 			await new Promise<void>((resolve, reject) => {
 				expressMiddleware(

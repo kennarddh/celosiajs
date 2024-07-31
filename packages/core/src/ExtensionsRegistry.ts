@@ -1,34 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+	CelosiaInstance,
+	CelosiaRequest,
+	CelosiaResponse,
+	CelosiaRouter,
 	DuplicateExtensionError,
-	ExpressInstance,
-	ExpressRequest,
-	ExpressResponse,
-	ExpressRouter,
 	InvalidExtensionError,
 } from './'
 
 export type ExtensionHandler<T, Args extends any[], Return> = (extended: T, ...args: Args) => Return
 
-export type ExpressInstanceExtensionHandler<
+export type CelosiaInstanceExtensionHandler<
 	Args extends any[] = any[],
 	Return = void,
-> = ExtensionHandler<ExpressInstance<boolean>, Args, Return>
+> = ExtensionHandler<CelosiaInstance<boolean>, Args, Return>
 
-export type ExpressRouterExtensionHandler<
+export type CelosiaRouterExtensionHandler<
 	Args extends any[] = any[],
 	Return = void,
-> = ExtensionHandler<ExpressRouter<boolean>, Args, Return>
+> = ExtensionHandler<CelosiaRouter<boolean>, Args, Return>
 
-export type ExpressRequestExtensionHandler<
+export type CelosiaRequestExtensionHandler<
 	Args extends any[] = any[],
 	Return = void,
-> = ExtensionHandler<ExpressRequest<any>, Args, Return>
+> = ExtensionHandler<CelosiaRequest<any>, Args, Return>
 
-export type ExpressResponseExtensionHandler<
+export type CelosiaResponseExtensionHandler<
 	Args extends any[] = any[],
 	Return = void,
-> = ExtensionHandler<ExpressResponse<any>, Args, Return>
+> = ExtensionHandler<CelosiaResponse<any>, Args, Return>
 
 export type TransformExtensionHandlerToExtensionType<
 	Handler extends ExtensionHandler<any, any, any>,
@@ -38,121 +38,121 @@ export type TransformExtensionHandlerToExtensionType<
 		: never
 
 export class ExtensionsRegistryClass {
-	private expressInstanceExtensionsHandler = new Map<
+	private celosiaInstanceExtensionsHandler = new Map<
 		string | symbol,
-		ExpressInstanceExtensionHandler
+		CelosiaInstanceExtensionHandler
 	>()
-	private expressRouterExtensionsHandler = new Map<
+	private celosiaRouterExtensionsHandler = new Map<
 		string | symbol,
-		ExpressRouterExtensionHandler
+		CelosiaRouterExtensionHandler
 	>()
-	private expressRequestExtensionsHandler = new Map<
+	private celosiaRequestExtensionsHandler = new Map<
 		string | symbol,
-		ExpressRequestExtensionHandler
+		CelosiaRequestExtensionHandler
 	>()
-	private expressResponseExtensionsHandler = new Map<
+	private celosiaResponseExtensionsHandler = new Map<
 		string | symbol,
-		ExpressResponseExtensionHandler
+		CelosiaResponseExtensionHandler
 	>()
 
-	registerExpressInstanceExtension(
+	registerCelosiaInstanceExtension(
 		key: string | symbol,
-		handler: ExpressInstanceExtensionHandler,
+		handler: CelosiaInstanceExtensionHandler,
 	): void {
-		if (this.expressInstanceExtensionsHandler.has(key))
+		if (this.celosiaInstanceExtensionsHandler.has(key))
 			throw new DuplicateExtensionError(
 				`Cannot register key "${key.toString()}" because the same key already exists.`,
 			)
 
-		this.expressInstanceExtensionsHandler.set(key, handler)
+		this.celosiaInstanceExtensionsHandler.set(key, handler)
 	}
 
-	removeExpressInstanceExtension(key: string | symbol): void {
-		if (!this.expressInstanceExtensionsHandler.has(key))
+	removeCelosiaInstanceExtension(key: string | symbol): void {
+		if (!this.celosiaInstanceExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
 			)
 
-		this.expressInstanceExtensionsHandler.delete(key)
+		this.celosiaInstanceExtensionsHandler.delete(key)
 	}
 
-	getExpressInstanceExtension(key: string | symbol): ExpressInstanceExtensionHandler | undefined {
-		return this.expressInstanceExtensionsHandler.get(key)
+	getCelosiaInstanceExtension(key: string | symbol): CelosiaInstanceExtensionHandler | undefined {
+		return this.celosiaInstanceExtensionsHandler.get(key)
 	}
 
-	registerExpressRouterExtension(
+	registerCelosiaRouterExtension(
 		key: string | symbol,
-		handler: ExpressRouterExtensionHandler,
+		handler: CelosiaRouterExtensionHandler,
 	): void {
-		if (this.expressRouterExtensionsHandler.has(key))
+		if (this.celosiaRouterExtensionsHandler.has(key))
 			throw new DuplicateExtensionError(
 				`Cannot register key "${key.toString()}" because the same key already exists.`,
 			)
 
-		this.expressRouterExtensionsHandler.set(key, handler)
+		this.celosiaRouterExtensionsHandler.set(key, handler)
 	}
 
-	removeExpressRouterExtension(key: string | symbol): void {
-		if (!this.expressRouterExtensionsHandler.has(key))
+	removeCelosiaRouterExtension(key: string | symbol): void {
+		if (!this.celosiaRouterExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
 			)
 
-		this.expressRouterExtensionsHandler.delete(key)
+		this.celosiaRouterExtensionsHandler.delete(key)
 	}
 
-	getExpressRouterExtension(key: string | symbol): ExpressRouterExtensionHandler | undefined {
-		return this.expressRouterExtensionsHandler.get(key)
+	getCelosiaRouterExtension(key: string | symbol): CelosiaRouterExtensionHandler | undefined {
+		return this.celosiaRouterExtensionsHandler.get(key)
 	}
 
-	registerExpressRequestExtension(
+	registerCelosiaRequestExtension(
 		key: string | symbol,
-		handler: ExpressRequestExtensionHandler,
+		handler: CelosiaRequestExtensionHandler,
 	): void {
-		if (this.expressRequestExtensionsHandler.has(key))
+		if (this.celosiaRequestExtensionsHandler.has(key))
 			throw new DuplicateExtensionError(
 				`Cannot register key "${key.toString()}" because the same key already exists.`,
 			)
 
-		this.expressRequestExtensionsHandler.set(key, handler)
+		this.celosiaRequestExtensionsHandler.set(key, handler)
 	}
 
-	removeExpressRequestExtension(key: string | symbol): void {
-		if (!this.expressRequestExtensionsHandler.has(key))
+	removeCelosiaRequestExtension(key: string | symbol): void {
+		if (!this.celosiaRequestExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
 			)
 
-		this.expressRequestExtensionsHandler.delete(key)
+		this.celosiaRequestExtensionsHandler.delete(key)
 	}
 
-	getExpressRequestExtension(key: string | symbol): ExpressRequestExtensionHandler | undefined {
-		return this.expressRequestExtensionsHandler.get(key)
+	getCelosiaRequestExtension(key: string | symbol): CelosiaRequestExtensionHandler | undefined {
+		return this.celosiaRequestExtensionsHandler.get(key)
 	}
 
-	registerExpressResponseExtension(
+	registerCelosiaResponseExtension(
 		key: string | symbol,
-		handler: ExpressResponseExtensionHandler,
+		handler: CelosiaResponseExtensionHandler,
 	): void {
-		if (this.expressResponseExtensionsHandler.has(key))
+		if (this.celosiaResponseExtensionsHandler.has(key))
 			throw new DuplicateExtensionError(
 				`Cannot register key "${key.toString()}" because the same key already exists.`,
 			)
 
-		this.expressResponseExtensionsHandler.set(key, handler)
+		this.celosiaResponseExtensionsHandler.set(key, handler)
 	}
 
-	removeExpressResponseExtension(key: string | symbol): void {
-		if (!this.expressResponseExtensionsHandler.has(key))
+	removeCelosiaResponseExtension(key: string | symbol): void {
+		if (!this.celosiaResponseExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
 			)
 
-		this.expressResponseExtensionsHandler.delete(key)
+		this.celosiaResponseExtensionsHandler.delete(key)
 	}
 
-	getExpressResponseExtension(key: string | symbol): ExpressResponseExtensionHandler | undefined {
-		return this.expressResponseExtensionsHandler.get(key)
+	getCelosiaResponseExtension(key: string | symbol): CelosiaResponseExtensionHandler | undefined {
+		return this.celosiaResponseExtensionsHandler.get(key)
 	}
 }
 

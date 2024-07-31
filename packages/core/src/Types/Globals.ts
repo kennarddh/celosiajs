@@ -3,15 +3,15 @@ import { CookiesObject, EmptyObject, JSON, PathParams, QueryParams } from '../'
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace ExpressFramework {
-		interface ExpressInstance<Strict extends boolean> {}
-		interface ExpressRequest<
+	namespace CelosiaJS {
+		interface CelosiaInstance<Strict extends boolean> {}
+		interface CelosiaRequest<
 			Body extends EmptyObject | JSON,
 			Query extends EmptyObject | QueryParams,
 			Params extends EmptyObject | PathParams,
 			Cookies extends EmptyObject | CookiesObject,
 		> {}
-		interface ExpressRouter<Strict extends boolean> {}
-		interface ExpressResponse<Body> {}
+		interface CelosiaRouter<Strict extends boolean> {}
+		interface CelosiaResponse<Body> {}
 	}
 }

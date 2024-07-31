@@ -10,37 +10,37 @@ import helmet from 'helmet'
 
 import {
 	BaseMiddleware,
-	ExpressRequest,
-	ExpressResponse,
-	ExpressRouter,
+	CelosiaRequest,
+	CelosiaResponse,
+	CelosiaRouter,
 	ExtensionsRegistry,
 	Globals,
 	IListenOptions,
 	InvalidExtensionError,
 	NoInputMiddleware,
-} from '../'
+} from '..'
 import ParseJson from './Middlewares/ParseJson'
 import ParseUrlencoded from './Middlewares/ParseUrlencoded'
 
-export interface InstanceConstructorOptions<Strict extends boolean = true> {
+export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
 }
 
-class ExpressInstance<Strict extends boolean> {
-	protected _cachedExtensionsProxy: ExpressFramework.ExpressInstance<Strict> | null = null
+class CelosiaInstance<Strict extends boolean> {
+	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
 
 	protected readonly isStrict: Strict
 	protected readonly express: ReturnType<typeof express>
 	protected _server: Server | null = null
 
-	constructor(options: InstanceConstructorOptions<Strict>) {
+	constructor(options: CelosiaInstanceConstructorOptions<Strict>) {
 		this.isStrict = options.strict
 
 		this.express = express()
 
 		// Only for internal use.
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-		;(this.express as any).__EXPRESS_FRAMEWORK__ = {
+		;(this.express as any).__CELOSIAJS__ = {
 			instance: this,
 		}
 
@@ -57,16 +57,16 @@ class ExpressInstance<Strict extends boolean> {
 	}
 	/**
 	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerExpressInstanceExtension`.
+	 * Register by using `ExtensionsRegistry.registerCelosiaInstanceExtension`.
 	 */
-	public get extensions(): ExpressFramework.ExpressInstance<Strict> {
+	public get extensions(): CelosiaJS.CelosiaInstance<Strict> {
 		if (this._cachedExtensionsProxy === null)
 			this._cachedExtensionsProxy = new Proxy(
 				{},
 				{
 					get: (_, property, __) => {
 						const extensionHandler =
-							ExtensionsRegistry.getExpressInstanceExtension(property)
+							ExtensionsRegistry.getCelosiaInstanceExtension(property)
 
 						if (extensionHandler === undefined)
 							throw new InvalidExtensionError(
@@ -77,7 +77,7 @@ class ExpressInstance<Strict extends boolean> {
 						return (...args: any[]) => extensionHandler(this, ...args)
 					},
 				},
-			) as ExpressFramework.ExpressInstance<Strict>
+			) as CelosiaJS.CelosiaInstance<Strict>
 
 		return this._cachedExtensionsProxy
 	}
@@ -93,7 +93,7 @@ class ExpressInstance<Strict extends boolean> {
 	/**
 	 * Must be called last after all router is registered
 	 *
-	 * Doesn't work until Express 5 because Express 4.x won't catch uncaught exception in promise.
+	 * TODO: Doesn't work until Express 5 because Express 4.x won't catch uncaught exception in promise.
 	 */
 	public addErrorHandler() {
 		this.express.use((error: Error, _: Request, response: Response, __: NextFunction): void => {
@@ -130,18 +130,18 @@ class ExpressInstance<Strict extends boolean> {
 
 	public useRouters(
 		path: string,
-		...routers: [ExpressRouter<Strict>, ...ExpressRouter<Strict>[]]
+		...routers: [CelosiaRouter<Strict>, ...CelosiaRouter<Strict>[]]
 	): this
-	public useRouters(...routers: [ExpressRouter<Strict>, ...ExpressRouter<Strict>[]]): this
+	public useRouters(...routers: [CelosiaRouter<Strict>, ...CelosiaRouter<Strict>[]]): this
 	public useRouters(
-		...routersAndPath: [string | ExpressRouter<Strict>, ...(string | ExpressRouter<Strict>)[]]
+		...routersAndPath: [string | CelosiaRouter<Strict>, ...(string | CelosiaRouter<Strict>)[]]
 	): this {
 		const possiblyPath = routersAndPath[0]
 		const path = typeof possiblyPath === 'string' ? possiblyPath : null
 
 		const routers = (
 			path === null ? routersAndPath : routersAndPath.filter((_, index) => index !== 0)
-		) as ExpressRouter[]
+		) as CelosiaRouter[]
 
 		routers.forEach(router => {
 			if (path === null) this.express.use(router.expressRouter)
@@ -178,8 +178,8 @@ class ExpressInstance<Strict extends boolean> {
 
 		middlewares.forEach(middleware => {
 			const handler = (request: Request, response: Response, next: NextFunction) => {
-				const newRequest = new ExpressRequest(request)
-				const newResponse = new ExpressResponse(response)
+				const newRequest = new CelosiaRequest(request)
+				const newResponse = new CelosiaResponse(response)
 
 				middleware
 					.index({}, newRequest, newResponse)
@@ -199,4 +199,4 @@ class ExpressInstance<Strict extends boolean> {
 	}
 }
 
-export default ExpressInstance
+export default CelosiaInstance

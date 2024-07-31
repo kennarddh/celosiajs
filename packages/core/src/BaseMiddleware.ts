@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { EmptyObject, ExpressRequest, ExpressResponse, type StopHere } from '.'
+import { CelosiaRequest, CelosiaResponse, EmptyObject, type StopHere } from '.'
 
 abstract class BaseMiddleware<
-	Request extends ExpressRequest<any, any, any, any> = ExpressRequest<any, any, any, any>,
-	Response extends ExpressResponse<any> = ExpressResponse<any>,
+	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
+	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 	Input extends Record<string, any> = EmptyObject,
 	Output extends Record<string, any> | EmptyObject = EmptyObject,
 > {

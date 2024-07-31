@@ -7,18 +7,18 @@ import { Readable } from 'stream'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 import {
+	CelosiaInstance,
 	CookieOptions,
 	DownloadOptions,
-	ExpressInstance,
 	ExtensionsRegistry,
 	InvalidExtensionError,
 	JSON,
 	OutgoingHeaderValue,
 	OutgoingHeaders,
 	SendFileOptions,
-} from '../'
+} from '..'
 
-export interface ResponseEvents {
+export interface CelosiaResponseEvents {
 	close: () => void
 	drain: () => void
 	error: (error: Error) => void
@@ -27,9 +27,9 @@ export interface ResponseEvents {
 	unpipe: (src: Readable) => void
 }
 
-class ExpressResponse<Body = JSON> extends TypedEmitter<ResponseEvents> {
+class CelosiaResponse<Body = JSON> extends TypedEmitter<CelosiaResponseEvents> {
 	protected _expressResponse: Response
-	protected _cachedExtensionsProxy: ExpressFramework.ExpressResponse<Body> | null = null
+	protected _cachedExtensionsProxy: CelosiaJS.CelosiaResponse<Body> | null = null
 
 	constructor(expressResponse: Response) {
 		super()
@@ -46,16 +46,16 @@ class ExpressResponse<Body = JSON> extends TypedEmitter<ResponseEvents> {
 
 	/**
 	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerExpressResponseExtension`.
+	 * Register by using `ExtensionsRegistry.registerCelosiaResponseExtension`.
 	 */
-	public get extensions(): ExpressFramework.ExpressResponse<Body> {
+	public get extensions(): CelosiaJS.CelosiaResponse<Body> {
 		if (this._cachedExtensionsProxy === null)
 			this._cachedExtensionsProxy = new Proxy(
 				{},
 				{
 					get: (_, property, __) => {
 						const extensionHandler =
-							ExtensionsRegistry.getExpressResponseExtension(property)
+							ExtensionsRegistry.getCelosiaResponseExtension(property)
 
 						if (extensionHandler === undefined)
 							throw new InvalidExtensionError(
@@ -66,7 +66,7 @@ class ExpressResponse<Body = JSON> extends TypedEmitter<ResponseEvents> {
 						return (...args: any[]) => extensionHandler(this, ...args)
 					},
 				},
-			) as ExpressFramework.ExpressResponse<Body>
+			) as CelosiaJS.CelosiaResponse<Body>
 
 		return this._cachedExtensionsProxy
 	}
@@ -78,7 +78,7 @@ class ExpressResponse<Body = JSON> extends TypedEmitter<ResponseEvents> {
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 		return (this.expressResponse.app as any).__EXPRESS_FRAMEWORK__
-			.instance as ExpressInstance<boolean>
+			.instance as CelosiaInstance<boolean>
 	}
 
 	/**
@@ -572,4 +572,4 @@ class ExpressResponse<Body = JSON> extends TypedEmitter<ResponseEvents> {
 	}
 }
 
-export default ExpressResponse
+export default CelosiaResponse

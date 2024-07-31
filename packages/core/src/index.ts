@@ -11,9 +11,9 @@ export {
 	default as ExtensionsRegistry,
 	ExtensionsRegistryClass,
 	type ExtensionHandler,
-	type ExpressInstanceExtensionHandler,
-	type ExpressRouterExtensionHandler,
-	type ExpressRequestExtensionHandler,
-	type ExpressResponseExtensionHandler,
+	type CelosiaInstanceExtensionHandler,
+	type CelosiaRouterExtensionHandler,
+	type CelosiaRequestExtensionHandler,
+	type CelosiaResponseExtensionHandler,
 	type TransformExtensionHandlerToExtensionType,
 } from './ExtensionsRegistry'

@@ -7,18 +7,18 @@ import RangeParser from 'range-parser'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 import {
+	CelosiaInstance,
 	CookiesObject,
 	EmptyObject,
-	ExpressInstance,
 	ExtensionsRegistry,
 	IncomingHeaderValue,
 	InvalidExtensionError,
 	JSON,
 	PathParams,
 	QueryParams,
-} from '../'
+} from '..'
 
-export interface RequestEvents {
+export interface CelosiaRequestEvents {
 	close: () => void
 	data: (chunk: Buffer) => void
 	end: () => void
@@ -28,14 +28,14 @@ export interface RequestEvents {
 	resume: () => void
 }
 
-class ExpressRequest<
+class CelosiaRequest<
 	Body extends EmptyObject | JSON = EmptyObject,
 	Query extends EmptyObject | QueryParams = EmptyObject,
 	Params extends EmptyObject | PathParams = EmptyObject,
 	Cookies extends EmptyObject | CookiesObject = EmptyObject,
-> extends TypedEmitter<RequestEvents> {
+> extends TypedEmitter<CelosiaRequestEvents> {
 	protected _expressRequest: Request
-	protected _cachedExtensionsProxy: ExpressFramework.ExpressRequest<
+	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRequest<
 		Body,
 		Query,
 		Params,
@@ -58,16 +58,16 @@ class ExpressRequest<
 
 	/**
 	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerExpressRequestExtension`.
+	 * Register by using `ExtensionsRegistry.registerCelosiaRequestExtension`.
 	 */
-	public get extensions(): ExpressFramework.ExpressRequest<Body, Query, Params, Cookies> {
+	public get extensions(): CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies> {
 		if (this._cachedExtensionsProxy === null)
 			this._cachedExtensionsProxy = new Proxy(
 				{},
 				{
 					get: (_, property, __) => {
 						const extensionHandler =
-							ExtensionsRegistry.getExpressRequestExtension(property)
+							ExtensionsRegistry.getCelosiaRequestExtension(property)
 
 						if (extensionHandler === undefined)
 							throw new InvalidExtensionError(
@@ -78,7 +78,7 @@ class ExpressRequest<
 						return (...args: any[]) => extensionHandler(this, ...args)
 					},
 				},
-			) as ExpressFramework.ExpressRequest<Body, Query, Params, Cookies>
+			) as CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies>
 
 		return this._cachedExtensionsProxy
 	}
@@ -90,7 +90,7 @@ class ExpressRequest<
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 		return (this.expressRequest.app as any).__EXPRESS_FRAMEWORK__
-			.instance as ExpressInstance<boolean>
+			.instance as CelosiaInstance<boolean>
 	}
 
 	public get body(): Body {
@@ -513,4 +513,4 @@ class ExpressRequest<
 	}
 }
 
-export default ExpressRequest
+export default CelosiaRequest

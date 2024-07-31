@@ -5,14 +5,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
-import { ExpressRequest, ExpressResponse } from '.'
+import { CelosiaRequest, CelosiaResponse } from '.'
 
 const emptyZodObject = z.object({})
 
 abstract class BaseController<
 	T extends Record<string, any> = {},
-	Request extends ExpressRequest<any, any, any, any> = ExpressRequest<any, any, any, any>,
-	Response extends ExpressResponse<any> = ExpressResponse<any>,
+	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
+	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 > {
 	public abstract index(data: T, request: Request, response: Response): void
 

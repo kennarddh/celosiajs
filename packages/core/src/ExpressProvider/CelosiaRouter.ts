@@ -4,8 +4,8 @@ import express, { NextFunction, Request, Response } from 'express'
 import {
 	BaseController,
 	BaseMiddleware,
-	ExpressRequest,
-	ExpressResponse,
+	CelosiaRequest,
+	CelosiaResponse,
 	ExtensionsRegistry,
 	Globals,
 	InvalidExtensionError,
@@ -17,34 +17,36 @@ import {
 	ValidateMiddlewares,
 } from '../'
 
-export interface RouterConstructorOptions<Strict extends boolean = true> {
+export interface CelosiaRouterConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
 }
 
-export type RouterGroupCallback<Strict extends boolean> = (router: ExpressRouter<Strict>) => void
+export type CelosiaRouterGroupCallback<Strict extends boolean> = (
+	router: CelosiaRouter<Strict>,
+) => void
 
-class ExpressRouter<Strict extends boolean = true> {
+class CelosiaRouter<Strict extends boolean = true> {
 	protected _isStrict: Strict
 	private _expressRouter = express.Router()
 
-	protected _cachedExtensionsProxy: ExpressFramework.ExpressRouter<Strict> | null = null
+	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRouter<Strict> | null = null
 
-	constructor(options: RouterConstructorOptions<Strict>) {
+	constructor(options: CelosiaRouterConstructorOptions<Strict>) {
 		this._isStrict = options.strict
 	}
 
 	/**
 	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerExpressRequestExtension`.
+	 * Register by using `ExtensionsRegistry.registerCelosiaRequestExtension`.
 	 */
-	public get extensions(): ExpressFramework.ExpressRouter<Strict> {
+	public get extensions(): CelosiaJS.CelosiaRouter<Strict> {
 		if (this._cachedExtensionsProxy === null)
 			this._cachedExtensionsProxy = new Proxy(
 				{},
 				{
 					get: (_, property, __) => {
 						const extensionHandler =
-							ExtensionsRegistry.getExpressRouterExtension(property)
+							ExtensionsRegistry.getCelosiaRouterExtension(property)
 
 						if (extensionHandler === undefined)
 							throw new InvalidExtensionError(
@@ -55,7 +57,7 @@ class ExpressRouter<Strict extends boolean = true> {
 						return (...args: any[]) => extensionHandler(this, ...args)
 					},
 				},
-			) as ExpressFramework.ExpressRouter<Strict>
+			) as CelosiaJS.CelosiaRouter<Strict>
 
 		return this._cachedExtensionsProxy
 	}
@@ -68,17 +70,17 @@ class ExpressRouter<Strict extends boolean = true> {
 		return this._expressRouter
 	}
 
-	public useRouters(path: string, ...routers: [ExpressRouter<any>, ...ExpressRouter<any>[]]): this
-	public useRouters(...routers: [ExpressRouter<any>, ...ExpressRouter<any>[]]): this
+	public useRouters(path: string, ...routers: [CelosiaRouter<any>, ...CelosiaRouter<any>[]]): this
+	public useRouters(...routers: [CelosiaRouter<any>, ...CelosiaRouter<any>[]]): this
 	public useRouters(
-		...routersAndPath: [string | ExpressRouter<any>, ...(string | ExpressRouter<any>)[]]
+		...routersAndPath: [string | CelosiaRouter<any>, ...(string | CelosiaRouter<any>)[]]
 	): this {
 		const possiblyPath = routersAndPath[0]
 		const path = typeof possiblyPath === 'string' ? possiblyPath : null
 
 		const routers = (
 			path === null ? routersAndPath : routersAndPath.filter((_, index) => index !== 0)
-		) as ExpressRouter[]
+		) as CelosiaRouter[]
 
 		routers.forEach(router => {
 			if (path === null) this._expressRouter.use(router.expressRouter)
@@ -115,8 +117,8 @@ class ExpressRouter<Strict extends boolean = true> {
 
 		middlewares.forEach(middleware => {
 			const handler = (request: Request, response: Response, next: NextFunction) => {
-				const newRequest = new ExpressRequest(request)
-				const newResponse = new ExpressResponse(response)
+				const newRequest = new CelosiaRequest(request)
+				const newResponse = new CelosiaResponse(response)
 
 				middleware
 					.index({}, newRequest, newResponse)
@@ -137,13 +139,13 @@ class ExpressRouter<Strict extends boolean = true> {
 		return this
 	}
 
-	public group(path: string, callback: RouterGroupCallback<Strict>): void
-	public group(callback: RouterGroupCallback<Strict>): void
+	public group(path: string, callback: CelosiaRouterGroupCallback<Strict>): void
+	public group(callback: CelosiaRouterGroupCallback<Strict>): void
 	public group(
-		callbackOrPath: RouterGroupCallback<Strict> | string,
-		callback?: RouterGroupCallback<Strict>,
+		callbackOrPath: CelosiaRouterGroupCallback<Strict> | string,
+		callback?: CelosiaRouterGroupCallback<Strict>,
 	) {
-		const router = new ExpressRouter({ strict: this.isStrict })
+		const router = new CelosiaRouter({ strict: this.isStrict })
 
 		if (typeof callbackOrPath === 'string') {
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -160,7 +162,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public get<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -173,7 +175,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public head<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -186,7 +188,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public post<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -199,7 +201,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public put<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -212,7 +214,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public patch<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -225,7 +227,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public delete<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -238,7 +240,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public options<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -251,7 +253,7 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 
 	public all<
-		Controller extends BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
@@ -265,7 +267,7 @@ class ExpressRouter<Strict extends boolean = true> {
 
 	private handler(
 		middlewares: BaseMiddleware[],
-		controller: BaseController<any, ExpressRequest<any, any, any, any>, any>,
+		controller: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		return async (request: Request, response: Response) => {
 			const parsedBody = await controller.body.safeParseAsync(request.body)
@@ -317,8 +319,8 @@ class ExpressRouter<Strict extends boolean = true> {
 			request.params = parsedParams.data
 			request.cookies = parsedCookies.data
 
-			const newRequest = new ExpressRequest(request)
-			const newResponse = new ExpressResponse(response)
+			const newRequest = new CelosiaRequest(request)
+			const newResponse = new CelosiaResponse(response)
 
 			let data = {}
 
@@ -350,4 +352,4 @@ class ExpressRouter<Strict extends boolean = true> {
 	}
 }
 
-export default ExpressRouter
+export default CelosiaRouter
