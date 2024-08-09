@@ -1,6 +1,6 @@
 {
 	"name": "@celosiajs/core",
-	"version": "0.0.1-alpha.0",
+	"version": "0.0.0",
 	"description": "CelosiaJS Core. Framework.",
 	"type": "module",
 	"exports": {
@@ -9,6 +9,9 @@
 	"files": [
 		"dist"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"build": "tsc",
 		"clean": "rimraf ./dist"

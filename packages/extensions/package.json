@@ -1,6 +1,6 @@
 {
 	"name": "@celosiajs/extensions",
-	"version": "0.0.1-alpha.0",
+	"version": "0.0.0",
 	"description": "CelosiaJS Extensions. Framework.",
 	"type": "module",
 	"exports": {
@@ -9,6 +9,9 @@
 	"files": [
 		"dist"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"build": "tsc",
 		"clean": "rimraf ./dist"
@@ -20,6 +23,6 @@
 	"author": "kennarddh",
 	"license": "MIT",
 	"dependencies": {
-		"@celosiajs/core": "^0.0.1-alpha.0"
+		"@celosiajs/core": "^0.0.0"
 	}
 }
