@@ -26,8 +26,12 @@
 		"skipLibCheck": false,
 		"declaration": true,
 		"resolveJsonModule": true,
-		"moduleResolution": "Bundler",
+		"moduleResolution": "Bundler"
 	},
-	"references": [{ "path": "./tsconfig.eslint.json" }, { "path": "./packages/core/tsconfig.json" }],
+	"references": [
+		{ "path": "./tsconfig.eslint.json" },
+		{ "path": "./packages/core/tsconfig.json" },
+		{ "path": "./packages/logging/tsconfig.json" }
+	],
 	"files": []
 }

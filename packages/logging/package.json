@@ -1,0 +1,25 @@
+{
+	"name": "@celosiajs/logging",
+	"version": "0.0.0",
+	"description": "CelosiaJS Logging. Framework.",
+	"type": "module",
+	"exports": {
+		".": "./dist/index.js"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc",
+		"clean": "rimraf ./dist"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kennarddh/celosiajs"
+	},
+	"author": "kennarddh",
+	"license": "MIT",
+	"peerDependencies": {
+		"winston": "^3.0.0"
+	}
+}
