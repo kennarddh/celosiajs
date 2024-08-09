@@ -19,6 +19,9 @@
 	},
 	"author": "kennarddh",
 	"license": "MIT",
+	"peerDependencies": {
+		"winston": "^3.0.0"
+	},
 	"dependencies": {
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
@@ -27,8 +30,7 @@
 		"helmet": "^7.1.0",
 		"range-parser": "^1.2.1",
 		"tiny-typed-emitter": "^2.1.0",
-		"zod": "^3.23.8",
-		"winston": "^3.13.0"
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
 		"@types/range-parser": "^1.2.7",
