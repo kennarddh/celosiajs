@@ -1,7 +1,7 @@
 {
 	"name": "@celosiajs/core",
 	"version": "0.0.1-alpha.1",
-	"description": "CelosiaJS Core. Framework.",
+	"description": "CelosiaJS Core. A framework for REST API based on Express.js",
 	"type": "module",
 	"exports": {
 		".": "./dist/index.js"

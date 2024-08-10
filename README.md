@@ -1,3 +1,3 @@
 # CelosiaJS
 
-A framework for rest api based on Express.js
+A framework for REST API based on Express.js
