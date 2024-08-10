@@ -32,7 +32,7 @@ const CelosiaFormat: (opts: {
 			message += ` ${info.ms}`
 		}
 
-		for (const splat of info[SPLAT]) {
+		for (const splat of info[SPLAT] ?? []) {
 			message += `\n${util.inspect(splat, inspectOptions)}`
 		}
 
