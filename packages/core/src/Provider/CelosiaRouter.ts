@@ -15,7 +15,7 @@ import {
 	ValidateController,
 	ValidateControllerWithoutBody,
 	ValidateMiddlewares,
-} from '../'
+} from '..'
 
 export interface CelosiaRouterConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
