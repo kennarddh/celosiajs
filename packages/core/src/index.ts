@@ -1,4 +1,4 @@
-export * from './ExpressProvider'
+export * from './Provider'
 export * from './Types'
 export * from './Utils'
 export * from './Constants'
