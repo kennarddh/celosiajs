@@ -1,6 +1,6 @@
 {
 	"name": "@celosiajs/logging",
-	"version": "0.0.1-alpha.3",
+	"version": "0.0.1-alpha.4",
 	"description": "CelosiaJS Logging. A framework for REST API based on Express.js",
 	"type": "module",
 	"exports": {
