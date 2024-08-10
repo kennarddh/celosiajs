@@ -3,7 +3,7 @@ import { Request } from 'express'
 import { IncomingHttpHeaders } from 'http'
 
 import { Socket } from 'net'
-import RangeParser from 'range-parser'
+import type RangeParser from 'range-parser'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 import {
