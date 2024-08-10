@@ -7,7 +7,9 @@
 		"packages/*"
 	],
 	"scripts": {
-		"build": "lerna run build",
+		"clean": "lerna run clean",
+		"build": "npm run clean && lerna run build",
+		"publish": "npm run build && lerna publish",
 		"lint:build": "tsc --project tsconfig.eslint.json",
 		"lint:check": "eslint --cache",
 		"lint:fix": "eslint --cache --fix",
