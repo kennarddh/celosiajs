@@ -1,6 +1,6 @@
 {
 	"name": "root",
-	"description": "CelosiaJS Root. Framework.",
+	"description": "CelosiaJS Root. A framework for REST API based on Express.js",
 	"private": true,
 	"type": "module",
 	"workspaces": [
