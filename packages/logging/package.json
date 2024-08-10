@@ -18,8 +18,24 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/kennarddh/celosiajs"
+		"url": "https://github.com/kennarddh/celosiajs.git"
 	},
+	"bugs": {
+		"url": "https://github.com/kennarddh/celosiajs/issues"
+	},
+	"homepage": "https://github.com/kennarddh/celosiajs#readme",
+	"keywords": [
+		"celosiajs",
+		"framework",
+		"web",
+		"http",
+		"rest",
+		"restful",
+		"router",
+		"api",
+		"express",
+		"zod"
+	],
 	"author": "kennarddh",
 	"license": "MIT",
 	"peerDependencies": {
