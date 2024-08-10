@@ -1,6 +1,6 @@
 {
 	"name": "@celosiajs/extensions",
-	"version": "0.0.1-alpha.1",
+	"version": "0.0.1-alpha.0",
 	"description": "CelosiaJS Extensions. Framework.",
 	"type": "module",
 	"exports": {
@@ -14,8 +14,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"clean": "rimraf ./dist",
-		"prepack": "npm run build"
+		"clean": "rimraf ./dist"
 	},
 	"repository": {
 		"type": "git",
@@ -24,6 +23,7 @@
 	"author": "kennarddh",
 	"license": "MIT",
 	"dependencies": {
-		"@celosiajs/core": "^0.0.1-alpha.1"
-	}
+		"@celosiajs/core": "^0.0.1-alpha.0"
+	},
+	"gitHead": "e8a2714bfc1869b0ba10c8d36ac88110f699eac4"
 }

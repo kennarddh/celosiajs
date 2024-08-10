@@ -3,8 +3,8 @@ import { ExtensionsRegistry } from '@celosiajs/core'
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace ExpressFramework {
-		interface ExpressResponse<Body> {
+	namespace CelosiaJS {
+		interface CelosiaResponse<Body> {
 			sendInternalServerError: () => void
 		}
 	}
