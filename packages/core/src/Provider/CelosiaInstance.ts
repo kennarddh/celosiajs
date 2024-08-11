@@ -2,11 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 
 import { Server } from 'http'
 
-import compression from 'compression'
-
 import cookieParser from 'cookie-parser'
-
-import helmet from 'helmet'
 
 import {
 	BaseMiddleware,
@@ -47,14 +43,12 @@ class CelosiaInstance<Strict extends boolean> {
 		// Settings
 		this.express.disable('x-powered-by')
 
-		this.express.use(compression())
-		this.express.use(helmet())
-
 		this.express.use(ParseUrlencoded)
 		this.express.use(ParseJson)
 
 		this.express.use(cookieParser())
 	}
+
 	/**
 	 * User-defined extensions method.
 	 * Register by using `ExtensionsRegistry.registerCelosiaInstanceExtension`.
