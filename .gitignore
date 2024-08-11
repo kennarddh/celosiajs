@@ -285,3 +285,6 @@ eslint.config.js
 eslint.config.d.ts
 eslint.config.base.js
 eslint.config.base.d.ts
+
+# Nx
+.nx/cache
