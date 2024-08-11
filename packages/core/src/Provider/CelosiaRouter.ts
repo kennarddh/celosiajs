@@ -37,7 +37,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 	/**
 	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerCelosiaRequestExtension`.
+	 * Register by using `ExtensionsRegistry.registerCelosiaRouterExtension`.
 	 */
 	public get extensions(): CelosiaJS.CelosiaRouter<Strict> {
 		if (this._cachedExtensionsProxy === null)
