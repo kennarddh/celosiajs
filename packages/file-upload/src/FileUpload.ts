@@ -37,8 +37,6 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			},
 		})
 
-		// TODO: Support other than memory storage engine for bigger file
-
 		const resultBody: Record<string, string | IUploadedFile> = {}
 
 		busboy.on('file', (name, file, info) => {
