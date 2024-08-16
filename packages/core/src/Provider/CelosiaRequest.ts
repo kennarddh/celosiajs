@@ -96,20 +96,40 @@ class CelosiaRequest<
 		return this.expressRequest.body as Body
 	}
 
+	public set body(newBody: Body) {
+		this.expressRequest.body = newBody
+	}
+
 	public get query(): Query {
 		return this.expressRequest.query as Query
+	}
+
+	public set query(newQuery: Query) {
+		;(this.expressRequest.query as Query) = newQuery
 	}
 
 	public get params(): Params {
 		return this.expressRequest.params as Params
 	}
 
+	public set params(newParams: Params) {
+		;(this.expressRequest.params as Params) = newParams
+	}
+
 	public get cookies(): Cookies {
 		return this.expressRequest.cookies as Cookies
 	}
 
+	public set cookies(newCookies: Cookies) {
+		this.expressRequest.cookies = newCookies
+	}
+
 	public get headers(): IncomingHttpHeaders {
 		return this.expressRequest.headers
+	}
+
+	public set headers(newHeaders: IncomingHttpHeaders) {
+		this.expressRequest.headers = newHeaders
 	}
 
 	/**
