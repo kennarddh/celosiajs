@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { BaseController, BaseMiddleware, CelosiaRequest, EmptyObject } from '../'
 
-export type INextFunction<Output> = (output?: Output) => void
+export type INextFunction<Output = undefined> = (output?: Output) => void
 
 export interface IListenOptions {
 	port?: number
