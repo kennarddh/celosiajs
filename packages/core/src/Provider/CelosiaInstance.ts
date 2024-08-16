@@ -175,14 +175,13 @@ class CelosiaInstance<Strict extends boolean> {
 				const newRequest = new CelosiaRequest(request)
 				const newResponse = new CelosiaResponse(response)
 
-				middleware
-					.index({}, newRequest, newResponse)
-					.then(() => {
+				try {
+					middleware.index({}, newRequest, newResponse, () => {
 						next()
 					})
-					.catch((error: unknown) => {
-						Globals.logger.error('Unknown middleware error occured', error)
-					})
+				} catch (error) {
+					Globals.logger.error('Unknown middleware error occured', error)
+				}
 			}
 
 			if (path === null) this.express.use(handler)
