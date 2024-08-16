@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-parameters, @typescript-eslint/no-explicit-any */
-import { CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction, type StopHere } from '.'
+import { CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '.'
 
 abstract class BaseMiddleware<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
@@ -12,7 +12,7 @@ abstract class BaseMiddleware<
 		request: Request,
 		response: Response,
 		next: INextFunction<Output | undefined>,
-	): Promise<Output> | Promise<typeof StopHere> | Promise<void>
+	): void
 }
 
 export default BaseMiddleware

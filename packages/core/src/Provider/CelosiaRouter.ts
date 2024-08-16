@@ -12,7 +12,6 @@ import {
 	InvalidExtensionError,
 	MiddlewareArray,
 	NoInputMiddleware,
-	StopHere,
 	ValidateController,
 	ValidateControllerWithoutBody,
 	ValidateMiddlewares,
@@ -121,28 +120,13 @@ class CelosiaRouter<Strict extends boolean = true> {
 				const newRequest = new CelosiaRequest(request)
 				const newResponse = new CelosiaResponse(response)
 
-				let alreadyNext = false
-
-				middleware
-					.index({}, newRequest, newResponse, () => {
-						if (alreadyNext) return
-
-						alreadyNext = true
-
+				try {
+					middleware.index({}, newRequest, newResponse, () => {
 						next()
 					})
-					.then(returnValue => {
-						if (alreadyNext) return
-
-						alreadyNext = true
-
-						if (returnValue === StopHere) return
-
-						next()
-					})
-					.catch((error: unknown) => {
-						Globals.logger.error('Unknown middleware error occured', error)
-					})
+				} catch (error) {
+					Globals.logger.error('Unknown middleware error occured', error)
+				}
 			}
 
 			if (path === null) this._expressRouter.use(handler)
@@ -339,33 +323,23 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 			for (const middleware of middlewares) {
 				try {
-					let alreadyNext = false
-
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
-						(resolve, reject) =>
-							middleware
-								.index(data, newRequest, newResponse, output => {
-									if (alreadyNext) return
-
-									alreadyNext = true
-
+						(resolve, reject) => {
+							try {
+								middleware.index(data, newRequest, newResponse, output => {
 									resolve(output)
 								})
-								.then(output => {
-									if (alreadyNext) return
-
-									alreadyNext = true
-
-									resolve(output as EmptyObject | Record<string, any> | undefined)
-								})
+							} catch (error) {
 								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-								.catch((error: unknown) => reject(error)),
+								reject(error)
+							}
+						},
 					)
 
-					if (output === StopHere) return
-
 					data = output ?? {}
-				} catch {
+				} catch (error) {
+					Globals.logger.error('Unknown handler middleware error occured', error)
+
 					if (!response.writableEnded) {
 						response.status(500).json({
 							data: {},
