@@ -5,6 +5,7 @@ import {
 	CelosiaResponse,
 	CookiesObject,
 	EmptyObject,
+	INextFunction,
 	JSON,
 	PathParams,
 	QueryParams,
@@ -115,6 +116,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		_: EmptyObject,
 		request: CelosiaRequest,
 		response: CelosiaResponse,
+		next: INextFunction,
 	) {
 		const busboy = busboyFactory({
 			headers: request.headers,
@@ -210,7 +212,9 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		})
 
 		busboy.on('close', () => {
-			console.log('Done parsing form!')
+			request.body = resultBody
+
+			next()
 		})
 
 		busboy.on('partsLimit', () => {
