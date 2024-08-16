@@ -6,6 +6,7 @@ import {
 	BaseMiddleware,
 	CelosiaRequest,
 	CelosiaResponse,
+	EmptyObject,
 	ExtensionsRegistry,
 	Globals,
 	InvalidExtensionError,
@@ -120,9 +121,21 @@ class CelosiaRouter<Strict extends boolean = true> {
 				const newRequest = new CelosiaRequest(request)
 				const newResponse = new CelosiaResponse(response)
 
+				let alreadyNext = false
+
 				middleware
-					.index({}, newRequest, newResponse)
+					.index({}, newRequest, newResponse, () => {
+						if (alreadyNext) return
+
+						alreadyNext = true
+
+						next()
+					})
 					.then(returnValue => {
+						if (alreadyNext) return
+
+						alreadyNext = true
+
 						if (returnValue === StopHere) return
 
 						next()
@@ -326,7 +339,28 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 			for (const middleware of middlewares) {
 				try {
-					const output = await middleware.index(data, newRequest, newResponse)
+					let alreadyNext = false
+
+					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
+						(resolve, reject) =>
+							middleware
+								.index(data, newRequest, newResponse, output => {
+									if (alreadyNext) return
+
+									alreadyNext = true
+
+									resolve(output)
+								})
+								.then(output => {
+									if (alreadyNext) return
+
+									alreadyNext = true
+
+									resolve(output as EmptyObject | Record<string, any> | undefined)
+								})
+								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+								.catch((error: unknown) => reject(error)),
+					)
 
 					if (output === StopHere) return
 
