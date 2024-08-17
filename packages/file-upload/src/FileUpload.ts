@@ -2,15 +2,134 @@ import {
 	BaseMiddleware,
 	CelosiaRequest,
 	CelosiaResponse,
-	EmptyObject,
-	INextFunction,
+	type DeepPartial,
+	type EmptyObject,
+	Globals,
+	type INextFunction,
 } from '@celosiajs/core'
-import { IFileUploadOptions, IUploadedFile } from 'Types'
+import { ExceededLimitInfo, ExceededLimitKind, IFileUploadOptions, IUploadedFile } from 'Types'
 import busboyFactory from 'busboy'
+import { Readable, Writable } from 'stream'
 
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
-	constructor(public options: IFileUploadOptions) {
+	public options: IFileUploadOptions
+
+	constructor(options: DeepPartial<IFileUploadOptions>) {
 		super()
+
+		this.options = {
+			defaultCharset: options.defaultCharset ?? 'utf8',
+			defaultParameterCharset: options.defaultParameterCharset ?? 'latin1',
+			preservePath: options.preservePath ?? false,
+			highWaterMark: options.highWaterMark ?? Writable.getDefaultHighWaterMark(false),
+			fileHighWaterMark: options.fileHighWaterMark ?? Readable.getDefaultHighWaterMark(false),
+			ignoreLimits: options.ignoreLimits ?? false,
+			limits: {
+				fieldNameSize: options.limits?.fieldNameSize ?? 100,
+				fields: options.limits?.fields ?? Infinity,
+				fieldSize: options.limits?.fieldSize ?? 1048576,
+				headerPairs: options.limits?.headerPairs ?? 2000,
+				fileSize: options.limits?.fileSize ?? Infinity,
+				files: options.limits?.files ?? Infinity,
+				parts: options.limits?.parts ?? Infinity,
+			},
+			limitExceededHandler:
+				options.limitExceededHandler ??
+				((
+					_: CelosiaRequest,
+					response: CelosiaResponse,
+					info: ExceededLimitInfo,
+					options: IFileUploadOptions,
+				) => {
+					switch (info.kind) {
+						case ExceededLimitKind.FieldNameTruncated: {
+							response.status(422).json({
+								errors: {
+									others: [
+										`Body field name that starts with "${info.name}" exceeded the length limit of ${options.limits.fieldNameSize}.`,
+									],
+								},
+								data: {},
+							})
+
+							break
+						}
+
+						case ExceededLimitKind.FieldValueTruncated: {
+							response.status(422).json({
+								errors: {
+									others: [
+										`Body field "${info.name}" value exceeded the length limit of ${options.limits.fieldSize}.`,
+									],
+								},
+								data: {},
+							})
+
+							break
+						}
+
+						case ExceededLimitKind.Fields: {
+							response.status(422).json({
+								errors: {
+									others: [
+										`Body fields amount exceeded the limit of ${options.limits.fields}.`,
+									],
+								},
+								data: {},
+							})
+
+							break
+						}
+
+						case ExceededLimitKind.Parts: {
+							response.status(422).json({
+								errors: {
+									others: [
+										`Body parts amount exceeded the limit of ${options.limits.parts}.`,
+									],
+								},
+								data: {},
+							})
+
+							break
+						}
+
+						case ExceededLimitKind.Files: {
+							response.status(422).json({
+								errors: {
+									others: [
+										`Body files amount exceeded the limit of ${options.limits.files}.`,
+									],
+								},
+								data: {},
+							})
+
+							break
+						}
+
+						case ExceededLimitKind.FileSize: {
+							response.status(422).json({
+								errors: {
+									others: [
+										`Body file "${info.name}" exceeded the file size limit of ${options.limits.fileSize} bytes.`,
+									],
+								},
+								data: {},
+							})
+
+							break
+						}
+
+						default: {
+							Globals.logger.warn(
+								'Invalid ExceededLimitKind passed to default limitExceededHandler.',
+							)
+
+							break
+						}
+					}
+				}),
+		}
 	}
 
 	public override async index(
@@ -23,17 +142,17 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			headers: request.headers,
 			highWaterMark: this.options.highWaterMark,
 			fileHwm: this.options.fileHighWaterMark,
-			defCharset: this.options.defaultCharset ?? 'utf8',
-			defParamCharset: this.options.defaultParameterCharset ?? 'latin1',
-			preservePath: this.options.preservePath ?? false,
+			defCharset: this.options.defaultCharset,
+			defParamCharset: this.options.defaultParameterCharset,
+			preservePath: this.options.preservePath,
 			limits: {
-				fieldNameSize: this.options.limits?.fieldNameSize ?? 100,
-				fields: this.options.limits?.fields ?? Infinity,
-				fieldSize: this.options.limits?.fieldSize ?? 1048576,
-				files: this.options.limits?.files ?? Infinity,
-				fileSize: this.options.limits?.fileSize ?? Infinity,
-				headerPairs: this.options.limits?.headerPairs ?? 2000,
-				parts: this.options.limits?.parts ?? Infinity,
+				fieldNameSize: this.options.limits.fieldNameSize,
+				fields: this.options.limits.fields,
+				fieldSize: this.options.limits.fieldSize,
+				files: this.options.limits.files,
+				fileSize: this.options.limits.fileSize,
+				headerPairs: this.options.limits.headerPairs,
+				parts: this.options.limits.parts,
 			},
 		})
 
@@ -45,12 +164,14 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 					request.expressRequest.unpipe(busboy)
 					busboy.end()
 
-					return response.status(422).json({
-						errors: {
-							others: [`Body file "${name}" exceeded the file size limit.`],
-						},
-						data: {},
-					})
+					this.options.limitExceededHandler(
+						request,
+						response,
+						{ kind: ExceededLimitKind.FileSize, info, name },
+						this.options,
+					)
+
+					return
 				}
 			}
 
@@ -75,37 +196,37 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			})
 		})
 
-		busboy.on('field', (name, val, info) => {
+		busboy.on('field', (name, value, info) => {
 			// eslint-disable-next-line security/detect-object-injection
-			resultBody[name] = val
+			resultBody[name] = value
 
 			if (!this.options.ignoreLimits) {
 				if (info.nameTruncated) {
 					request.expressRequest.unpipe(busboy)
 					busboy.end()
 
-					return response.status(422).json({
-						errors: {
-							others: [
-								`Body field name that starts with "${info.nameTruncated}" exceeded the length limit.`,
-							],
-						},
-						data: {},
-					})
+					this.options.limitExceededHandler(
+						request,
+						response,
+						{ kind: ExceededLimitKind.FieldNameTruncated, info, name, value },
+						this.options,
+					)
+
+					return
 				}
 
 				if (info.valueTruncated) {
 					request.expressRequest.unpipe(busboy)
 					busboy.end()
 
-					return response.status(422).json({
-						errors: {
-							others: [
-								`Body field "${info.nameTruncated}" value exceeded the length limit.`,
-							],
-						},
-						data: {},
-					})
+					this.options.limitExceededHandler(
+						request,
+						response,
+						{ kind: ExceededLimitKind.FieldValueTruncated, info, name, value },
+						this.options,
+					)
+
+					return
 				}
 			}
 		})
@@ -122,12 +243,12 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
-			response.status(422).json({
-				errors: {
-					others: ['Body parts amount exceeded the limit.'],
-				},
-				data: {},
-			})
+			this.options.limitExceededHandler(
+				request,
+				response,
+				{ kind: ExceededLimitKind.Parts },
+				this.options,
+			)
 		})
 
 		busboy.on('filesLimit', () => {
@@ -136,12 +257,12 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
-			response.status(422).json({
-				errors: {
-					others: [`Body files amount exceeded the limit.`],
-				},
-				data: {},
-			})
+			this.options.limitExceededHandler(
+				request,
+				response,
+				{ kind: ExceededLimitKind.Files },
+				this.options,
+			)
 		})
 
 		busboy.on('fieldsLimit', () => {
@@ -150,12 +271,12 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
-			response.status(422).json({
-				errors: {
-					others: [`Fields amount exceeded the limit.`],
-				},
-				data: {},
-			})
+			this.options.limitExceededHandler(
+				request,
+				response,
+				{ kind: ExceededLimitKind.Fields },
+				this.options,
+			)
 		})
 
 		request.expressRequest.pipe(busboy)
