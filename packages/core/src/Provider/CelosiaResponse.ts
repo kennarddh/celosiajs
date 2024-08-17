@@ -2,8 +2,9 @@ import { Response } from 'express'
 
 import { OutgoingHttpHeader, OutgoingHttpHeaders } from 'http'
 
-import { Socket } from 'net'
 import { Readable } from 'stream'
+
+import { Socket } from 'net'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 import {

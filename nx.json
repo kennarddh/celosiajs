@@ -1,16 +1,12 @@
 {
-  "targetDefaults": {
-    "build": {
-      "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
-    },
-    "clean": {
-      "dependsOn": []
-    }
-  }
+	"targetDefaults": {
+		"build": {
+			"cache": true,
+			"dependsOn": ["^build"],
+			"outputs": ["{projectRoot}/dist"]
+		},
+		"clean": {
+			"dependsOn": []
+		}
+	}
 }

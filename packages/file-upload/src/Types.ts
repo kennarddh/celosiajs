@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import busboy from 'busboy'
+
 import {
 	CelosiaRequest,
 	CelosiaResponse,
@@ -8,7 +10,6 @@ import {
 	PathParams,
 	QueryParams,
 } from '@celosiajs/core'
-import busboy from 'busboy'
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
