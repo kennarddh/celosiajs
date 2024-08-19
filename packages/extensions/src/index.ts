@@ -5,6 +5,9 @@ declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace CelosiaJS {
 		interface CelosiaResponse<Body> {
+			/**
+			 * Send a json containing "Internal Server Error" response with 500 status code
+			 */
 			sendInternalServerError: () => CelosiaResponseClass
 		}
 	}
