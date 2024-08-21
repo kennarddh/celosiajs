@@ -61,9 +61,7 @@ export default tsEslint.config(
 			'@typescript-eslint/no-misused-promises': [
 				'error',
 				{
-					checksVoidReturn: {
-						arguments: false,
-					},
+					checksVoidReturn: false,
 				},
 			],
 			'@typescript-eslint/restrict-template-expressions': [
