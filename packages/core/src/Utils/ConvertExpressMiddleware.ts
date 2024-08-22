@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 
-import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject } from '..'
+import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '..'
 
 /**
  * deferToNext in the expressMiddleware NextFunction is ignored
@@ -10,35 +10,24 @@ const ConvertExpressMiddleware = (expressMiddleware: RequestHandler) => {
 		public override async index(
 			_: EmptyObject,
 			request: CelosiaRequest,
-			response: CelosiaResponse<JSON>,
-		): Promise<EmptyObject> {
-			await new Promise<void>((resolve, reject) => {
-				expressMiddleware(
-					request.expressRequest,
-					response.expressResponse,
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					(errorOrDeferToNext?: any) => {
-						// If value is truthy
-						if (!errorOrDeferToNext) {
-							resolve()
+			response: CelosiaResponse,
+			next: INextFunction,
+		) {
+			expressMiddleware(
+				request.expressRequest,
+				response.expressResponse,
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(errorOrDeferToNext?: any) => {
+					// If value is truthy
+					if (!errorOrDeferToNext) return next()
 
-							return
-						}
+					// Ignore defer to next
+					if (errorOrDeferToNext === 'route' || errorOrDeferToNext === 'router')
+						return next()
 
-						// Ignore defer to next
-						if (errorOrDeferToNext === 'route' || errorOrDeferToNext === 'router') {
-							resolve()
-
-							return
-						}
-
-						// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-						reject(errorOrDeferToNext)
-					},
-				)
-			})
-
-			return {}
+					throw errorOrDeferToNext
+				},
+			)
 		}
 	}
 }
