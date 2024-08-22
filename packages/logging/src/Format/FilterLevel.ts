@@ -4,12 +4,19 @@ import { Format } from 'logform'
 
 const FilterLevel: (opts: { list: string[]; isWhitelist: boolean }) => Format = winston.format(
 	(info, opts: { list: string[]; isWhitelist: boolean }) => {
-		if (opts.list.includes(info.level)) {
-			if (opts.isWhitelist) return info
-			else return false
+		if (opts.isWhitelist) {
+			if (opts.list.includes(info.level)) {
+				return info
+			} else {
+				return false
+			}
+		} else {
+			if (opts.list.includes(info.level)) {
+				return false
+			} else {
+				return info
+			}
 		}
-
-		return info
 	},
 )
 
