@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
-import { BaseController, BaseMiddleware, CelosiaRequest, EmptyObject } from '../'
+import { BaseController, BaseMiddleware, CelosiaRequest, DeepRequired, EmptyObject } from '../'
 
 export type INextFunction<Output = undefined> = (output?: Output) => void
 
@@ -19,16 +19,16 @@ export type NoInputMiddleware = BaseMiddleware<CelosiaRequest>
 
 // & EmptyObject is used so that `{ x: string } extends EmptyObject` become true, because EmptyObject has it's own brand symbol.
 export type IControllerRequest<Controller extends BaseController<any, any, any>> = CelosiaRequest<
-	{} extends z.infer<Controller['body']>
+	{} extends DeepRequired<z.infer<Controller['body']>>
 		? EmptyObject
 		: z.infer<Controller['body']> & EmptyObject,
-	{} extends z.infer<Controller['query']>
+	{} extends DeepRequired<z.infer<Controller['query']>>
 		? EmptyObject
 		: z.infer<Controller['query']> & EmptyObject,
-	{} extends z.infer<Controller['params']>
+	{} extends DeepRequired<z.infer<Controller['params']>>
 		? EmptyObject
 		: z.infer<Controller['params']> & EmptyObject,
-	{} extends z.infer<Controller['cookies']>
+	{} extends DeepRequired<z.infer<Controller['cookies']>>
 		? EmptyObject
 		: z.infer<Controller['cookies']> & EmptyObject
 >
