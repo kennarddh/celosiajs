@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { z } from 'zod'
+import { ZodType, z } from 'zod'
 
 import { CelosiaRequest, CelosiaResponse } from '.'
 
@@ -16,7 +16,7 @@ abstract class BaseController<
 > {
 	public abstract index(data: T, request: Request, response: Response): void
 
-	public get body() {
+	public get body(): ZodType<any, any, any> {
 		return emptyZodObject
 	}
 
