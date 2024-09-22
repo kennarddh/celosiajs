@@ -142,3 +142,26 @@ export interface IUploadedFile {
 	mimeType: string
 	buffer: Buffer
 }
+
+export enum IDuplicateStrategy {
+	Combine,
+	First,
+	Last,
+}
+
+export interface IParsePartsOptions {
+	allowDots: boolean
+	allowEmptyArrays: boolean
+	allowPrototypes: boolean
+	allowSparse: boolean
+	arrayLimit: number
+	comma: boolean
+	decodeDotInKeys: boolean
+	depth: number
+	duplicateStrategy: IDuplicateStrategy
+	parameterLimit: number
+	parseArrays: boolean
+	plainObjects: boolean
+	strictDepth: boolean
+	strictNullHandling: boolean
+}
