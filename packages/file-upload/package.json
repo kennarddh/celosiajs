@@ -40,7 +40,8 @@
 	"license": "MIT",
 	"dependencies": {
 		"@celosiajs/core": "^0.0.1-alpha.9",
-		"busboy": "^1.6.0"
+		"busboy": "^1.6.0",
+		"zod": "^3.23.8"
 	},
 	"gitHead": "e8a2714bfc1869b0ba10c8d36ac88110f699eac4",
 	"devDependencies": {

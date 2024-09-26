@@ -11,6 +11,9 @@ import {
 	QueryParams,
 } from '@celosiajs/core'
 
+import UploadedFile from 'UploadedFile'
+import { z } from 'zod'
+
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace CelosiaJS {
@@ -136,12 +139,7 @@ export interface IFileUploadOptions {
 	) => void
 }
 
-export interface IUploadedFile {
-	fileName: string
-	encoding: string
-	mimeType: string
-	buffer: Buffer
-}
+export type IUploadedFile = z.infer<typeof UploadedFile>
 
 export enum IDuplicateStrategy {
 	Combine,
