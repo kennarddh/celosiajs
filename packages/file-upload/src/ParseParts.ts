@@ -19,7 +19,7 @@
 /**
  * Taken from qs library
  */
-import { IDuplicateStrategy, IParsePartsOptions } from './Types'
+import { IDuplicateStrategy, IParsePartsOptions, IParsedParts } from './Types'
 
 const defaults: IParsePartsOptions = {
 	allowDots: false,
@@ -314,7 +314,10 @@ const normalizeParseOptions = (opts?: Partial<IParsePartsOptions> | undefined) =
 	}
 }
 
-const ParseParts = (input: Record<string, any>, opts?: Partial<IParsePartsOptions> | undefined) => {
+const ParseParts = <T>(
+	input: Record<string, T>,
+	opts?: Partial<IParsePartsOptions> | undefined,
+): IParsedParts<T> => {
 	const options = normalizeParseOptions(opts)
 
 	const tempObj = parseValues(input, options)
@@ -329,7 +332,7 @@ const ParseParts = (input: Record<string, any>, opts?: Partial<IParsePartsOption
 		obj = merge(obj, newObj, options)
 	}
 
-	if (options.allowSparse) return obj
+	if (options.allowSparse) return obj as IParsedParts<T>
 
 	return compact(obj)
 }

@@ -12,6 +12,7 @@ import {
 	type INextFunction,
 } from '@celosiajs/core'
 
+import ParseParts from 'ParseParts'
 import { ExceededLimitInfo, ExceededLimitKind, IFileUploadOptions, IUploadedFile } from 'Types'
 
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
@@ -159,7 +160,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			},
 		})
 
-		const resultBody: Record<string, string | IUploadedFile> = {}
+		const parts: Record<string, string | IUploadedFile> = {}
 
 		busboy.on('file', (name, file, info) => {
 			if (!this.options.ignoreLimits) {
@@ -190,7 +191,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 				const buffer = Buffer.concat(buffers)
 
 				// eslint-disable-next-line security/detect-object-injection
-				resultBody[name] = {
+				parts[name] = {
 					encoding,
 					fileName: filename,
 					mimeType,
@@ -201,7 +202,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 		busboy.on('field', (name, value, info) => {
 			// eslint-disable-next-line security/detect-object-injection
-			resultBody[name] = value
+			parts[name] = value
 
 			if (!this.options.ignoreLimits) {
 				if (info.nameTruncated) {
@@ -235,7 +236,11 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		})
 
 		busboy.on('close', () => {
-			request.body = resultBody
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			const body = ParseParts<string | IUploadedFile>(parts)
+
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			request.body = body
 
 			next()
 		})
