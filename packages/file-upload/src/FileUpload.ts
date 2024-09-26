@@ -236,10 +236,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		})
 
 		busboy.on('close', () => {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const body = ParseParts<string | IUploadedFile>(parts)
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			request.body = body
 
 			next()
