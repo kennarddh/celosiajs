@@ -1,0 +1,27 @@
+{
+	"name": "example",
+	"version": "1.0.0",
+	"description": "Example",
+	"main": "src/index.ts",
+	"type": "module",
+	"scripts": {
+		"start": "tsx watch ./src/index.ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kennarddh/express-boilerplate"
+	},
+	"author": "kennarddh",
+	"license": "MIT",
+	"dependencies": {
+		"@celosiajs/core": "file:../packages/core",
+		"@celosiajs/extensions": "file:../packages/extensions",
+		"@celosiajs/file-upload": "file:../packages/file-upload",
+		"@celosiajs/logging": "file:../packages/logging",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"tsx": "^4.11.0",
+		"typescript": "^5.4.5"
+	}
+}
