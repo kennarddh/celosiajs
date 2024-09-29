@@ -170,7 +170,7 @@ const parseArrayValue = (val: any, options: IParsePartsOptions) => {
 	return val
 }
 
-const parseValues = (input: any, options: IParsePartsOptions) => {
+const parseValues = (input: [string, any][], options: IParsePartsOptions) => {
 	const obj = { __proto__: null }
 
 	for (const [key, rawValue] of input) {
@@ -315,7 +315,7 @@ const normalizeParseOptions = (opts?: Partial<IParsePartsOptions> | undefined) =
 }
 
 const ParseParts = <T>(
-	input: Record<string, T>,
+	input: [string, T][],
 	opts?: Partial<IParsePartsOptions> | undefined,
 ): IParsedParts<T> => {
 	const options = normalizeParseOptions(opts)

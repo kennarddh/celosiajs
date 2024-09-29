@@ -160,7 +160,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			},
 		})
 
-		const parts: Record<string, string | IUploadedFile> = {}
+		const parts: [string, string | IUploadedFile][] = []
 
 		busboy.on('file', (name, file, info) => {
 			if (!this.options.ignoreLimits) {
@@ -190,19 +190,20 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			file.on('close', () => {
 				const buffer = Buffer.concat(buffers)
 
-				// eslint-disable-next-line security/detect-object-injection
-				parts[name] = {
-					encoding,
-					fileName: filename,
-					mimeType,
-					buffer,
-				}
+				parts.push([
+					name,
+					{
+						encoding,
+						fileName: filename,
+						mimeType,
+						buffer,
+					},
+				])
 			})
 		})
 
 		busboy.on('field', (name, value, info) => {
-			// eslint-disable-next-line security/detect-object-injection
-			parts[name] = value
+			parts.push([name, value])
 
 			if (!this.options.ignoreLimits) {
 				if (info.nameTruncated) {
