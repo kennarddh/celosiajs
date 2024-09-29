@@ -4,6 +4,7 @@
 import { z } from 'zod'
 
 import { BaseController, BaseMiddleware, CelosiaRequest, DeepRequired, EmptyObject } from '../'
+import InvariantOf from './InvariantOf'
 
 export type INextFunction<Output = undefined> = (output?: Output) => void
 
@@ -58,7 +59,7 @@ export type ValidateMiddlewares<
 							BaseMiddleware<
 								IControllerRequest<Controller>,
 								IControllerResponse<Controller>,
-								{ requiredInput: RequiredInput; input: Input },
+								InvariantOf<Input>,
 								Output
 							>,
 						]
@@ -70,8 +71,8 @@ export type ValidateMiddlewares<
 					[
 						...Results,
 						BaseMiddleware<
-							IControllerRequest<Controller>,
-							IControllerResponse<Controller>,
+							InvariantOf<IControllerRequest<Controller>>,
+							InvariantOf<IControllerResponse<Controller>>,
 							Input,
 							Output
 						>,
@@ -84,8 +85,8 @@ export type ValidateMiddlewares<
 				[
 					...Results,
 					BaseMiddleware<
-						IControllerRequest<Controller>,
-						IControllerResponse<Controller>,
+						InvariantOf<IControllerRequest<Controller>>,
+						InvariantOf<IControllerResponse<Controller>>,
 						Input,
 						Output
 					>,

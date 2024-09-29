@@ -10,6 +10,7 @@ import {
 	ExtensionsRegistry,
 	Globals,
 	InvalidExtensionError,
+	MergeMiddlewaresOutput,
 	MiddlewareArray,
 	NoInputMiddleware,
 	ValidateController,
@@ -160,17 +161,79 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 	public get<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
+	public get<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
+	public get(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.get(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.get(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.get(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public head<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
 	public head<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -178,12 +241,58 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
+	public head(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.head(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.head(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.head(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public post<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
 	public post<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -191,12 +300,58 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
+	public post(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.post(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.post(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.post(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public put<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
 	public put<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -204,12 +359,58 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
+	public put(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.put(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.put(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.put(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public patch<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
 	public patch<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -217,12 +418,58 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
+	public patch(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.patch(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.patch(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.patch(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public delete<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
 	public delete<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -230,12 +477,58 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
+	public delete(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.delete(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.delete(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.delete(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public options<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
 	public options<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -243,12 +536,58 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+	): this
+	public options(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.options(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.options(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.options(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
+	public all<
+		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		Middlewares extends MiddlewareArray,
+	>(
+		path: string,
+		preValidationMiddlewares: PreValidationMiddlewares &
+			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+		middlewares: Middlewares &
+			ValidateMiddlewares<
+				Controller,
+				Middlewares,
+				MergeMiddlewaresOutput<PreValidationMiddlewares>
+			>,
+		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
 	public all<
 		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
@@ -256,17 +595,93 @@ class CelosiaRouter<Strict extends boolean = true> {
 		path: string,
 		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
 		controller: Controller & ValidateController<Controller, Middlewares>,
+	): this
+	public all(
+		path: string,
+		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		middlewaresOrController:
+			| BaseMiddleware[]
+			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
-		this._expressRouter.all(path, this.handler(middlewares, controller))
+		if (controller) {
+			this._expressRouter.all(
+				path,
+				this.handler(
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseMiddleware[],
+					controller,
+				),
+			)
+		} else {
+			this._expressRouter.all(
+				path,
+				this.handler(
+					[],
+					preValidationMiddlewaresOrMiddlewares,
+					middlewaresOrController as BaseController<
+						any,
+						CelosiaRequest<any, any, any, any>,
+						any
+					>,
+				),
+			)
+		}
 
 		return this
 	}
 
 	private handler(
+		preValidationMiddlewares: BaseMiddleware[],
 		middlewares: BaseMiddleware[],
 		controller: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		return async (request: Request, response: Response) => {
+			const newRequest = new CelosiaRequest(request)
+			const newResponse = new CelosiaResponse(response)
+
+			let data = {}
+
+			for (const preValidationMiddleware of preValidationMiddlewares) {
+				try {
+					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
+						(resolve, reject) => {
+							try {
+								preValidationMiddleware.index(
+									data,
+									newRequest,
+									newResponse,
+									output => {
+										resolve(output)
+									},
+								)
+							} catch (error) {
+								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+								reject(error)
+							}
+						},
+					)
+
+					data = output ?? {}
+				} catch (error) {
+					Globals.logger.error(
+						'Unknown handler preValidationMiddleware error occured',
+						error,
+					)
+
+					if (!response.writableEnded) {
+						response.status(500).json({
+							data: {},
+							errors: {
+								others: ['Internal Server Error'],
+							},
+						})
+					}
+
+					return
+				}
+			}
+
 			const parsedBody = await controller.body.safeParseAsync(request.body)
 			const parsedQuery = await controller.query.safeParseAsync(request.query)
 			const parsedParams = await controller.params.safeParseAsync(request.params)
@@ -311,15 +726,11 @@ class CelosiaRouter<Strict extends boolean = true> {
 					errors,
 				})
 
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			request.body = parsedBody.data
 			request.query = parsedQuery.data
 			request.params = parsedParams.data
 			request.cookies = parsedCookies.data
-
-			const newRequest = new CelosiaRequest(request)
-			const newResponse = new CelosiaResponse(response)
-
-			let data = {}
 
 			for (const middleware of middlewares) {
 				try {
