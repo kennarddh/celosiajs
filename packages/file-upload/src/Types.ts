@@ -1,32 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import busboy from 'busboy'
 
-import {
-	CelosiaRequest,
-	CelosiaResponse,
-	CookiesObject,
-	EmptyObject,
-	JSON,
-	PathParams,
-	QueryParams,
-} from '@celosiajs/core'
+import { CelosiaRequest, CelosiaResponse } from '@celosiajs/core'
 
-import UploadedFile from 'UploadedFile'
 import { z } from 'zod'
 
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace CelosiaJS {
-		interface CelosiaRequest<
-			Body extends EmptyObject | JSON,
-			Query extends EmptyObject | QueryParams,
-			Params extends EmptyObject | PathParams,
-			Cookies extends EmptyObject | CookiesObject,
-		> {
-			files: []
-		}
-	}
-}
+import UploadedFile from './ZodUploadedFileType'
 
 export enum ExceededLimitKind {
 	FileSize,
