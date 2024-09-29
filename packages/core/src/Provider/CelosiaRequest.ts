@@ -2,9 +2,10 @@ import { Request } from 'express'
 
 import { IncomingHttpHeaders } from 'http'
 
+import { PassThrough } from 'stream'
+
 import { Socket } from 'net'
 import type RangeParser from 'range-parser'
-import { TypedEmitter } from 'tiny-typed-emitter'
 
 import {
 	CelosiaInstance,
@@ -18,22 +19,12 @@ import {
 	QueryParams,
 } from '..'
 
-export interface CelosiaRequestEvents {
-	close: () => void
-	data: (chunk: Buffer) => void
-	end: () => void
-	error: (error: Error) => void
-	pause: () => void
-	readable: () => void
-	resume: () => void
-}
-
 class CelosiaRequest<
 	Body extends EmptyObject | JSON = EmptyObject,
 	Query extends EmptyObject | QueryParams = EmptyObject,
 	Params extends EmptyObject | PathParams = EmptyObject,
 	Cookies extends EmptyObject | CookiesObject = EmptyObject,
-> extends TypedEmitter<CelosiaRequestEvents> {
+> extends PassThrough {
 	protected _expressRequest: Request
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRequest<
 		Body,
@@ -47,13 +38,7 @@ class CelosiaRequest<
 
 		this._expressRequest = expressRequest
 
-		expressRequest.on('close', () => this.emit('close'))
-		expressRequest.on('data', (data: Buffer) => this.emit('data', data))
-		expressRequest.on('end', () => this.emit('end'))
-		expressRequest.on('error', error => this.emit('error', error))
-		expressRequest.on('pause', () => this.emit('pause'))
-		expressRequest.on('readable', () => this.emit('readable'))
-		expressRequest.on('resume', () => this.emit('resume'))
+		expressRequest.pipe(this)
 	}
 
 	/**
@@ -525,7 +510,7 @@ class CelosiaRequest<
 	 * as an argument to any listeners on the event.
 	 * @since v0.3.0
 	 */
-	public destroy(error?: Error): this {
+	public override destroy(error?: Error): this {
 		this.expressRequest.destroy(error)
 
 		return this
