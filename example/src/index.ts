@@ -24,11 +24,10 @@ class Middleware1 extends BaseMiddleware {
 		response: CelosiaResponse,
 		next: INextFunction,
 	): void {
+		console.log('middleware')
 		next()
 	}
 }
-
-router.useMiddlewares(new Middleware1())
 
 router.post('/file-upload', [new FileUpload({})], [new Middleware1()], new FileUploadController())
 

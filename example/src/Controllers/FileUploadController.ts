@@ -9,13 +9,14 @@ class FileUploadController extends BaseController {
 		request: IControllerRequest<FileUploadController>,
 		response: CelosiaResponse,
 	) {
-		response.json({ hi: true })
+		console.log('controller body', request.body)
+		response.status(200).json({ hi: true })
 	}
 
 	public override get body() {
 		return z.object({
 			str: z.string(),
-			file: ZodUploadedFileType,
+			files: ZodUploadedFileType.array(),
 		})
 	}
 }
