@@ -5,7 +5,7 @@ import { CelosiaRequest, CelosiaResponse } from '@celosiajs/core'
 
 import { z } from 'zod'
 
-import UploadedFile from './ZodUploadedFileType'
+import { ZodActualUploadedFileType } from './ZodUploadedFileType'
 
 export enum ExceededLimitKind {
 	FileSize,
@@ -118,7 +118,7 @@ export interface IFileUploadOptions {
 	) => void
 }
 
-export type IUploadedFile = z.infer<typeof UploadedFile>
+export type IUploadedFile = z.infer<typeof ZodActualUploadedFileType>
 
 export enum IDuplicateStrategy {
 	Combine,
