@@ -14,7 +14,7 @@ const ParseUrlencoded = (req: Request, res: Response, next: NextFunction) => {
 		next()
 	}
 
-	express.urlencoded({ extended: false })(req, res, errorHandler)
+	express.urlencoded({ extended: true })(req, res, errorHandler)
 }
 
 export default ParseUrlencoded
