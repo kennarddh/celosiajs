@@ -2,10 +2,7 @@ import { Response } from 'express'
 
 import { OutgoingHttpHeader, OutgoingHttpHeaders } from 'http'
 
-import { Readable } from 'stream'
-
 import { Socket } from 'net'
-import { TypedEmitter } from 'tiny-typed-emitter'
 
 import {
 	CelosiaInstance,
@@ -19,30 +16,12 @@ import {
 	SendFileOptions,
 } from '..'
 
-export interface CelosiaResponseEvents {
-	close: () => void
-	drain: () => void
-	error: (error: Error) => void
-	finish: () => void
-	pipe: (src: Readable) => void
-	unpipe: (src: Readable) => void
-}
-
-class CelosiaResponse<Body = JSON> extends TypedEmitter<CelosiaResponseEvents> {
+class CelosiaResponse<Body = JSON> {
 	protected _expressResponse: Response
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaResponse<Body> | null = null
 
 	constructor(expressResponse: Response) {
-		super()
-
 		this._expressResponse = expressResponse
-
-		expressResponse.on('close', () => this.emit('close'))
-		expressResponse.on('drain', () => this.emit('drain'))
-		expressResponse.on('error', error => this.emit('error', error))
-		expressResponse.on('finish', () => this.emit('finish'))
-		expressResponse.on('unpipe', src => this.emit('unpipe', src))
-		expressResponse.on('pipe', src => this.emit('pipe', src))
 	}
 
 	/**

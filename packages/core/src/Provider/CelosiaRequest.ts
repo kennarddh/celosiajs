@@ -2,8 +2,6 @@ import { Request } from 'express'
 
 import { IncomingHttpHeaders } from 'http'
 
-import { PassThrough } from 'stream'
-
 import { Socket } from 'net'
 import type RangeParser from 'range-parser'
 
@@ -24,7 +22,7 @@ class CelosiaRequest<
 	Query extends EmptyObject | QueryParams = EmptyObject,
 	Params extends EmptyObject | PathParams = EmptyObject,
 	Cookies extends EmptyObject | CookiesObject = EmptyObject,
-> extends PassThrough {
+> {
 	protected _expressRequest: Request
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRequest<
 		Body,
@@ -34,11 +32,7 @@ class CelosiaRequest<
 	> | null = null
 
 	constructor(expressRequest: Request) {
-		super()
-
 		this._expressRequest = expressRequest
-
-		expressRequest.pipe(this)
 	}
 
 	/**
@@ -510,7 +504,7 @@ class CelosiaRequest<
 	 * as an argument to any listeners on the event.
 	 * @since v0.3.0
 	 */
-	public override destroy(error?: Error): this {
+	public destroy(error?: Error): this {
 		this.expressRequest.destroy(error)
 
 		return this
