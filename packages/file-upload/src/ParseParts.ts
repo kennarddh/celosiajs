@@ -51,51 +51,6 @@ const arrayToIndexedObject = (
 		options.plainObjects ? { __proto__: null } : {},
 	)
 
-const compactQueue = (queue: any) => {
-	while (queue.length > 1) {
-		const item = queue.pop()
-		const obj = item.obj[item.prop]
-
-		if (Array.isArray(obj)) {
-			const compacted: any[] = []
-
-			for (let j = 0; j < obj.length; ++j) {
-				if (typeof obj[j] !== 'undefined') {
-					compacted.push(obj[j])
-				}
-			}
-
-			item.obj[item.prop] = compacted
-		}
-	}
-}
-
-const compact = (value: any) => {
-	const queue = [{ obj: { o: value }, prop: 'o' }]
-	const refs: any[] = []
-
-	for (let i = 0; i < queue.length; ++i) {
-		const item = queue[i]
-		const obj = (item as any).obj[(item as any).prop]
-
-		const keys = Object.keys(obj)
-
-		for (let j = 0; j < keys.length; ++j) {
-			const key = keys[j]
-			const val = obj[key as any]
-
-			if (typeof val === 'object' && val !== null && !refs.includes(val)) {
-				queue.push({ obj: obj, prop: key as any })
-				refs.push(val)
-			}
-		}
-	}
-
-	compactQueue(queue)
-
-	return value
-}
-
 const merge = (target: any, source: any, options: IParsePartsOptions) => {
 	/* eslint no-param-reassign: 0 */
 	if (!source) return target
@@ -314,6 +269,31 @@ const normalizeParseOptions = (opts?: Partial<IParsePartsOptions> | undefined) =
 	}
 }
 
+type ICleanUpIO = undefined | string | ICleanUpIOObject | ICleanUpIOArray
+
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+interface ICleanUpIOObject {
+	[x: string]: ICleanUpIO
+}
+
+type ICleanUpIOArray = ICleanUpIO[]
+
+const cleanUp = (input: ICleanUpIO): ICleanUpIO => {
+	if (Array.isArray(input)) {
+		// Remove every empty element.
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		return input.filter(() => true).map(row => cleanUp(row))
+	}
+
+	if (typeof input === 'object' && !(input instanceof Buffer)) {
+		return Object.fromEntries(
+			Object.entries(input).map(([key, value]) => [key, cleanUp(value)]),
+		)
+	}
+
+	return input
+}
+
 const ParseParts = <T>(
 	input: [string, T][],
 	opts?: Partial<IParsePartsOptions> | undefined,
@@ -334,7 +314,7 @@ const ParseParts = <T>(
 
 	if (options.allowSparse) return obj as IParsedParts<T>
 
-	return compact(obj)
+	return cleanUp(obj as ICleanUpIO) as IParsedParts<T>
 }
 
 export default ParseParts
