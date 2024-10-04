@@ -13,8 +13,8 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "tsc",
-		"build:watch": "tsc -w",
+		"build": "tsc && tsc-alias",
+		"build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
 		"clean": "rimraf ./dist"
 	},
 	"repository": {
