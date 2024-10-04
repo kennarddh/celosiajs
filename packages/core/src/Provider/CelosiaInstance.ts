@@ -91,7 +91,7 @@ class CelosiaInstance<Strict extends boolean> {
 	 */
 	public addErrorHandler() {
 		this.express.use((error: Error, _: Request, response: Response, __: NextFunction): void => {
-			Globals.logger.error('Error occured.', error)
+			Globals.logger.error('Error occured. From error handler', error)
 
 			response.status(500).json({ errors: { others: ['Internal Server Error'] }, data: {} })
 		})

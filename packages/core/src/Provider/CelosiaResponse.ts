@@ -549,6 +549,18 @@ class CelosiaResponse<Body = JSON> {
 	public writeProcessing(): void {
 		this.expressResponse.writeProcessing()
 	}
+
+	/**
+	 * Send a json containing "Internal Server Error" response with 500 status code
+	 */
+	public sendInternalServerError(): this {
+		return this.status(500).json({
+			errors: {
+				others: ['Internal server error'],
+			},
+			data: {},
+		} as Body extends JSON ? Body : never)
+	}
 }
 
 export default CelosiaResponse

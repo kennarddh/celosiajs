@@ -669,14 +669,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 						error,
 					)
 
-					if (!response.writableEnded) {
-						response.status(500).json({
-							data: {},
-							errors: {
-								others: ['Internal Server Error'],
-							},
-						})
-					}
+					if (!response.writableEnded) newResponse.sendInternalServerError()
 
 					return
 				}
@@ -751,14 +744,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				} catch (error) {
 					Globals.logger.error('Unknown handler middleware error occured', error)
 
-					if (!response.writableEnded) {
-						response.status(500).json({
-							data: {},
-							errors: {
-								others: ['Internal Server Error'],
-							},
-						})
-					}
+					if (!response.writableEnded) newResponse.sendInternalServerError()
 
 					return
 				}

@@ -154,12 +154,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 						info.error,
 					)
 
-					response.status(500).json({
-						errors: {
-							others: ['Internal server error'],
-						},
-						data: {},
-					})
+					response.sendInternalServerError()
 				}),
 			parser: options.parser ?? {},
 		}
