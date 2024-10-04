@@ -5,8 +5,8 @@ export interface IGlobals {
 }
 
 const Globals: IGlobals = {
-	// Noop logger as default
-	logger: new winston.Logger(),
+	// Noop silent logger as default.
+	logger: winston.createLogger({ silent: true }),
 }
 
 export default Globals
