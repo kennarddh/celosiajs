@@ -17,11 +17,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * Taken from qs library
+ * Taken mostly from qs library with some modification
  */
 import { IDuplicateStrategy, IParsePartsOptions, IParsedParts } from './Types'
 
-const defaults: IParsePartsOptions = {
+const defaultOptions: IParsePartsOptions = {
 	allowDots: false,
 	allowEmptyArrays: false,
 	allowPrototypes: false,
@@ -258,12 +258,13 @@ const parseKeys = (givenKey: string | undefined, val: any, options: IParsePartsO
 }
 
 const normalizeParseOptions = (opts?: Partial<IParsePartsOptions> | undefined) => {
-	if (!opts) return defaults
+	if (!opts) return defaultOptions
 
-	const allowDots = (opts.allowDots ?? opts.decodeDotInKeys === true) ? true : defaults.allowDots
+	const allowDots =
+		(opts.allowDots ?? opts.decodeDotInKeys === true) ? true : defaultOptions.allowDots
 
 	return {
-		...defaults,
+		...defaultOptions,
 		...opts,
 		allowDots,
 	}

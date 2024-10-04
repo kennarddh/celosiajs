@@ -133,6 +133,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 						}
 					}
 				}),
+			parser: options.parser ?? {},
 		}
 	}
 

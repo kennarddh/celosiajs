@@ -116,6 +116,8 @@ export interface IFileUploadOptions {
 		info: ExceededLimitInfo,
 		options: IFileUploadOptions,
 	) => void
+
+	parser: Partial<IParsePartsOptions>
 }
 
 export type IUploadedFile = z.infer<typeof ZodActualUploadedFileType>
