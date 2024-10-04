@@ -14,6 +14,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
+		"build:watch": "tsc -w",
 		"clean": "rimraf ./dist"
 	},
 	"repository": {

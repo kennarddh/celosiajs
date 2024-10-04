@@ -9,6 +9,7 @@
 	"scripts": {
 		"clean": "lerna run clean",
 		"build": "npm run clean && lerna run build",
+		"build:watch": "lerna run --parallel build:watch",
 		"publish": "npm run build && lerna publish",
 		"lint:build": "tsc --project tsconfig.eslint.json",
 		"lint:check": "eslint --cache",
