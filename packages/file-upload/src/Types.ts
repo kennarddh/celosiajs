@@ -16,6 +16,16 @@ export enum ExceededLimitKind {
 	Fields,
 }
 
+export enum FileUploadErrorKind {
+	FileStream,
+	Busboy,
+}
+
+export interface FileUploadErrorInfo {
+	kind: FileUploadErrorKind
+	error: Error
+}
+
 export type ExceededLimitInfo =
 	| { kind: ExceededLimitKind.FileSize; name: string; info: busboy.FileInfo }
 	| {
@@ -114,6 +124,16 @@ export interface IFileUploadOptions {
 		request: CelosiaRequest,
 		response: CelosiaResponse,
 		info: ExceededLimitInfo,
+		options: IFileUploadOptions,
+	) => void
+
+	/**
+	 * Called when an error occured while parsing body. Can be used to send a error response. Default: Send a json error response with status 500.
+	 */
+	errorHandler: (
+		request: CelosiaRequest,
+		response: CelosiaResponse,
+		info: FileUploadErrorInfo,
 		options: IFileUploadOptions,
 	) => void
 

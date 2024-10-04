@@ -13,7 +13,14 @@ import {
 } from '@celosiajs/core'
 
 import ParseParts from 'ParseParts'
-import { ExceededLimitInfo, ExceededLimitKind, IFileUploadOptions, IUploadedFile } from 'Types'
+import {
+	ExceededLimitInfo,
+	ExceededLimitKind,
+	FileUploadErrorInfo,
+	FileUploadErrorKind,
+	IFileUploadOptions,
+	IUploadedFile,
+} from 'Types'
 
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 	public options: IFileUploadOptions
@@ -133,6 +140,27 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 						}
 					}
 				}),
+			errorHandler:
+				options.errorHandler ??
+				((
+					_: CelosiaRequest,
+					response: CelosiaResponse,
+					info: FileUploadErrorInfo,
+					__: IFileUploadOptions,
+				) => {
+					Globals.logger.error(
+						'FileUpload error',
+						{ kind: info.kind, kindName: FileUploadErrorKind[info.kind] },
+						info.error,
+					)
+
+					response.status(500).json({
+						errors: {
+							others: ['Internal server error'],
+						},
+						data: {},
+					})
+				}),
 			parser: options.parser ?? {},
 		}
 	}
@@ -186,6 +214,18 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 			file.on('data', (data: Buffer) => {
 				buffers.push(data)
+			})
+
+			file.on('error', (error: Error) => {
+				request.expressRequest.unpipe(busboy)
+				busboy.end()
+
+				this.options.errorHandler(
+					request,
+					response,
+					{ kind: FileUploadErrorKind.FileStream, error },
+					this.options,
+				)
 			})
 
 			file.on('close', () => {
@@ -243,6 +283,18 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			request.body = body
 
 			next()
+		})
+
+		busboy.on('error', (error: Error) => {
+			request.expressRequest.unpipe(busboy)
+			busboy.end()
+
+			this.options.errorHandler(
+				request,
+				response,
+				{ kind: FileUploadErrorKind.Busboy, error },
+				this.options,
+			)
 		})
 
 		busboy.on('partsLimit', () => {
