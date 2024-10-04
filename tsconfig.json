@@ -28,10 +28,6 @@
 		"resolveJsonModule": true,
 		"moduleResolution": "Bundler"
 	},
-	"tsc-alias": {
-		"resolveFullPaths": true,
-		"verbose": false
-	},
 	"references": [
 		{ "path": "./tsconfig.eslint.json" },
 		{ "path": "./example/tsconfig.json" },

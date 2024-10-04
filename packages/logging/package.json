@@ -13,7 +13,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "tsc && tsc-alias",
+		"build": "tsc",
 		"clean": "rimraf ./dist"
 	},
 	"repository": {

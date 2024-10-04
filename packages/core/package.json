@@ -13,7 +13,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "tsc && tsc-alias",
+		"build": "tsc",
 		"clean": "rimraf ./dist"
 	},
 	"repository": {
@@ -50,8 +50,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@types/cookie-parser": "^1.4.7",
-		"tsc-alias": "^1.8.10"
+		"@types/cookie-parser": "^1.4.7"
 	},
 	"gitHead": "e8a2714bfc1869b0ba10c8d36ac88110f699eac4"
 }
