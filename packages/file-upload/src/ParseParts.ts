@@ -257,7 +257,7 @@ const parseKeys = (givenKey: string | undefined, val: any, options: IParsePartsO
 	return parseObject(keys, val, options)
 }
 
-const normalizeParseOptions = (opts?: Partial<IParsePartsOptions> | undefined) => {
+const normalizeParseOptions = (opts?: Partial<IParsePartsOptions>) => {
 	if (!opts) return defaultOptions
 
 	const allowDots =
@@ -297,7 +297,7 @@ const cleanUp = (input: ICleanUpIO): ICleanUpIO => {
 
 const ParseParts = <T>(
 	input: [string, T][],
-	opts?: Partial<IParsePartsOptions> | undefined,
+	opts?: Partial<IParsePartsOptions>,
 ): IParsedParts<T> => {
 	const options = normalizeParseOptions(opts)
 

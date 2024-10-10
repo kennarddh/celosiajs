@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import busboy from 'busboy'
 
 import { CelosiaRequest, CelosiaResponse } from '@celosiajs/core'
