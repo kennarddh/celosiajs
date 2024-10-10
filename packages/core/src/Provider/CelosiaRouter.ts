@@ -740,7 +740,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 						},
 					)
 
-					data = output ?? {}
+					data = { ...data, ...(output ?? {}) }
 				} catch (error) {
 					Globals.logger.error('Unknown handler middleware error occured', error)
 
