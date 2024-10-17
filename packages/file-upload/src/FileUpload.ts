@@ -166,6 +166,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		response: CelosiaResponse,
 		next: INextFunction,
 	) {
+		if (!request.header('content-type')?.startsWith('multipart/form-data')) return next()
+
 		const busboy = busboyFactory({
 			headers: request.headers,
 			highWaterMark: this.options.highWaterMark,
