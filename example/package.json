@@ -9,7 +9,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/kennarddh/express-boilerplate"
+		"url": "git+https://github.com/kennarddh/express-boilerplate"
 	},
 	"author": "kennarddh",
 	"license": "MIT",
