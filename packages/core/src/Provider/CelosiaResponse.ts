@@ -217,6 +217,15 @@ class CelosiaResponse<Body = JSON> {
 	}
 
 	/**
+	 * Set _Content-Disposition_ header to _attachment_ with optional `filename`.
+	 */
+	public attachment(filename: string): this {
+		this.expressResponse.attachment(filename)
+
+		return this
+	}
+
+	/**
 	 * Set _Content-Type_ response header with `type` through `mime.lookup()`
 	 * when it does not contain "/", or set the Content-Type to `type` otherwise.
 	 *
