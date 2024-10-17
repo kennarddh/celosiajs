@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { ZodEffects, z } from 'zod'
 
 export const ZodActualUploadedFileType = z.object({
 	fileName: z.string(),
@@ -15,6 +15,6 @@ const ZodUploadedFileType = z.any().refine(
 		return result.success
 	},
 	{ message: 'Invalid file' },
-)
+) as ZodEffects<ReturnType<typeof z.any>, typeof ZodActualUploadedFileType.shape>
 
 export default ZodUploadedFileType
