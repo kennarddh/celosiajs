@@ -189,22 +189,6 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		const parts: [string, string | IUploadedFile][] = []
 
 		busboy.on('file', (name, file, info) => {
-			if (!this.options.ignoreLimits) {
-				if (file.truncated) {
-					request.expressRequest.unpipe(busboy)
-					busboy.end()
-
-					this.options.limitExceededHandler(
-						request,
-						response,
-						{ kind: ExceededLimitKind.FileSize, info, name },
-						this.options,
-					)
-
-					return
-				}
-			}
-
 			const { filename, encoding, mimeType } = info
 
 			const buffers: Buffer[] = []
@@ -226,6 +210,22 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			})
 
 			file.on('close', () => {
+				if (!this.options.ignoreLimits) {
+					if (file.truncated) {
+						request.expressRequest.unpipe(busboy)
+						busboy.end()
+
+						this.options.limitExceededHandler(
+							request,
+							response,
+							{ kind: ExceededLimitKind.FileSize, info, name },
+							this.options,
+						)
+
+						return
+					}
+				}
+
 				const buffer = Buffer.concat(buffers)
 
 				parts.push([
