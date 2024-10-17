@@ -57,7 +57,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 							response.status(422).json({
 								errors: {
 									others: [
-										`Body field name that starts with "${info.name}" exceeded the length limit of ${options.limits.fieldNameSize}.`,
+										`Body field name that starts with '${info.name}' exceeded the length limit of ${options.limits.fieldNameSize}.`,
 									],
 								},
 								data: {},
@@ -122,7 +122,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 							response.status(422).json({
 								errors: {
 									others: [
-										`Body file "${info.name}" exceeded the file size limit of ${options.limits.fileSize} bytes.`,
+										`Body file '${info.name}' exceeded the file size limit of ${options.limits.fileSize} bytes.`,
 									],
 								},
 								data: {},
