@@ -117,12 +117,12 @@ class CelosiaRouter<Strict extends boolean = true> {
 		) as BaseMiddleware[]
 
 		middlewares.forEach(middleware => {
-			const handler = (request: Request, response: Response, next: NextFunction) => {
+			const handler = async (request: Request, response: Response, next: NextFunction) => {
 				const newRequest = new CelosiaRequest(request)
 				const newResponse = new CelosiaResponse(response)
 
 				try {
-					middleware.index({}, newRequest, newResponse, () => {
+					await middleware.index({}, newRequest, newResponse, () => {
 						next()
 					})
 				} catch (error) {
@@ -647,7 +647,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
 						(resolve, reject) => {
 							try {
-								preValidationMiddleware.index(
+								const mightBePromise = preValidationMiddleware.index(
 									data,
 									newRequest,
 									newResponse,
@@ -655,6 +655,13 @@ class CelosiaRouter<Strict extends boolean = true> {
 										resolve(output)
 									},
 								)
+
+								if (mightBePromise instanceof Promise) {
+									mightBePromise.catch((error: unknown) => {
+										// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+										reject(error)
+									})
+								}
 							} catch (error) {
 								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
 								reject(error)
@@ -730,9 +737,21 @@ class CelosiaRouter<Strict extends boolean = true> {
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
 						(resolve, reject) => {
 							try {
-								middleware.index(data, newRequest, newResponse, output => {
-									resolve(output)
-								})
+								const mightBePromise = middleware.index(
+									data,
+									newRequest,
+									newResponse,
+									output => {
+										resolve(output)
+									},
+								)
+
+								if (mightBePromise instanceof Promise) {
+									mightBePromise.catch((error: unknown) => {
+										// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+										reject(error)
+									})
+								}
 							} catch (error) {
 								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
 								reject(error)

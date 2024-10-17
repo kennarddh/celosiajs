@@ -12,7 +12,7 @@ abstract class BaseMiddleware<
 		request: Request,
 		response: Response,
 		next: INextFunction<Output | undefined>,
-	): void
+	): void | Promise<void>
 }
 
 export default BaseMiddleware
