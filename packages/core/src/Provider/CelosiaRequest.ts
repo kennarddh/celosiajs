@@ -128,6 +128,8 @@ class CelosiaRequest<
 	 *     req.header('Something');
 	 *     // => undefined
 	 */
+	public header(name: 'set-cookie'): string[] | undefined
+	public header(name: string): string | undefined
 	public header(name: string): IncomingHeaderValue | undefined {
 		return this.expressRequest.header(name)
 	}
