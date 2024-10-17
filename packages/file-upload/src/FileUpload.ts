@@ -25,7 +25,7 @@ import {
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 	public options: IFileUploadOptions
 
-	constructor(options: DeepPartial<IFileUploadOptions>) {
+	constructor(options: DeepPartial<IFileUploadOptions> = {}) {
 		super()
 
 		this.options = {
