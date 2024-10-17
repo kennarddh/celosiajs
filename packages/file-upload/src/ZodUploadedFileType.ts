@@ -8,13 +8,22 @@ export const ZodActualUploadedFileType = z.object({
 })
 
 // To hide individual property's error. Because the internal working of the system should not be shown to the client.
-const ZodUploadedFileType = z.any().refine(
-	async (data: unknown) => {
-		const result = await ZodActualUploadedFileType.safeParseAsync(data)
+const ZodUploadedFileType = z.any().superRefine(async (data, ctx) => {
+	if (data === undefined) {
+		return ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: 'Required',
+		})
+	}
 
-		return result.success
-	},
-	{ message: 'Invalid file' },
-) as ZodEffects<ReturnType<typeof z.any>, z.infer<typeof ZodActualUploadedFileType>>
+	const result = await ZodActualUploadedFileType.safeParseAsync(data)
+
+	if (!result.success) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: `Invalid file`,
+		})
+	}
+}) as ZodEffects<z.ZodAny, z.infer<typeof ZodActualUploadedFileType>>
 
 export default ZodUploadedFileType
