@@ -15,6 +15,6 @@ const ZodUploadedFileType = z.any().refine(
 		return result.success
 	},
 	{ message: 'Invalid file' },
-) as ZodEffects<ReturnType<typeof z.any>, typeof ZodActualUploadedFileType.shape>
+) as ZodEffects<ReturnType<typeof z.any>, z.infer<typeof ZodActualUploadedFileType>>
 
 export default ZodUploadedFileType
