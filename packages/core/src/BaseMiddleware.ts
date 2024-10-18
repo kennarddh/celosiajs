@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
+
 /* eslint-disable @typescript-eslint/no-unnecessary-type-parameters, @typescript-eslint/no-explicit-any */
 import { CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '.'
 
@@ -12,7 +14,7 @@ abstract class BaseMiddleware<
 		request: Request,
 		response: Response,
 		next: INextFunction<Output | undefined>,
-	): void | Promise<void>
+	): any | Promise<any>
 }
 
 export default BaseMiddleware

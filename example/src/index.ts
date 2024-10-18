@@ -75,7 +75,7 @@ class TestController extends BaseController {
 	}
 }
 
-router.post('/file-upload', [new FileUpload({})], [new Middleware1()], new FileUploadController())
+router.post('/file-upload', [new FileUpload()], [new Middleware1()], new FileUploadController())
 router.post('/test', [], new TestController())
 router.post('/middleware-error', [new MiddlewareErrorController()], new TestController())
 
