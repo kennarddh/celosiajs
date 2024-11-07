@@ -647,6 +647,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
 						(resolve, reject) => {
 							try {
+								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = preValidationMiddleware.index(
 									data,
 									newRequest,
@@ -681,6 +682,14 @@ class CelosiaRouter<Strict extends boolean = true> {
 					return
 				}
 			}
+
+			if (response.writableEnded)
+				return Globals.logger.warn(
+					"A pre validation middleware calls next after writing response. Request won't be processed further.",
+					{
+						url: request.url,
+					},
+				)
 
 			const parsedBody = await controller.body.safeParseAsync(request.body)
 			const parsedQuery = await controller.query.safeParseAsync(request.query)
@@ -720,11 +729,12 @@ class CelosiaRouter<Strict extends boolean = true> {
 					parsedParams.success &&
 					parsedCookies.success
 				)
-			)
+			) {
 				return response.status(422).json({
 					data: {},
 					errors,
 				})
+			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			request.body = parsedBody.data
@@ -737,6 +747,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
 						(resolve, reject) => {
 							try {
+								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = middleware.index(
 									data,
 									newRequest,
@@ -763,11 +774,21 @@ class CelosiaRouter<Strict extends boolean = true> {
 				} catch (error) {
 					Globals.logger.error('Unknown handler middleware error occured', error)
 
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (!response.writableEnded) newResponse.sendInternalServerError()
 
 					return
 				}
 			}
+
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (response.writableEnded)
+				return Globals.logger.warn(
+					"A middleware calls next after writing response. Request won't be processed further.",
+					{
+						url: request.url,
+					},
+				)
 
 			controller.index(data, newRequest, newResponse)
 
