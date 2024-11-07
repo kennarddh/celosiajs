@@ -188,6 +188,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 		const parts: [string, string | IUploadedFile][] = []
 
+		let errorOccured = false
+
 		busboy.on('file', (name, file, info) => {
 			const { filename, encoding, mimeType } = info
 
@@ -198,6 +200,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			})
 
 			file.on('error', (error: Error) => {
+				errorOccured = false
+
 				request.expressRequest.unpipe(busboy)
 				busboy.end()
 
@@ -212,6 +216,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			file.on('close', () => {
 				if (!this.options.ignoreLimits) {
 					if (file.truncated) {
+						errorOccured = false
+
 						request.expressRequest.unpipe(busboy)
 						busboy.end()
 
@@ -245,7 +251,10 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 			if (!this.options.ignoreLimits) {
 				if (info.nameTruncated) {
+					errorOccured = false
+
 					request.expressRequest.unpipe(busboy)
+
 					busboy.end()
 
 					this.options.limitExceededHandler(
@@ -259,6 +268,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 				}
 
 				if (info.valueTruncated) {
+					errorOccured = false
+
 					request.expressRequest.unpipe(busboy)
 					busboy.end()
 
@@ -275,6 +286,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		})
 
 		busboy.on('close', () => {
+			if (errorOccured) return
+
 			const body = ParseParts<string | IUploadedFile>(parts)
 
 			request.body = body
@@ -283,6 +296,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		})
 
 		busboy.on('error', (error: Error) => {
+			errorOccured = false
+
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
@@ -297,6 +312,9 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('partsLimit', () => {
 			if (this.options.ignoreLimits) return
 
+			errorOccured = false
+
+			errorOccured = false
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
@@ -311,6 +329,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('filesLimit', () => {
 			if (this.options.ignoreLimits) return
 
+			errorOccured = false
+
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
@@ -324,6 +344,8 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 		busboy.on('fieldsLimit', () => {
 			if (this.options.ignoreLimits) return
+
+			errorOccured = false
 
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
