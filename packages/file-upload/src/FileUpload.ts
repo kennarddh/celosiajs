@@ -200,7 +200,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			})
 
 			file.on('error', (error: Error) => {
-				errorOccured = false
+				errorOccured = true
 
 				request.expressRequest.unpipe(busboy)
 				busboy.end()
@@ -216,7 +216,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			file.on('close', () => {
 				if (!this.options.ignoreLimits) {
 					if (file.truncated) {
-						errorOccured = false
+						errorOccured = true
 
 						request.expressRequest.unpipe(busboy)
 						busboy.end()
@@ -251,7 +251,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 			if (!this.options.ignoreLimits) {
 				if (info.nameTruncated) {
-					errorOccured = false
+					errorOccured = true
 
 					request.expressRequest.unpipe(busboy)
 
@@ -268,7 +268,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 				}
 
 				if (info.valueTruncated) {
-					errorOccured = false
+					errorOccured = true
 
 					request.expressRequest.unpipe(busboy)
 					busboy.end()
@@ -296,7 +296,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		})
 
 		busboy.on('error', (error: Error) => {
-			errorOccured = false
+			errorOccured = true
 
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
@@ -312,9 +312,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('partsLimit', () => {
 			if (this.options.ignoreLimits) return
 
-			errorOccured = false
-
-			errorOccured = false
+			errorOccured = true
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
 
@@ -329,7 +327,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('filesLimit', () => {
 			if (this.options.ignoreLimits) return
 
-			errorOccured = false
+			errorOccured = true
 
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
@@ -345,7 +343,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('fieldsLimit', () => {
 			if (this.options.ignoreLimits) return
 
-			errorOccured = false
+			errorOccured = true
 
 			request.expressRequest.unpipe(busboy)
 			busboy.end()
