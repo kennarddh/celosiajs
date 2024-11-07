@@ -647,6 +647,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
 						(resolve, reject) => {
 							try {
+								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = preValidationMiddleware.index(
 									data,
 									newRequest,
@@ -720,11 +721,18 @@ class CelosiaRouter<Strict extends boolean = true> {
 					parsedParams.success &&
 					parsedCookies.success
 				)
-			)
+			) {
+				if (response.writableEnded)
+					return Globals.logger.warn(
+						'A middleware calls next after writing to response.',
+						{ url: request.url },
+					)
+
 				return response.status(422).json({
 					data: {},
 					errors,
 				})
+			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			request.body = parsedBody.data
@@ -737,6 +745,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
 						(resolve, reject) => {
 							try {
+								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = middleware.index(
 									data,
 									newRequest,
