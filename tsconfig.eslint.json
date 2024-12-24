@@ -5,8 +5,9 @@
 		"sourceMap": false,
 		"types": ["node"],
 		"outDir": "./",
-		"declarationDir": "./"
+		"declarationDir": "./",
+		"emitDeclarationOnly": false
 	},
-	"include": ["./eslint.d.ts", "./eslint.config.ts"],
+	"include": ["./eslint.d.ts", "./eslint.config.ts", "scripts"],
 	"exclude": ["src"]
 }

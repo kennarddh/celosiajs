@@ -75,8 +75,19 @@ class TestController extends BaseController {
 	}
 }
 
+class GetController extends BaseController {
+	public async index(
+		_: EmptyObject,
+		__: IControllerRequest<TestController>,
+		response: CelosiaResponse,
+	) {
+		response.status(200).json({ hi: true })
+	}
+}
+
 router.post('/file-upload', [new FileUpload()], [new Middleware1()], new FileUploadController())
 router.post('/test', [], new TestController())
+router.get('/', [], new GetController())
 router.post('/middleware-error', [new MiddlewareErrorController()], new TestController())
 
 instance.useRouters(router)

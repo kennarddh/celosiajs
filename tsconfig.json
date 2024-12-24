@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"target": "ES2022" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-		"module": "ES2022" /* Specify what module code is generated. */,
+		"target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+		"module": "ESNext" /* Specify what module code is generated. */,
 		"allowJs": false /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
 		"esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
 		"forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
@@ -26,7 +26,8 @@
 		"skipLibCheck": false,
 		"declaration": true,
 		"resolveJsonModule": true,
-		"moduleResolution": "Bundler"
+		"moduleResolution": "Bundler",
+		"emitDeclarationOnly": true
 	},
 	"references": [
 		{ "path": "./tsconfig.eslint.json" },
