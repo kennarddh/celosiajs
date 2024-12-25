@@ -8,6 +8,7 @@ const esbuildOptions = {
 	format: 'esm',
 	platform: 'node',
 	packages: 'external',
+	minify: true,
 } satisfies BuildOptions as BuildOptions
 
 export default esbuildOptions
