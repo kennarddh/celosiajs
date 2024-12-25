@@ -8,6 +8,6 @@
 		"declarationDir": "./",
 		"emitDeclarationOnly": false
 	},
-	"include": ["./eslint.d.ts", "./eslint.config.ts", "scripts"],
+	"include": ["./eslint.d.ts", "./eslint.config.ts"],
 	"exclude": ["src"]
 }

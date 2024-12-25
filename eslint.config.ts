@@ -109,4 +109,12 @@ export default tsEslint.config(
 			// ],
 		},
 	},
+	{
+		files: ['eslint.config.ts', 'eslint.d.ts'],
+		languageOptions: {
+			parserOptions: {
+				project: 'tsconfig.scripts.json',
+			},
+		},
+	},
 )
