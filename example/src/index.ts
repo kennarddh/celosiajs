@@ -97,6 +97,7 @@ class GetController extends BaseController {
 		__: IControllerRequest<TestController>,
 		response: CelosiaResponse,
 	) {
+		this.logger.info('Get request')
 		response.status(200).json({ hi: true })
 	}
 }

@@ -16,12 +16,10 @@ const CelosiaFormat: (opts: {
 			inspectOptions,
 			timestamp = true,
 			levelPadLength = 7,
-			source,
 		}: {
 			inspectOptions?: InspectOptions
 			levelPadLength?: number
 			timestamp?: boolean
-			source?: string
 		},
 	) => {
 		let message = ''
@@ -34,7 +32,7 @@ const CelosiaFormat: (opts: {
 
 		message += `${message ? ' ' : ''}[${info.level.padEnd(levelPadLength, ' ')}]`
 
-		if (source) message += ` [${source}]`
+		if (info.source) message += ` [${info.source}]`
 
 		message += `: ${info.message}`
 
