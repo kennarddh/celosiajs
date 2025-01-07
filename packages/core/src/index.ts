@@ -2,6 +2,8 @@ export * from './Provider'
 export * from './Types'
 export * from './Utils'
 export * from './Errors'
+export * from './Repository'
+export * from './Service'
 
 export { default as Globals, type IGlobals } from './Globals'
 export { default as BaseController } from './BaseController'
