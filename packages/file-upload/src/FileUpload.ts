@@ -12,7 +12,7 @@ import {
 	type INextFunction,
 } from '@celosiajs/core'
 
-import ParseParts from 'ParseParts'
+import ParseParts from './ParseParts'
 import {
 	ExceededLimitInfo,
 	ExceededLimitKind,
@@ -20,7 +20,7 @@ import {
 	FileUploadErrorKind,
 	IFileUploadOptions,
 	IUploadedFile,
-} from 'Types'
+} from './Types'
 
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 	public options: IFileUploadOptions

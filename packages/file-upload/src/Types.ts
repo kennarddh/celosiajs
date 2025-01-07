@@ -166,7 +166,6 @@ export interface IParsePartsOptions {
 
 export type IParsedPartsValue<T> = T | IParsedParts<T> | IParsedPartsArray<T>
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 export interface IParsedParts<T> {
 	[x: string]: IParsedPartsValue<T>
 }

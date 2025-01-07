@@ -12,12 +12,12 @@ import {
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
 
-import winston from 'winston'
+import * as winston from 'winston'
 
-import FileUploadController from 'Controllers/FileUploadController'
 import { z } from 'zod'
 
 import { CelosiaFormat } from '../../packages/logging/dist'
+import FileUploadController from './Controllers/FileUploadController'
 
 const logger = winston.createLogger({
 	transports: [new winston.transports.Console()],

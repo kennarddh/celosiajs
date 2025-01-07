@@ -1,8 +1,8 @@
-import winston from 'winston'
+import { format } from 'winston'
 
 import { Format } from 'logform'
 
-const FilterLevel: (opts: { list: string[]; isWhitelist: boolean }) => Format = winston.format(
+const FilterLevel: (opts: { list: string[]; isWhitelist: boolean }) => Format = format(
 	(info, opts: { list: string[]; isWhitelist: boolean }) => {
 		if (opts.isWhitelist) {
 			if (opts.list.includes(info.level)) {

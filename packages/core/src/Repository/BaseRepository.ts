@@ -1,9 +1,9 @@
-import winston from 'winston'
+import { Logger } from 'winston'
 
-import Globals from 'Globals'
+import Globals from '../Globals'
 
 class BaseRepository {
-	logger: winston.Logger
+	logger: Logger
 
 	constructor(public loggingSource: string) {
 		this.logger = Globals.logger.child({ source: loggingSource })

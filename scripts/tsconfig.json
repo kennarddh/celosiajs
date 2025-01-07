@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"composite": true,
 		"types": ["node"]
 	},
 	"include": ["build.ts", "buildWatch.ts", "esbuildOptions.ts"],

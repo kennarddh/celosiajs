@@ -1,12 +1,12 @@
-import winston from 'winston'
+import { Logger, createLogger } from 'winston'
 
 export interface IGlobals {
-	logger: winston.Logger
+	logger: Logger
 }
 
 const Globals: IGlobals = {
 	// Noop silent logger as default.
-	logger: winston.createLogger({ silent: true }),
+	logger: createLogger({ silent: true }),
 }
 
 export default Globals

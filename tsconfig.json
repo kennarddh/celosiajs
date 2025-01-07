@@ -23,7 +23,7 @@
 		"noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier. */,
 		"allowUnusedLabels": true /* Disable error reporting for unused labels. */,
 		"allowUnreachableCode": true /* Disable error reporting for unreachable code. */,
-		"skipLibCheck": false,
+		"skipLibCheck": true,
 		"declaration": true,
 		"resolveJsonModule": true,
 		"moduleResolution": "Bundler",
@@ -31,12 +31,12 @@
 	},
 	"references": [
 		{ "path": "./scripts/tsconfig.json" },
-		{ "path": "./eslint/tsconfig.json" },
 		{ "path": "./example/tsconfig.json" },
 		{ "path": "./packages/core/tsconfig.json" },
 		{ "path": "./packages/extensions/tsconfig.json" },
 		{ "path": "./packages/logging/tsconfig.json" },
 		{ "path": "./packages/file-upload/tsconfig.json" }
 	],
+	"include": ["eslint.config.ts"],
 	"files": []
 }

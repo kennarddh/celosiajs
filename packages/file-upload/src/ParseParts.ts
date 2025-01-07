@@ -272,7 +272,6 @@ const normalizeParseOptions = (opts?: Partial<IParsePartsOptions>) => {
 
 type ICleanUpIO = undefined | string | ICleanUpIOObject | ICleanUpIOArray
 
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 interface ICleanUpIOObject {
 	[x: string]: ICleanUpIO
 }

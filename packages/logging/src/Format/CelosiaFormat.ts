@@ -1,5 +1,5 @@
 /* eslint-disable security/detect-object-injection */
-import winston from 'winston'
+import { format } from 'winston'
 
 import { Format } from 'logform'
 import { MESSAGE, SPLAT } from 'triple-beam'
@@ -9,7 +9,7 @@ const CelosiaFormat: (opts: {
 	inspectOptions?: InspectOptions
 	levelPadLength?: number
 	timestamp?: boolean
-}) => Format = winston.format(
+}) => Format = format(
 	(
 		info,
 		{

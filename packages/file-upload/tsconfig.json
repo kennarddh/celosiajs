@@ -1,5 +1,9 @@
 {
-	"compilerOptions": { "outDir": "./dist/", "baseUrl": "src" },
+	"compilerOptions": {
+		"composite": true,
+		"outDir": "./dist/",
+		"baseUrl": "src"
+	},
 	"include": ["src"],
 	"exclude": ["dist"],
 	"extends": "../../tsconfig.json"
