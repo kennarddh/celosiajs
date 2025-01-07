@@ -16,7 +16,7 @@ abstract class BaseController<
 > {
 	logger: winston.Logger
 
-	constructor(protected loggingSource: string) {
+	constructor(public loggingSource: string) {
 		this.logger = Globals.logger.child({ source: loggingSource })
 	}
 

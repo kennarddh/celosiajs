@@ -4,6 +4,10 @@ import { ZodUploadedFileType } from '@celosiajs/file-upload'
 import { z } from 'zod'
 
 class FileUploadController extends BaseController {
+	constructor() {
+		super('FileUploadController')
+	}
+
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<FileUploadController>,

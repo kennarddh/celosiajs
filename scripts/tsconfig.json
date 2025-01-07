@@ -1,0 +1,7 @@
+{
+	"compilerOptions": {
+		"types": ["node"]
+	},
+	"include": ["build.ts", "buildWatch.ts", "esbuildOptions.ts"],
+	"extends": "../tsconfig.json"
+}

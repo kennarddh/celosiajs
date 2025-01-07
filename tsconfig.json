@@ -30,7 +30,8 @@
 		"emitDeclarationOnly": true
 	},
 	"references": [
-		{ "path": "./tsconfig.eslint.json" },
+		{ "path": "./scripts/tsconfig.json" },
+		{ "path": "./eslint/tsconfig.json" },
 		{ "path": "./example/tsconfig.json" },
 		{ "path": "./packages/core/tsconfig.json" },
 		{ "path": "./packages/extensions/tsconfig.json" },

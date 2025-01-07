@@ -36,6 +36,10 @@ const instance = new CelosiaInstance({ strict: true })
 const router = new CelosiaRouter({ strict: true })
 
 class Middleware1 extends BaseMiddleware {
+	constructor() {
+		super('Middleware1')
+	}
+
 	override index(
 		_: EmptyObject,
 		__: CelosiaRequest,
@@ -48,6 +52,10 @@ class Middleware1 extends BaseMiddleware {
 }
 
 class MiddlewareErrorController extends BaseMiddleware {
+	constructor() {
+		super('MiddlewareErrorController')
+	}
+
 	override index(
 		_: EmptyObject,
 		__: CelosiaRequest,
@@ -59,6 +67,10 @@ class MiddlewareErrorController extends BaseMiddleware {
 }
 
 class TestController extends BaseController {
+	constructor() {
+		super('TestController')
+	}
+
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<TestController>,
@@ -76,6 +88,10 @@ class TestController extends BaseController {
 }
 
 class GetController extends BaseController {
+	constructor() {
+		super('GetController')
+	}
+
 	public async index(
 		_: EmptyObject,
 		__: IControllerRequest<TestController>,

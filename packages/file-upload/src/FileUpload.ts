@@ -26,7 +26,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 	public options: IFileUploadOptions
 
 	constructor(options: DeepPartial<IFileUploadOptions> = {}) {
-		super()
+		super('FileUpload')
 
 		this.options = {
 			defaultCharset: options.defaultCharset ?? 'utf8',

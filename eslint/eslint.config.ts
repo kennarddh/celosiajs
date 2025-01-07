@@ -1,3 +1,5 @@
+import path from 'path'
+
 import js from '@eslint/js'
 import { FlatConfig } from '@typescript-eslint/utils/ts-eslint'
 // import importPlugin from 'eslint-plugin-import'
@@ -13,14 +15,14 @@ import tsEslint from 'typescript-eslint'
 // Also eslint-import-resolver-typescript
 
 export default tsEslint.config(
-	{ ignores: ['**/dist/**/*', 'eslint.config.d.ts', 'eslint.config.js'] },
+	{ ignores: ['**/dist/**/*'] },
 	{
 		languageOptions: {
 			parser: tsEslint.parser as FlatConfig.Parser,
 			parserOptions: {
 				ecmaVersion: 'latest',
 				sourceType: 'module',
-				tsconfigRootDir: import.meta.dirname,
+				tsconfigRootDir: path.resolve(import.meta.dirname, '..'),
 				projectService: true,
 				extraFileExtensions: ['.json'],
 			},
@@ -89,32 +91,5 @@ export default tsEslint.config(
 		// 	typescript: {},
 		// },
 		// },
-	},
-	{
-		files: ['eslint.config.ts', 'eslint.d.ts'],
-		languageOptions: {
-			parserOptions: {
-				project: 'tsconfig.eslint.json',
-			},
-		},
-		plugins: {
-			// import: importPlugin,
-		},
-		rules: {
-			// 'import/no-extraneous-dependencies': [
-			// 	'error',
-			// 	{
-			// 		devDependencies: true,
-			// 	},
-			// ],
-		},
-	},
-	{
-		files: ['eslint.config.ts', 'eslint.d.ts'],
-		languageOptions: {
-			parserOptions: {
-				project: 'tsconfig.scripts.json',
-			},
-		},
 	},
 )

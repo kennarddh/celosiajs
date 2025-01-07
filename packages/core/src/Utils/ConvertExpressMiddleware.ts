@@ -7,6 +7,10 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, INextFunc
  */
 const ConvertExpressMiddleware = (expressMiddleware: RequestHandler) => {
 	return class extends BaseMiddleware {
+		constructor() {
+			super('ExpressMidlewareCompat')
+		}
+
 		public override async index(
 			_: EmptyObject,
 			request: CelosiaRequest,
