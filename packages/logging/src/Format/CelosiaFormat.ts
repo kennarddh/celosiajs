@@ -16,17 +16,27 @@ const CelosiaFormat: (opts: {
 			inspectOptions,
 			timestamp = true,
 			levelPadLength = 7,
-		}: { inspectOptions?: InspectOptions; levelPadLength?: number; timestamp?: boolean },
+			source,
+		}: {
+			inspectOptions?: InspectOptions
+			levelPadLength?: number
+			timestamp?: boolean
+			source?: string
+		},
 	) => {
 		let message = ''
 
 		if (timestamp) {
 			const timestampString = new Date().toLocaleString()
 
-			message += `${timestampString} | `
+			message += `[${timestampString}]`
 		}
 
-		message += `${info.level.padEnd(levelPadLength, ' ')}: ${info.message}`
+		message += `${message ? ' ' : ''}[${info.level.padEnd(levelPadLength, ' ')}]`
+
+		if (source) message += ` [${source}]`
+
+		message += `: ${info.message}`
 
 		if (info.ms) {
 			message += ` ${info.ms}`

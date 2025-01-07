@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 
-/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters, @typescript-eslint/no-explicit-any */
-import { CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '.'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import winston from 'winston'
+
+import { CelosiaRequest, CelosiaResponse, EmptyObject, Globals, INextFunction } from '.'
 
 abstract class BaseMiddleware<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
@@ -9,6 +11,12 @@ abstract class BaseMiddleware<
 	Input extends Record<string, any> = EmptyObject,
 	Output extends Record<string, any> | EmptyObject = EmptyObject,
 > {
+	logger: winston.Logger
+
+	constructor(protected loggingSource: string) {
+		this.logger = Globals.logger.child({ source: loggingSource })
+	}
+
 	public abstract index(
 		data: Input,
 		request: Request,

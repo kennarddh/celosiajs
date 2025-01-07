@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 
-/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import winston from 'winston'
+
 import { ZodType, z } from 'zod'
 
-import { CelosiaRequest, CelosiaResponse } from '.'
+import { CelosiaRequest, CelosiaResponse, Globals } from '.'
 
 const emptyZodObject = z.object({})
 
@@ -14,6 +14,12 @@ abstract class BaseController<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 > {
+	logger: winston.Logger
+
+	constructor(protected loggingSource: string) {
+		this.logger = Globals.logger.child({ source: loggingSource })
+	}
+
 	public abstract index(data: T, request: Request, response: Response): void
 
 	public get body(): ZodType<any, any, any> {
