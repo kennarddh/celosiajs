@@ -28,6 +28,7 @@ class CelosiaInstance<Strict extends boolean> {
 	protected readonly isStrict: Strict
 	protected readonly express: ReturnType<typeof express>
 	protected _server: Server | null = null
+	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
 
 	constructor(options: CelosiaInstanceConstructorOptions<Strict>) {
 		this.isStrict = options.strict
@@ -91,8 +92,7 @@ class CelosiaInstance<Strict extends boolean> {
 	 */
 	public addErrorHandler() {
 		this.express.use((error: Error, _: Request, response: Response, __: NextFunction): void => {
-			Globals.logger.error('Error occured. From error handler', error)
-
+			this.logger.error('Global error handler', error)
 			response.status(500).json({ errors: { others: ['Internal Server Error'] }, data: {} })
 		})
 	}
@@ -180,7 +180,7 @@ class CelosiaInstance<Strict extends boolean> {
 						next()
 					})
 				} catch (error) {
-					Globals.logger.error('Unknown middleware error occured', error)
+					this.logger.error('Unknown middleware error occured', error)
 				}
 			}
 

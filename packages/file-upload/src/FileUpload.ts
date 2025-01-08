@@ -8,7 +8,6 @@ import {
 	CelosiaResponse,
 	type DeepPartial,
 	type EmptyObject,
-	Globals,
 	type INextFunction,
 } from '@celosiajs/core'
 
@@ -132,7 +131,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 						}
 
 						default: {
-							Globals.logger.warn(
+							this.logger.warn(
 								'Invalid ExceededLimitKind passed to default limitExceededHandler.',
 							)
 
@@ -148,7 +147,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 					info: FileUploadErrorInfo,
 					__: IFileUploadOptions,
 				) => {
-					Globals.logger.error(
+					this.logger.error(
 						'FileUpload error',
 						{ kind: info.kind, kindName: FileUploadErrorKind[info.kind] },
 						info.error,

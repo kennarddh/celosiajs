@@ -32,6 +32,8 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRouter<Strict> | null = null
 
+	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
+
 	constructor(options: CelosiaRouterConstructorOptions<Strict>) {
 		this._isStrict = options.strict
 	}
@@ -126,7 +128,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 						next()
 					})
 				} catch (error) {
-					Globals.logger.error('Unknown middleware error occured', error)
+					this.logger.error('Unknown middleware error occured', error)
 				}
 			}
 
@@ -672,7 +674,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 					data = output ?? {}
 				} catch (error) {
-					Globals.logger.error(
+					this.logger.error(
 						'Unknown handler preValidationMiddleware error occured',
 						error,
 					)
@@ -683,13 +685,14 @@ class CelosiaRouter<Strict extends boolean = true> {
 				}
 			}
 
-			if (response.writableEnded)
-				return Globals.logger.warn(
+			if (response.writableEnded) {
+				this.logger.warn(
 					"A pre validation middleware calls next after writing response. Request won't be processed further.",
-					{
-						url: request.url,
-					},
+					{ url: request.url },
 				)
+
+				return
+			}
 
 			const parsedBody = await controller.body.safeParseAsync(request.body)
 			const parsedQuery = await controller.query.safeParseAsync(request.query)
@@ -772,7 +775,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 					data = { ...data, ...(output ?? {}) }
 				} catch (error) {
-					Globals.logger.error('Unknown handler middleware error occured', error)
+					this.logger.error('Unknown handler middleware error occured', error)
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (!response.writableEnded) newResponse.sendInternalServerError()
@@ -783,7 +786,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (response.writableEnded)
-				return Globals.logger.warn(
+				return this.logger.warn(
 					"A middleware calls next after writing response. Request won't be processed further.",
 					{
 						url: request.url,
