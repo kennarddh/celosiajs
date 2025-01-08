@@ -27,7 +27,8 @@
 		"declaration": true,
 		"resolveJsonModule": true,
 		"moduleResolution": "Bundler",
-		"emitDeclarationOnly": true
+		"emitDeclarationOnly": true,
+		"experimentalDecorators": true
 	},
 	"references": [
 		{ "path": "./example/tsconfig.json" },

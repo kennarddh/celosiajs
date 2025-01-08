@@ -1,14 +1,18 @@
 import {
 	BaseController,
 	BaseMiddleware,
+	BaseRepository,
+	BaseService,
 	CelosiaInstance,
 	CelosiaRequest,
 	CelosiaResponse,
 	CelosiaRouter,
+	DependencyInjection,
 	EmptyObject,
 	Globals,
 	IControllerRequest,
 	INextFunction,
+	Injectable,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
 
@@ -102,10 +106,50 @@ class GetController extends BaseController {
 	}
 }
 
+@Injectable('UserRepository')
+class UserRepository extends BaseRepository {
+	public getById(id: string) {
+		return { id, name: 'X' }
+	}
+}
+
+@Injectable('UserService')
+class UserService extends BaseService {
+	constructor(
+		private userRepository: UserRepository = DependencyInjection.get<UserRepository>(
+			'UserRepository',
+		),
+	) {
+		super('UserService')
+	}
+
+	public getNameLowercase() {
+		return this.userRepository.getById('1').name.toLowerCase()
+	}
+}
+
+class UserController extends BaseController {
+	constructor(
+		private userService: UserService = DependencyInjection.get<UserService>('UserService'),
+	) {
+		super('UserController')
+	}
+
+	public async index(
+		_: EmptyObject,
+		__: IControllerRequest<UserController>,
+		response: CelosiaResponse,
+	) {
+		const name = this.userService.getNameLowercase()
+		response.status(200).json({ name })
+	}
+}
+
 router.post('/file-upload', [new FileUpload()], [new Middleware1()], new FileUploadController())
 router.post('/test', [], new TestController())
 router.get('/', [], new GetController())
 router.post('/middleware-error', [new MiddlewareErrorController()], new TestController())
+router.get('/user', [], new UserController())
 
 instance.useRouters(router)
 
