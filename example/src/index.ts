@@ -15,12 +15,12 @@ import {
 	Injectable,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
+import { CelosiaFormat } from '@celosiajs/logging'
 
 import * as winston from 'winston'
 
 import { z } from 'zod'
 
-import { CelosiaFormat } from '../../packages/logging/dist'
 import FileUploadController from './Controllers/FileUploadController'
 
 const logger = winston.createLogger({
@@ -115,7 +115,7 @@ class UserRepository extends BaseRepository {
 
 @Injectable()
 class UserService extends BaseService {
-	constructor(private userRepository: UserRepository = DependencyInjection.get(UserRepository)) {
+	constructor(private userRepository = DependencyInjection.get(UserRepository)) {
 		super('UserService')
 	}
 
@@ -125,7 +125,7 @@ class UserService extends BaseService {
 }
 
 class UserController extends BaseController {
-	constructor(private userService: UserService = DependencyInjection.get(UserService)) {
+	constructor(private userService = DependencyInjection.get(UserService)) {
 		super('UserController')
 	}
 

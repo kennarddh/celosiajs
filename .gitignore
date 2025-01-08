@@ -288,3 +288,6 @@ eslint.config.base.d.ts
 
 # Nx
 .nx/
+
+# Tsup
+.tsup/

@@ -38,6 +38,6 @@
 		{ "path": "./packages/logging/tsconfig.json" },
 		{ "path": "./packages/file-upload/tsconfig.json" }
 	],
-	"include": ["eslint.config.ts", "tsup.config.ts"],
+	"include": ["eslint.config.ts", "tsup.config.ts", "tsup.watch.config.ts"],
 	"files": []
 }

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 export enum DependencyScope {
 	Singleton,
 	Transient,
@@ -11,13 +15,12 @@ export interface IRegisteredDependency<T> {
 	scope: DependencyScope
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 // Class decorator
 export const Injectable = (
 	scope: DependencyScope = DependencyScope.Transient,
 	key?: string | symbol,
 ) => {
-	return <T extends Provider<any>>(constructor: T) => {
+	return (constructor: Provider<any>) => {
 		const anyConstructor = constructor as any
 
 		anyConstructor.__injectable__ = {
@@ -28,12 +31,13 @@ export const Injectable = (
 			if (!anyConstructor.__providerKey__) anyConstructor.__providerKey__ = Symbol()
 		}
 
-		const resolvedKey = key || (anyConstructor.__providerKey__ as symbol)
+		const resolvedKey = key ?? (anyConstructor.__providerKey__ as symbol)
 
 		DependencyInjection.registerProvider(resolvedKey, constructor, scope)
 	}
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class DependencyInjection {
 	private static providers = new Map<symbol, IRegisteredDependency<any>>()
 	private static singletonCache = new Map<symbol, any>()
@@ -45,7 +49,7 @@ class DependencyInjection {
 		provider: Provider<T>,
 		scope: DependencyScope = DependencyScope.Transient,
 	) {
-		const resolvedKey = typeof key === 'string' ? Symbol.for(key) : key
+		const resolvedKey = this.resolveKey(key)
 
 		if (DependencyInjection.providers.has(resolvedKey))
 			throw new Error(`Provider for ${resolvedKey.description} already exist`)
@@ -58,18 +62,7 @@ class DependencyInjection {
 	}
 
 	public static get<T>(key: string | symbol | Provider<T>): T {
-		let resolvedKey
-
-		if (typeof key === 'symbol') {
-			resolvedKey = key
-		} else if (typeof key === 'string') {
-			resolvedKey = Symbol.for(key)
-		} else {
-			if (!(key as any).__providerKey__)
-				throw new Error(`${key} is not a registered provider`)
-
-			resolvedKey = (key as any).__providerKey__
-		}
+		const resolvedKey = this.resolveKey(key)
 
 		const registeredDependency = DependencyInjection.providers.get(resolvedKey)
 
@@ -88,6 +81,16 @@ class DependencyInjection {
 		}
 
 		return new registeredDependency.provider()
+	}
+
+	public static resolveKey<T>(key: string | symbol | Provider<T>): symbol {
+		if (typeof key === 'symbol') return key
+		if (typeof key === 'string') return Symbol.for(key)
+
+		if (!(key as any).__providerKey__)
+			throw new Error(`${key.name} is not a registered provider`)
+
+		return (key as any).__providerKey__ as symbol
 	}
 }
 
