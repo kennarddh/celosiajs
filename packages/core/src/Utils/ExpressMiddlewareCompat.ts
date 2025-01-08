@@ -5,7 +5,7 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, INextFunc
 /**
  * deferToNext in the expressMiddleware NextFunction is ignored
  */
-const ConvertExpressMiddleware = (expressMiddleware: RequestHandler) => {
+const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler) => {
 	return class extends BaseMiddleware {
 		constructor() {
 			super('ExpressMidlewareCompat')
@@ -36,4 +36,4 @@ const ConvertExpressMiddleware = (expressMiddleware: RequestHandler) => {
 	}
 }
 
-export default ConvertExpressMiddleware
+export default ExpressMiddlewareCompat

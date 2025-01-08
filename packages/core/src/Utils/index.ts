@@ -1,1 +1,1 @@
-export { default as ConvertExpressMiddleware } from './ConvertExpressMiddleware'
+export { default as ExpressMiddlewareCompat } from './ExpressMiddlewareCompat'
