@@ -106,20 +106,16 @@ class GetController extends BaseController {
 	}
 }
 
-@Injectable('UserRepository')
+@Injectable()
 class UserRepository extends BaseRepository {
 	public getById(id: string) {
 		return { id, name: 'X' }
 	}
 }
 
-@Injectable('UserService')
+@Injectable()
 class UserService extends BaseService {
-	constructor(
-		private userRepository: UserRepository = DependencyInjection.get<UserRepository>(
-			'UserRepository',
-		),
-	) {
+	constructor(private userRepository: UserRepository = DependencyInjection.get(UserRepository)) {
 		super('UserService')
 	}
 
@@ -129,9 +125,7 @@ class UserService extends BaseService {
 }
 
 class UserController extends BaseController {
-	constructor(
-		private userService: UserService = DependencyInjection.get<UserService>('UserService'),
-	) {
+	constructor(private userService: UserService = DependencyInjection.get(UserService)) {
 		super('UserController')
 	}
 
