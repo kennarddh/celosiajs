@@ -14,9 +14,9 @@ abstract class BaseController<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 > {
-	logger: Logger
+	protected logger: Logger
 
-	constructor(public loggingSource: string) {
+	constructor(protected loggingSource: string) {
 		this.logger = Globals.logger.child({ source: loggingSource })
 	}
 

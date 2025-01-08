@@ -5,7 +5,7 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, INextFunc
 /**
  * deferToNext in the expressMiddleware NextFunction is ignored
  */
-const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler) => {
+const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler): new () => BaseMiddleware => {
 	return class extends BaseMiddleware {
 		constructor() {
 			super('ExpressMidlewareCompat')

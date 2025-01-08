@@ -11,9 +11,9 @@ abstract class BaseMiddleware<
 	Input extends Record<string, any> = EmptyObject,
 	Output extends Record<string, any> | EmptyObject = EmptyObject,
 > {
-	logger: Logger
+	protected logger: Logger
 
-	constructor(public loggingSource: string) {
+	constructor(protected loggingSource: string) {
 		this.logger = Globals.logger.child({ source: loggingSource })
 	}
 
