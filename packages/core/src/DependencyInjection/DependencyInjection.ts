@@ -1,7 +1,10 @@
+/* eslint-disable security/detect-object-injection */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+const providerKeySymbol = Symbol('providerKey')
+
 export enum DependencyScope {
 	Singleton,
 	Transient,
@@ -24,10 +27,10 @@ export const Injectable = (
 		const anyConstructor = constructor as any
 
 		if (!key) {
-			if (!anyConstructor.__providerKey__) anyConstructor.__providerKey__ = Symbol()
+			if (!anyConstructor[providerKeySymbol]) anyConstructor[providerKeySymbol] = Symbol()
 		}
 
-		const resolvedKey = key ?? (anyConstructor.__providerKey__ as symbol)
+		const resolvedKey = key ?? (anyConstructor[providerKeySymbol] as symbol)
 
 		DependencyInjection.registerProvider(resolvedKey, constructor, scope)
 	}
@@ -83,10 +86,10 @@ class DependencyInjection {
 		if (typeof key === 'symbol') return key
 		if (typeof key === 'string') return Symbol.for(key)
 
-		if (!(key as any).__providerKey__)
+		if (!(key as any)[providerKeySymbol])
 			throw new Error(`${key.name} is not a registered provider`)
 
-		return (key as any).__providerKey__ as symbol
+		return (key as any)[providerKeySymbol] as symbol
 	}
 }
 
