@@ -23,10 +23,6 @@ export const Injectable = (
 	return (constructor: Provider<any>) => {
 		const anyConstructor = constructor as any
 
-		anyConstructor.__injectable__ = {
-			scope,
-		}
-
 		if (!key) {
 			if (!anyConstructor.__providerKey__) anyConstructor.__providerKey__ = Symbol()
 		}
