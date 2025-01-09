@@ -15,6 +15,7 @@ import {
 	OutgoingHeaders,
 	SendFileOptions,
 } from '..'
+import { CelosiaInstanceInternalsSymbol } from './CelosiaInstance'
 
 class CelosiaResponse<Body = JSON> {
 	protected _expressResponse: Response
@@ -56,8 +57,9 @@ class CelosiaResponse<Body = JSON> {
 	}
 
 	public get instance() {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-		return (this.expressResponse.app as any).__CELOSIAJS__.instance as CelosiaInstance<boolean>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
+		return (this.expressResponse.app as any)[CelosiaInstanceInternalsSymbol]
+			.instance as CelosiaInstance<boolean>
 	}
 
 	/**

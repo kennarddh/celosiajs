@@ -16,6 +16,7 @@ import {
 	PathParams,
 	QueryParams,
 } from '..'
+import { CelosiaInstanceInternalsSymbol } from './CelosiaInstance'
 
 class CelosiaRequest<
 	Body extends EmptyObject | JSON = EmptyObject,
@@ -67,8 +68,9 @@ class CelosiaRequest<
 	}
 
 	public get instance() {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-		return (this.expressRequest.app as any).__CELOSIAJS__.instance as CelosiaInstance<boolean>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
+		return (this.expressRequest.app as any)[CelosiaInstanceInternalsSymbol]
+			.instance as CelosiaInstance<boolean>
 	}
 
 	public get body(): Body {

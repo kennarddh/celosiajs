@@ -22,6 +22,8 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	strict: Strict
 }
 
+export const CelosiaInstanceInternalsSymbol = Symbol('celosiaInstanceInternals')
+
 class CelosiaInstance<Strict extends boolean> {
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
 
@@ -36,8 +38,8 @@ class CelosiaInstance<Strict extends boolean> {
 		this.express = express()
 
 		// Only for internal use.
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-		;(this.express as any).__CELOSIAJS__ = {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, security/detect-object-injection
+		;(this.express as any)[CelosiaInstanceInternalsSymbol] = {
 			instance: this,
 		}
 
