@@ -5,7 +5,6 @@ import {
 	BaseController,
 	BaseMiddleware,
 	CelosiaRequest,
-	CelosiaResponse,
 	EmptyObject,
 	ExtensionsRegistry,
 	Globals,
@@ -134,13 +133,15 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 		middlewares.forEach(middleware => {
 			const handler = async (request: Request, response: Response, next: NextFunction) => {
-				const newRequest = new CelosiaRequest(request)
-				const newResponse = new CelosiaResponse(response)
-
 				try {
-					await middleware.index({}, newRequest, newResponse, () => {
-						next()
-					})
+					await middleware.index(
+						{},
+						request.celosiaRequest,
+						response.celosiaResponse,
+						() => {
+							next()
+						},
+					)
 				} catch (error) {
 					this.logger.error('Unknown middleware error occured', error)
 				}
@@ -725,9 +726,6 @@ class CelosiaRouter<Strict extends boolean = true> {
 		controller: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		return async (request: Request, response: Response) => {
-			const newRequest = new CelosiaRequest(request)
-			const newResponse = new CelosiaResponse(response)
-
 			let data = {}
 
 			for (const preValidationMiddleware of preValidationMiddlewares) {
@@ -738,8 +736,8 @@ class CelosiaRouter<Strict extends boolean = true> {
 								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = preValidationMiddleware.index(
 									data,
-									newRequest,
-									newResponse,
+									request.celosiaRequest,
+									response.celosiaResponse,
 									output => {
 										resolve(output)
 									},
@@ -765,7 +763,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 						error,
 					)
 
-					if (!response.writableEnded) newResponse.sendInternalServerError()
+					if (!response.writableEnded) response.celosiaResponse.sendInternalServerError()
 
 					return
 				}
@@ -839,8 +837,8 @@ class CelosiaRouter<Strict extends boolean = true> {
 								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = middleware.index(
 									data,
-									newRequest,
-									newResponse,
+									request.celosiaRequest,
+									response.celosiaResponse,
 									output => {
 										resolve(output)
 									},
@@ -864,7 +862,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					this.logger.error('Unknown handler middleware error occured', error)
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					if (!response.writableEnded) newResponse.sendInternalServerError()
+					if (!response.writableEnded) response.celosiaResponse.sendInternalServerError()
 
 					return
 				}
@@ -879,7 +877,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					},
 				)
 
-			controller.index(data, newRequest, newResponse)
+			controller.index(data, request.celosiaRequest, response.celosiaResponse)
 
 			return
 		}

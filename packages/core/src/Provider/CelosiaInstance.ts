@@ -6,8 +6,6 @@ import cookieParser from 'cookie-parser'
 
 import {
 	BaseMiddleware,
-	CelosiaRequest,
-	CelosiaResponse,
 	CelosiaRouter,
 	ExtensionsRegistry,
 	Globals,
@@ -15,14 +13,13 @@ import {
 	InvalidExtensionError,
 	NoInputMiddleware,
 } from '..'
+import InjectProperties from './Middlewares/InjectProperties'
 import ParseJson from './Middlewares/ParseJson'
 import ParseUrlencoded from './Middlewares/ParseUrlencoded'
 
 export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
 }
-
-export const CelosiaInstanceSymbol = Symbol('celosiaInstance')
 
 class CelosiaInstance<Strict extends boolean> {
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
@@ -37,11 +34,12 @@ class CelosiaInstance<Strict extends boolean> {
 
 		this.express = express()
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any, security/detect-object-injection
-		;(this.express as any)[CelosiaInstanceSymbol] = this
+		this.express.celosiaInstance = this
 
 		// Settings
 		this.express.disable('x-powered-by')
+
+		this.express.use(InjectProperties)
 
 		this.express.use(ParseUrlencoded)
 		this.express.use(ParseJson)
@@ -185,11 +183,8 @@ class CelosiaInstance<Strict extends boolean> {
 
 		middlewares.forEach(middleware => {
 			const handler = (request: Request, response: Response, next: NextFunction) => {
-				const newRequest = new CelosiaRequest(request)
-				const newResponse = new CelosiaResponse(response)
-
 				try {
-					middleware.index({}, newRequest, newResponse, () => {
+					middleware.index({}, request.celosiaRequest, response.celosiaResponse, () => {
 						next()
 					})
 				} catch (error) {
