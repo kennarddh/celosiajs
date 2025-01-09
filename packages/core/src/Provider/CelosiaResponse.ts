@@ -6,6 +6,7 @@ import { Socket } from 'net'
 
 import {
 	CelosiaInstance,
+	CelosiaRequest,
 	CookieOptions,
 	DownloadOptions,
 	ExtensionsRegistry,
@@ -15,13 +16,19 @@ import {
 	OutgoingHeaders,
 	SendFileOptions,
 } from '..'
-import { CelosiaInstanceInternalsSymbol } from './CelosiaInstance'
+import { CelosiaInstanceSymbol } from './CelosiaInstance'
+import { CelosiaRequestSymbol } from './CelosiaRequest'
+
+export const CelosiaResponseSymbol = Symbol('celosiaResponse')
 
 class CelosiaResponse<Body = JSON> {
 	protected _expressResponse: Response
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaResponse<Body> | null = null
 
 	constructor(expressResponse: Response) {
+		// eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+		;(expressResponse as any)[CelosiaResponseSymbol] = this
+
 		this._expressResponse = expressResponse
 	}
 
@@ -64,8 +71,15 @@ class CelosiaResponse<Body = JSON> {
 	 */
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
-		return (this.expressResponse.app as any)[CelosiaInstanceInternalsSymbol]
-			.instance as CelosiaInstance<boolean>
+		return (this.expressResponse.app as any)[CelosiaInstanceSymbol] as CelosiaInstance<boolean>
+	}
+
+	/**
+	 * CelosiaRequest for this request.
+	 */
+	public get request() {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
+		return (this.expressResponse.req as any)[CelosiaRequestSymbol] as CelosiaRequest
 	}
 
 	/**

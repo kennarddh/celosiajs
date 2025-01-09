@@ -7,6 +7,7 @@ import type RangeParser from 'range-parser'
 
 import {
 	CelosiaInstance,
+	CelosiaResponse,
 	CookiesObject,
 	EmptyObject,
 	ExtensionsRegistry,
@@ -16,7 +17,10 @@ import {
 	PathParams,
 	QueryParams,
 } from '..'
-import { CelosiaInstanceInternalsSymbol } from './CelosiaInstance'
+import { CelosiaInstanceSymbol } from './CelosiaInstance'
+import { CelosiaResponseSymbol } from './CelosiaResponse'
+
+export const CelosiaRequestSymbol = Symbol('celosiaRequest')
 
 class CelosiaRequest<
 	Body extends EmptyObject | JSON = EmptyObject,
@@ -38,6 +42,9 @@ class CelosiaRequest<
 	protected requestId: string = crypto.randomUUID()
 
 	constructor(expressRequest: Request) {
+		// eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+		;(expressRequest as any)[CelosiaRequestSymbol] = this
+
 		this._expressRequest = expressRequest
 	}
 
@@ -80,8 +87,15 @@ class CelosiaRequest<
 	 */
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
-		return (this.expressRequest.app as any)[CelosiaInstanceInternalsSymbol]
-			.instance as CelosiaInstance<boolean>
+		return (this.expressRequest.app as any)[CelosiaInstanceSymbol] as CelosiaInstance<boolean>
+	}
+
+	/**
+	 * CelosiaResponse for this request.
+	 */
+	public get response() {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
+		return (this.expressRequest.res as any)[CelosiaResponseSymbol] as CelosiaResponse
 	}
 
 	/**
