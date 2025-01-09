@@ -143,7 +143,11 @@ class CelosiaRouter<Strict extends boolean = true> {
 						},
 					)
 				} catch (error) {
-					this.logger.error('Unknown middleware error occured', error)
+					this.logger.error(
+						'Unknown middleware error occured',
+						{ requestId: request.celosiaRequest.requestId },
+						error,
+					)
 				}
 			}
 
@@ -760,6 +764,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				} catch (error) {
 					this.logger.error(
 						'Unknown handler preValidationMiddleware error occured',
+						{ requestId: request.celosiaRequest.requestId },
 						error,
 					)
 
@@ -772,7 +777,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 			if (response.writableEnded) {
 				this.logger.warn(
 					"A pre validation middleware calls next after writing response. Request won't be processed further.",
-					{ url: request.url },
+					{ requestId: request.celosiaRequest.requestId, url: request.url },
 				)
 
 				return
@@ -859,7 +864,11 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 					data = { ...data, ...(output ?? {}) }
 				} catch (error) {
-					this.logger.error('Unknown handler middleware error occured', error)
+					this.logger.error(
+						'Unknown handler middleware error occured',
+						{ requestId: request.celosiaRequest.requestId },
+						error,
+					)
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (!response.writableEnded) response.celosiaResponse.sendInternalServerError()
@@ -873,6 +882,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				return this.logger.warn(
 					"A middleware calls next after writing response. Request won't be processed further.",
 					{
+						requestId: request.celosiaRequest.requestId,
 						url: request.url,
 					},
 				)

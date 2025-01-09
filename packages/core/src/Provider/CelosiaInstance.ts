@@ -88,10 +88,19 @@ class CelosiaInstance<Strict extends boolean> {
 	 * TODO: Doesn't work until Express 5 because Express 4.x won't catch uncaught exception in promise.
 	 */
 	public addErrorHandler() {
-		this.express.use((error: Error, _: Request, response: Response, __: NextFunction): void => {
-			this.logger.error('Global error handler', error)
-			response.status(500).json({ errors: { others: ['Internal Server Error'] }, data: {} })
-		})
+		this.express.use(
+			(error: Error, request: Request, response: Response, __: NextFunction): void => {
+				this.logger.error(
+					'Global error handler',
+					{ requestId: request.celosiaRequest.requestId },
+					error,
+				)
+
+				response
+					.status(500)
+					.json({ errors: { others: ['Internal Server Error'] }, data: {} })
+			},
+		)
 	}
 
 	/**
@@ -188,7 +197,11 @@ class CelosiaInstance<Strict extends boolean> {
 						next()
 					})
 				} catch (error) {
-					this.logger.error('Unknown middleware error occured', error)
+					this.logger.error(
+						'Unknown middleware error occured',
+						{ requestId: request.celosiaRequest.requestId },
+						error,
+					)
 				}
 			}
 
