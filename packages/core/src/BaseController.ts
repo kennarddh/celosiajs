@@ -22,18 +22,30 @@ abstract class BaseController<
 
 	public abstract index(data: T, request: Request, response: Response): void
 
+	/**
+	 * Request's body validation.
+	 */
 	public get body(): ZodType<any, any, any> {
 		return emptyZodObject
 	}
 
+	/**
+	 * Request's query validation.
+	 */
 	public get query() {
 		return emptyZodObject
 	}
 
+	/**
+	 * Request's params validation.
+	 */
 	public get params() {
 		return emptyZodObject
 	}
 
+	/**
+	 * Request's cookies validation.
+	 */
 	public get cookies() {
 		return emptyZodObject
 	}

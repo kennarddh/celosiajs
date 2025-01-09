@@ -99,6 +99,9 @@ class CelosiaInstance<Strict extends boolean> {
 		})
 	}
 
+	/**
+	 * Listen for connections.
+	 */
 	public listen(options: IListenOptions): Promise<void> {
 		if (this._server !== null) throw new Error('Server already running')
 
@@ -113,6 +116,9 @@ class CelosiaInstance<Strict extends boolean> {
 		})
 	}
 
+	/**
+	 * Stops the server from accepting new connections and keeps existing connections.
+	 */
 	public close(): Promise<void> {
 		if (this._server === null) throw new Error('Server is not running')
 
@@ -124,11 +130,19 @@ class CelosiaInstance<Strict extends boolean> {
 		})
 	}
 
+	/**
+	 * Use a router with a path.
+	 */
 	public useRouters(
 		path: string,
 		...routers: [CelosiaRouter<Strict>, ...CelosiaRouter<Strict>[]]
 	): this
+
+	/**
+	 * Use a router on base url.
+	 */
 	public useRouters(...routers: [CelosiaRouter<Strict>, ...CelosiaRouter<Strict>[]]): this
+
 	public useRouters(
 		...routersAndPath: [string | CelosiaRouter<Strict>, ...(string | CelosiaRouter<Strict>)[]]
 	): this {

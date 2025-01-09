@@ -3,6 +3,7 @@ import { RequestHandler } from 'express'
 import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '..'
 
 /**
+ * A compatibility layer for using express' middleware.
  * deferToNext in the expressMiddleware NextFunction is ignored
  */
 const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler): new () => BaseMiddleware => {

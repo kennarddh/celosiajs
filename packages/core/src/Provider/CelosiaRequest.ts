@@ -68,52 +68,88 @@ class CelosiaRequest<
 		return this._cachedExtensionsProxy
 	}
 
+	/**
+	 * Express request object.
+	 */
 	public get expressRequest() {
 		return this._expressRequest
 	}
 
+	/**
+	 * Reference to the CelosiaInstance currently handling this request.
+	 */
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
 		return (this.expressRequest.app as any)[CelosiaInstanceInternalsSymbol]
 			.instance as CelosiaInstance<boolean>
 	}
 
+	/**
+	 * Request body.
+	 */
 	public get body(): Body {
 		return this.expressRequest.body as Body
 	}
 
+	/**
+	 * Set request body.
+	 */
 	public set body(newBody: Body) {
 		this.expressRequest.body = newBody
 	}
 
+	/**
+	 * Request query.
+	 */
 	public get query(): Query {
 		return this.expressRequest.query as Query
 	}
 
+	/**
+	 * Set request query.
+	 */
 	public set query(newQuery: Query) {
 		;(this.expressRequest.query as Query) = newQuery
 	}
 
+	/**
+	 * Request params.
+	 */
 	public get params(): Params {
 		return this.expressRequest.params as Params
 	}
 
+	/**
+	 * Set request params.
+	 */
 	public set params(newParams: Params) {
 		;(this.expressRequest.params as Params) = newParams
 	}
 
+	/**
+	 * Request cookies.
+	 */
 	public get cookies(): Cookies {
 		return this.expressRequest.cookies as Cookies
 	}
 
+	/**
+	 * Set request cookies.
+	 */
 	public set cookies(newCookies: Cookies) {
 		this.expressRequest.cookies = newCookies
 	}
 
+	/**
+	 * Request headers.
+	 */
 	public get headers(): IncomingHttpHeaders {
 		return this.expressRequest.headers
 	}
 
+	/**
+	 * Set request headers.
+	 */
 	public set headers(newHeaders: IncomingHttpHeaders) {
 		this.expressRequest.headers = newHeaders
 	}

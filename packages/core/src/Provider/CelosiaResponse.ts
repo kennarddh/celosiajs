@@ -52,10 +52,16 @@ class CelosiaResponse<Body = JSON> {
 		return this._cachedExtensionsProxy
 	}
 
+	/**
+	 * Express response object.
+	 */
 	public get expressResponse() {
 		return this._expressResponse
 	}
 
+	/**
+	 * Reference to the CelosiaInstance currently handling this request.
+	 */
 	public get instance() {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection
 		return (this.expressResponse.app as any)[CelosiaInstanceInternalsSymbol]
