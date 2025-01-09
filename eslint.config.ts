@@ -1,11 +1,8 @@
-import path from 'path'
-
 import js from '@eslint/js'
 import { FlatConfig } from '@typescript-eslint/utils/ts-eslint'
 import eslintPluginImportX from 'eslint-plugin-import-x'
 import prettier from 'eslint-plugin-prettier'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
-// eslint-disable-next-line import-x/default
 import security from 'eslint-plugin-security'
 import globals from 'globals'
 import tsEslint from 'typescript-eslint'
@@ -25,7 +22,7 @@ export default tsEslint.config(
 			parserOptions: {
 				ecmaVersion: 'latest',
 				sourceType: 'module',
-				tsconfigRootDir: path.resolve(import.meta.dirname, '..'),
+				tsconfigRootDir: import.meta.dirname,
 				projectService: true,
 				extraFileExtensions: ['.json'],
 			},
