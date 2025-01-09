@@ -32,6 +32,11 @@ class CelosiaRequest<
 		Cookies
 	> | null = null
 
+	/**
+	 * Unique request id. Can be used for tracking requests.
+	 */
+	protected requestId: string = crypto.randomUUID()
+
 	constructor(expressRequest: Request) {
 		this._expressRequest = expressRequest
 	}
