@@ -5,6 +5,7 @@ export * from './Errors'
 export * from './Repository'
 export * from './Service'
 export * from './DependencyInjection'
+export * from './Middlewares'
 
 export { default as Globals, type IGlobals } from './Globals'
 export { default as BaseController } from './BaseController'
