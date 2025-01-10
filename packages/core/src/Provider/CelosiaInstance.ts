@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 
 import {
 	BaseMiddleware,
+	CelosiaRequest,
 	CelosiaRouter,
 	ExtensionsRegistry,
 	Globals,
@@ -19,18 +20,20 @@ import ParseUrlencoded from './Middlewares/ParseUrlencoded'
 
 export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	generateRequestId?: (request: CelosiaRequest<any, any, any, any>) => string
 }
 
 class CelosiaInstance<Strict extends boolean> {
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
 
-	protected readonly isStrict: Strict
 	protected readonly express: ReturnType<typeof express>
 	protected _server: Server | null = null
 	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
+	protected _options: CelosiaInstanceConstructorOptions<Strict>
 
 	constructor(options: CelosiaInstanceConstructorOptions<Strict>) {
-		this.isStrict = options.strict
+		this._options = options
 
 		this.express = express()
 
@@ -45,6 +48,13 @@ class CelosiaInstance<Strict extends boolean> {
 		this.express.use(ParseJson)
 
 		this.express.use(cookieParser())
+	}
+
+	/**
+	 * Returns the options used to initialize this instance.
+	 */
+	public get options() {
+		return this._options
 	}
 
 	/**
@@ -210,6 +220,14 @@ class CelosiaInstance<Strict extends boolean> {
 		})
 
 		return this
+	}
+
+	/**
+	 * Generate a request id for every new request. If supplied this will use `options.generateRequestId` else it will use `crypto.randomUUID`.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	public generateRequestId(request: CelosiaRequest<any, any, any, any>): string {
+		return this.options.generateRequestId?.(request) ?? crypto.randomUUID()
 	}
 }
 

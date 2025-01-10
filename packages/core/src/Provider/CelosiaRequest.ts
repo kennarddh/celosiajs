@@ -33,10 +33,12 @@ class CelosiaRequest<
 	/**
 	 * Unique request id. Can be used for tracking requests.
 	 */
-	public id: string = crypto.randomUUID()
+	public id: string
 
 	constructor(expressRequest: Request) {
 		this._expressRequest = expressRequest
+
+		this.id = expressRequest.celosiaInstance.generateRequestId(this)
 	}
 
 	/**
