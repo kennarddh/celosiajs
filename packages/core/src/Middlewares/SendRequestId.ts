@@ -1,5 +1,4 @@
 import { CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '..'
-
 /**
  * BaseMiddleware import is not imported from root.
  * Because if it is imported from root it will cause cyclical import.

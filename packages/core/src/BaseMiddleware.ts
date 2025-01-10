@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-explicit-any */
 import { Logger } from 'winston'
 
 import { CelosiaRequest, CelosiaResponse, EmptyObject, Globals, INextFunction } from '.'

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any */
 import { Logger } from 'winston'
 
 import { ZodType, z } from 'zod'
