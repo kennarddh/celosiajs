@@ -31,6 +31,7 @@ class CelosiaInstance<Strict extends boolean> {
 	protected _server: Server | null = null
 	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
 	protected _options: CelosiaInstanceConstructorOptions<Strict>
+	protected hasErrorHandlerAdded = false
 
 	constructor(options: CelosiaInstanceConstructorOptions<Strict>) {
 		this._options = options
@@ -98,6 +99,10 @@ class CelosiaInstance<Strict extends boolean> {
 	 * TODO: Doesn't work until Express 5 because Express 4.x won't catch uncaught exception in promise.
 	 */
 	public addErrorHandler() {
+		if (this.hasErrorHandlerAdded) return
+
+		this.hasErrorHandlerAdded = true
+
 		this.express.use(
 			(error: Error, request: Request, response: Response, __: NextFunction): void => {
 				this.logger.error(
