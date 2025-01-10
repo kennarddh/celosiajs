@@ -13,6 +13,7 @@ import {
 	IControllerRequest,
 	INextFunction,
 	Injectable,
+	SendRequestId,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
 import { CelosiaFormat } from '@celosiajs/logging'
@@ -34,10 +35,6 @@ const logger = winston.createLogger({
 Globals.logger = logger
 
 const port = 9999
-
-const instance = new CelosiaInstance({ strict: true })
-
-const router = new CelosiaRouter({ strict: true })
 
 class Middleware1 extends BaseMiddleware {
 	constructor() {
@@ -138,6 +135,12 @@ class UserController extends BaseController {
 		response.status(200).json({ name })
 	}
 }
+
+const instance = new CelosiaInstance({ strict: true })
+
+instance.useMiddlewares(new SendRequestId())
+
+const router = new CelosiaRouter({ strict: true })
 
 router.post('/file-upload', [new FileUpload()], [new Middleware1()], new FileUploadController())
 router.post('/test', [], new TestController())
