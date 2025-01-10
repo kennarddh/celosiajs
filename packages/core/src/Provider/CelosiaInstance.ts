@@ -4,6 +4,8 @@ import { Server } from 'http'
 
 import cookieParser from 'cookie-parser'
 
+import { OptionsJson, OptionsUrlencoded } from 'body-parser'
+
 import {
 	BaseMiddleware,
 	CelosiaRequest,
@@ -18,10 +20,79 @@ import InjectProperties from './Middlewares/InjectProperties'
 import ParseJson from './Middlewares/ParseJson'
 import ParseUrlencoded from './Middlewares/ParseUrlencoded'
 
+export enum QueryParserMode {
+	/**
+	 * Use node's `querystring` module.
+	 */
+	Simple,
+
+	/**
+	 * Use `qs` module.
+	 */
+	Extended,
+}
+
+export interface IJSONBodyParserOptions extends OptionsJson {
+	/**
+	 * Whether this parser is enabled.
+	 */
+	enabled?: boolean
+}
+
+export interface IUrlencodedBodyParserOptions extends OptionsUrlencoded {
+	/**
+	 * Whether this parser is enabled.
+	 */
+	enabled?: boolean
+}
+
+export interface ICookieParserOptions {
+	/**
+	 * Whether this parser is enabled.
+	 */
+	enabled?: boolean
+}
+
+export interface IQueryParserOptions {
+	/**
+	 * Whether this parser is enabled.
+	 */
+	enabled?: boolean
+
+	/**
+	 * Mode to use when parsing query.
+	 */
+	mode?: QueryParserMode
+}
+
 export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
+
+	/**
+	 * A generator function to generate a unique id for each request. Defaults to `crypto.randomUUID`.
+	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	generateRequestId?: (request: CelosiaRequest<any, any, any, any>) => string
+
+	/**
+	 * Options for query parser.
+	 */
+	queryParserOptions?: IQueryParserOptions
+
+	/**
+	 * Options supplied for `cookieParser`.
+	 */
+	cookieParserOptions?: ICookieParserOptions
+
+	/**
+	 * Options supplied for `bodyParser.json`.
+	 */
+	jsonBodyParserOptions?: IJSONBodyParserOptions
+
+	/**
+	 * Options supplied for `bodyParser.urlencoded`.
+	 */
+	urlencodedBodyParserOptions?: IUrlencodedBodyParserOptions
 }
 
 class CelosiaInstance<Strict extends boolean> {
@@ -43,15 +114,35 @@ class CelosiaInstance<Strict extends boolean> {
 		// Settings
 		this.express.disable('x-powered-by')
 
-		// TODO: Make option for this, defaults to simple
-		this.express.set('query parser', 'extended')
+		if (this.options.queryParserOptions?.enabled ?? true) {
+			this.express.set(
+				'query parser',
+				(this.options.queryParserOptions?.mode ?? QueryParserMode.Simple) ==
+					QueryParserMode.Simple
+					? 'simple'
+					: 'extended',
+			)
+		} else {
+			this.express.set('query parser', false)
+		}
 
 		this.express.use(InjectProperties)
 
-		this.express.use(ParseUrlencoded)
-		this.express.use(ParseJson)
+		if (this.options.urlencodedBodyParserOptions?.enabled ?? true) {
+			const { enabled: _, ...restOptions } = this.options.urlencodedBodyParserOptions ?? {}
 
-		this.express.use(cookieParser())
+			this.express.use(ParseUrlencoded(restOptions))
+		}
+
+		if (this.options.jsonBodyParserOptions?.enabled ?? true) {
+			const { enabled: _, ...restOptions } = this.options.jsonBodyParserOptions ?? {}
+
+			this.express.use(ParseJson(restOptions))
+		}
+
+		if (this.options.cookieParserOptions?.enabled ?? true) {
+			this.express.use(cookieParser())
+		}
 	}
 
 	/**

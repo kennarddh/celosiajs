@@ -1,20 +1,23 @@
-import express, { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
-const ParseUrlencoded = (req: Request, res: Response, next: NextFunction) => {
-	const errorHandler = (err: Error | null) => {
-		if (err instanceof Error) {
-			res.status(422).json({
-				errors: { others: ['Invalid urlencoded body'] },
-				data: {},
-			})
+import bodyParser, { OptionsUrlencoded } from 'body-parser'
 
-			return
+const ParseUrlencoded =
+	(options: Partial<OptionsUrlencoded>) => (req: Request, res: Response, next: NextFunction) => {
+		const errorHandler = (err: Error | null) => {
+			if (err instanceof Error) {
+				res.status(422).json({
+					errors: { others: ['Invalid urlencoded body'] },
+					data: {},
+				})
+
+				return
+			}
+
+			next()
 		}
 
-		next()
+		bodyParser.urlencoded(options)(req, res, errorHandler)
 	}
-
-	express.urlencoded({ extended: true })(req, res, errorHandler)
-}
 
 export default ParseUrlencoded

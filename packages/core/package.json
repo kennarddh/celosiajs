@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@types/express": "^5.0.0",
 		"@types/range-parser": "^1.2.7",
+		"body-parser": "^2.0.2",
 		"cookie-parser": "^1.4.7",
 		"express": "^5.0.1",
 		"tiny-typed-emitter": "^2.1.0",
