@@ -43,6 +43,9 @@ class CelosiaInstance<Strict extends boolean> {
 		// Settings
 		this.express.disable('x-powered-by')
 
+		// TODO: Make option for this, defaults to simple
+		this.express.set('query parser', 'extended')
+
 		this.express.use(InjectProperties)
 
 		this.express.use(ParseUrlencoded)
@@ -94,9 +97,8 @@ class CelosiaInstance<Strict extends boolean> {
 	}
 
 	/**
-	 * Must be called last after all router is registered
-	 *
-	 * TODO: Doesn't work until Express 5 because Express 4.x won't catch uncaught exception in promise.
+	 * Add a catch all error handler.
+	 * Must be called last after all router is registered.
 	 */
 	public addErrorHandler() {
 		if (this.hasErrorHandlerAdded) return
@@ -124,13 +126,22 @@ class CelosiaInstance<Strict extends boolean> {
 	public listen(options: IListenOptions): Promise<void> {
 		if (this._server !== null) throw new Error('Server already running')
 
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			// https://stackoverflow.com/a/69324331/14813577
 			this._server = this.express.listen(
 				options.port ?? 0,
 				options.host ?? '127.0.0.1',
 				options.backlog ?? 511,
-				resolve,
+				// TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71488
+				// https://expressjs.com/en/guide/migrating-5.html#app.listen
+				// Wait for the express' typing package to be update to reflect the latest changes in listen's callback in v5
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+				((error?: Error) => {
+					if (error) return reject(error)
+
+					resolve()
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				}) as any,
 			)
 		})
 	}

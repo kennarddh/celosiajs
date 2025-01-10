@@ -111,13 +111,6 @@ class CelosiaRequest<
 	}
 
 	/**
-	 * Set request query.
-	 */
-	public set query(newQuery: Query) {
-		;(this.expressRequest.query as Query) = newQuery
-	}
-
-	/**
 	 * Request params.
 	 */
 	public get params(): Params {

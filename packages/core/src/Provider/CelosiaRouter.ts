@@ -822,10 +822,12 @@ class CelosiaRouter<Strict extends boolean = true> {
 					parsedCookies.success
 				)
 			) {
-				return response.status(422).json({
+				response.status(422).json({
 					data: {},
 					errors,
 				})
+
+				return
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -878,14 +880,17 @@ class CelosiaRouter<Strict extends boolean = true> {
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (response.writableEnded)
-				return this.logger.warn(
+			if (response.writableEnded) {
+				this.logger.warn(
 					"A middleware calls next after writing response. Request won't be processed further.",
 					{
 						requestId: request.celosiaRequest.id,
 						url: request.url,
 					},
 				)
+
+				return
+			}
 
 			controller.index(data, request.celosiaRequest, response.celosiaResponse)
 
