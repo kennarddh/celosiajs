@@ -581,6 +581,18 @@ class CelosiaResponse<Body = JSON> {
 			data: {},
 		} as Body extends JSON ? Body : never)
 	}
+
+	/**
+	 * Adds the field to the Vary response header, if it is not there already.
+	 * Examples:
+	 *
+	 *     res.vary('User-Agent');
+	 */
+	public vary(field: string): this {
+		this.expressResponse.vary(field)
+
+		return this
+	}
 }
 
 export default CelosiaResponse
