@@ -145,7 +145,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				} catch (error) {
 					this.logger.error(
 						'Unknown middleware error occured',
-						{ requestId: request.celosiaRequest.requestId },
+						{ requestId: request.celosiaRequest.id },
 						error,
 					)
 				}
@@ -764,7 +764,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				} catch (error) {
 					this.logger.error(
 						'Unknown handler preValidationMiddleware error occured',
-						{ requestId: request.celosiaRequest.requestId },
+						{ requestId: request.celosiaRequest.id },
 						error,
 					)
 
@@ -777,7 +777,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 			if (response.writableEnded) {
 				this.logger.warn(
 					"A pre validation middleware calls next after writing response. Request won't be processed further.",
-					{ requestId: request.celosiaRequest.requestId, url: request.url },
+					{ requestId: request.celosiaRequest.id, url: request.url },
 				)
 
 				return
@@ -866,7 +866,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				} catch (error) {
 					this.logger.error(
 						'Unknown handler middleware error occured',
-						{ requestId: request.celosiaRequest.requestId },
+						{ requestId: request.celosiaRequest.id },
 						error,
 					)
 
@@ -882,7 +882,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				return this.logger.warn(
 					"A middleware calls next after writing response. Request won't be processed further.",
 					{
-						requestId: request.celosiaRequest.requestId,
+						requestId: request.celosiaRequest.id,
 						url: request.url,
 					},
 				)

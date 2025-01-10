@@ -133,7 +133,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 						default: {
 							this.logger.warn(
 								'Invalid ExceededLimitKind passed to default limitExceededHandler.',
-								{ requestId: request.requestId },
+								{ requestId: request.id },
 							)
 
 							break
@@ -153,7 +153,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 						{
 							kind: info.kind,
 							kindName: FileUploadErrorKind[info.kind],
-							requestId: request.requestId,
+							requestId: request.id,
 						},
 						info.error,
 					)

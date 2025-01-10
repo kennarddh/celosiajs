@@ -92,7 +92,7 @@ class CelosiaInstance<Strict extends boolean> {
 			(error: Error, request: Request, response: Response, __: NextFunction): void => {
 				this.logger.error(
 					'Global error handler',
-					{ requestId: request.celosiaRequest.requestId },
+					{ requestId: request.celosiaRequest.id },
 					error,
 				)
 
@@ -199,7 +199,7 @@ class CelosiaInstance<Strict extends boolean> {
 				} catch (error) {
 					this.logger.error(
 						'Unknown middleware error occured',
-						{ requestId: request.celosiaRequest.requestId },
+						{ requestId: request.celosiaRequest.id },
 						error,
 					)
 				}

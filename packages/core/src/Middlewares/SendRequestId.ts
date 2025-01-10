@@ -7,7 +7,7 @@ class SendRequestId extends BaseMiddleware {
 		response: CelosiaResponse,
 		next: INextFunction,
 	) {
-		response.header('Request-Id', request.requestId)
+		response.header('Request-Id', request.id)
 
 		next()
 	}
