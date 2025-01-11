@@ -2,6 +2,7 @@ import busboy from 'busboy'
 
 import { CelosiaRequest, CelosiaResponse } from '@celosiajs/core'
 
+import QueryString from 'qs'
 import { z } from 'zod'
 
 import { ZodActualUploadedFileType } from './ZodUploadedFileType'
@@ -84,90 +85,59 @@ export interface FileUploadOptions {
 	/**
 	 * highWaterMark to use for the parser stream. Default: node's stream.Writable default.
 	 */
-	highWaterMark: number
+	highWaterMark?: number
 
 	/**
 	 * highWaterMark to use for individual file streams. Default: node's stream.Readable default.
 	 */
-	fileHighWaterMark: number
+	fileHighWaterMark?: number
 
 	/**
 	 * Default character set to use when one isn't defined. Default: 'utf8'.
 	 */
-	defaultCharset: string
+	defaultCharset?: string
 
 	/**
 	 * For multipart forms, the default character set to use for values of part header parameters (e.g. filename) that are not extended parameters (that contain an explicit charset). Default: 'latin1'.
 	 */
-	defaultParameterCharset: string
+	defaultParameterCharset?: string
 
 	/**
 	 * If paths in filenames from file parts in a 'multipart/form-data' request shall be preserved. Default: false.
 	 */
-	preservePath: boolean
+	preservePath?: boolean
 
 	/**
 	 *  Various limits on incoming data.
 	 */
-	limits: FileUploadLimitsOptions
+	limits?: FileUploadLimitsOptions
 
 	/**
 	 * Ignore limits. Will truncate the data if it's over the configured limit. Default: false.
 	 */
-	ignoreLimits: boolean
+	ignoreLimits?: boolean
 
 	/**
 	 * Called when a limit is exceeded while parsing body. Can be used to send a error response. Default: Send a json error response with status 422.
 	 */
-	limitExceededHandler: (
+	limitExceededHandler?: (
 		request: CelosiaRequest,
 		response: CelosiaResponse,
 		info: ExceededLimitInfo,
-		options: FileUploadOptions,
+		options: Required<FileUploadOptions>,
 	) => void
 
 	/**
 	 * Called when an error occured while parsing body. Can be used to send a error response. Default: Send a json error response with status 500.
 	 */
-	errorHandler: (
+	errorHandler?: (
 		request: CelosiaRequest,
 		response: CelosiaResponse,
 		info: FileUploadErrorInfo,
-		options: FileUploadOptions,
+		options: Required<FileUploadOptions>,
 	) => void
 
-	parser: Partial<ParsePartsOptions>
+	parser?: QueryString.IParseOptions<QueryString.BooleanOptional>
 }
 
 export type UploadedFile = z.infer<typeof ZodActualUploadedFileType>
-
-export enum DuplicateStrategy {
-	Combine,
-	First,
-	Last,
-}
-
-export interface ParsePartsOptions {
-	allowDots: boolean
-	allowEmptyArrays: boolean
-	allowPrototypes: boolean
-	allowSparse: boolean
-	arrayLimit: number
-	comma: boolean
-	decodeDotInKeys: boolean
-	depth: number
-	duplicateStrategy: DuplicateStrategy
-	parameterLimit: number
-	parseArrays: boolean
-	plainObjects: boolean
-	strictDepth: boolean
-	strictNullHandling: boolean
-}
-
-export type ParsedPartsValue<T> = T | ParsedParts<T> | ParsedPartsArray<T>
-
-export interface ParsedParts<T> {
-	[x: string]: ParsedPartsValue<T>
-}
-
-export type ParsedPartsArray<T> = ParsedPartsValue<T>[]

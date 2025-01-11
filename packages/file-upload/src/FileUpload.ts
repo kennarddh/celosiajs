@@ -6,12 +6,13 @@ import {
 	BaseMiddleware,
 	CelosiaRequest,
 	CelosiaResponse,
-	type DeepPartial,
 	type EmptyObject,
 	type NextFunction,
 } from '@celosiajs/core'
 
-import ParseParts from './ParseParts'
+import QueryString from 'qs'
+
+import ParseValues from './ParseValues'
 import {
 	ExceededLimitInfo,
 	ExceededLimitKind,
@@ -22,9 +23,9 @@ import {
 } from './Types'
 
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
-	public options: FileUploadOptions
+	public options: Required<FileUploadOptions>
 
-	constructor(options: DeepPartial<FileUploadOptions> = {}) {
+	constructor(options: FileUploadOptions = {}) {
 		super('FileUpload')
 
 		this.options = {
@@ -49,7 +50,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 					request: CelosiaRequest,
 					response: CelosiaResponse,
 					info: ExceededLimitInfo,
-					options: FileUploadOptions,
+					options: Required<FileUploadOptions>,
 				) => {
 					switch (info.kind) {
 						case ExceededLimitKind.FieldNameTruncated: {
@@ -146,7 +147,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 					request: CelosiaRequest,
 					response: CelosiaResponse,
 					info: FileUploadErrorInfo,
-					__: FileUploadOptions,
+					__: Required<FileUploadOptions>,
 				) => {
 					this.logger.error(
 						'FileUpload error',
@@ -160,7 +161,11 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 
 					response.sendInternalServerError()
 				}),
-			parser: options.parser ?? {},
+			parser: {
+				duplicates: 'combine',
+				comma: false,
+				...(options.parser ?? {}),
+			},
 		}
 	}
 
@@ -292,7 +297,11 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('close', () => {
 			if (errorOccured) return
 
-			const body = ParseParts<string | UploadedFile>(parts, this.options.parser)
+			const body = QueryString.parse(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+				ParseValues(parts, this.options.parser) as any,
+				this.options.parser,
+			)
 
 			request.body = body
 
