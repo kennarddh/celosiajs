@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 
 import { Server } from 'http'
 
-import cookieParser from 'cookie-parser'
+import cookieParser, { CookieParseOptions } from 'cookie-parser'
 
 import { OptionsJson, OptionsUrlencoded } from 'body-parser'
 
@@ -48,11 +48,16 @@ export interface IUrlencodedBodyParserOptions extends OptionsUrlencoded {
 	enabled?: boolean
 }
 
-export interface ICookieParserOptions {
+export interface ICookieParserOptions extends CookieParseOptions {
 	/**
 	 * Whether this parser is enabled.
 	 */
 	enabled?: boolean
+
+	/**
+	 * Cookie signing secret(s).
+	 */
+	secret?: string | string[]
 }
 
 export interface IQueryParserOptions {
@@ -156,7 +161,9 @@ class CelosiaInstance<Strict extends boolean> {
 		}
 
 		if (this.options.cookieParserOptions?.enabled ?? true) {
-			this.express.use(cookieParser())
+			const { enabled: _, secret, ...restOptions } = this.options.cookieParserOptions ?? {}
+
+			this.express.use(cookieParser(secret, restOptions))
 		} else {
 			this.express.use(InjectDefaultCookie)
 		}
