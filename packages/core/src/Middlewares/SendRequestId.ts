@@ -7,6 +7,9 @@ import { CelosiaRequest, CelosiaResponse, EmptyObject, NextFunction } from '..'
  */
 import BaseMiddleware from '../BaseMiddleware'
 
+/**
+ * Add a `Request-Id` header to every response.
+ */
 class SendRequestId extends BaseMiddleware {
 	constructor() {
 		super('SendRequestId')

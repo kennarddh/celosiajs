@@ -18,7 +18,11 @@ export interface RegisteredDependency<T> {
 	scope: DependencyScope
 }
 
-// Class decorator
+/**
+ * Mark a class as injectable and register it to DependencyInjection.
+ *
+ * @param key When not supplied, the class itself will be the key
+ */
 export const Injectable = (
 	scope: DependencyScope = DependencyScope.Transient,
 	key?: string | symbol,
@@ -36,6 +40,11 @@ export const Injectable = (
 	}
 }
 
+/**
+ * Dependency injection singleton.
+ *
+ * Can be used to register or get dependency.
+ */
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class DependencyInjection {
 	private static providers = new Map<symbol, RegisteredDependency<any>>()
@@ -43,6 +52,9 @@ class DependencyInjection {
 
 	private constructor() {}
 
+	/**
+	 * Register a dependency provider.
+	 */
 	public static registerProvider<T>(
 		key: string | symbol,
 		provider: Provider<T>,
@@ -60,6 +72,12 @@ class DependencyInjection {
 		})
 	}
 
+	/**
+	 * Get a dependency.
+	 *
+	 * If the dependency provider's scope is transient, this will create a new instance and returns it.
+	 * If the dependency provider's scope is singleton, this will returns the already cached instance.
+	 */
 	public static get<T>(key: string | symbol | Provider<T>): T {
 		const resolvedKey = this.resolveKey(key)
 
@@ -82,6 +100,9 @@ class DependencyInjection {
 		return new registeredDependency.provider()
 	}
 
+	/**
+	 * Resolve dependency's symbol key based on class/symbol/string key.
+	 */
 	public static resolveKey<T>(key: string | symbol | Provider<T>): symbol {
 		if (typeof key === 'symbol') return key
 		if (typeof key === 'string') return Symbol.for(key)

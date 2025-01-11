@@ -55,7 +55,12 @@ export class ExtensionsRegistryClass {
 		CelosiaResponseExtensionHandler
 	>()
 
-	registerCelosiaInstanceExtension(
+	/**
+	 * Register a new extension for CelosiaInstance.
+	 *
+	 * Throws `DuplicateExtensionError` when a key has been registered.
+	 */
+	public registerCelosiaInstanceExtension(
 		key: string | symbol,
 		handler: CelosiaInstanceExtensionHandler,
 	): void {
@@ -67,7 +72,12 @@ export class ExtensionsRegistryClass {
 		this.celosiaInstanceExtensionsHandler.set(key, handler)
 	}
 
-	removeCelosiaInstanceExtension(key: string | symbol): void {
+	/**
+	 * Remove an extension for CelosiaInstance.
+	 *
+	 * Throws `InvalidExtensionError` when a key has not been registered.
+	 */
+	public removeCelosiaInstanceExtension(key: string | symbol): void {
 		if (!this.celosiaInstanceExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
@@ -76,11 +86,21 @@ export class ExtensionsRegistryClass {
 		this.celosiaInstanceExtensionsHandler.delete(key)
 	}
 
-	getCelosiaInstanceExtension(key: string | symbol): CelosiaInstanceExtensionHandler | undefined {
+	/**
+	 * Get a registered extension for CelosiaInstance.
+	 */
+	public getCelosiaInstanceExtension(
+		key: string | symbol,
+	): CelosiaInstanceExtensionHandler | undefined {
 		return this.celosiaInstanceExtensionsHandler.get(key)
 	}
 
-	registerCelosiaRouterExtension(
+	/**
+	 * Register a new extension for CelosiaRouter.
+	 *
+	 * Throws `DuplicateExtensionError` when a key has been registered.
+	 */
+	public registerCelosiaRouterExtension(
 		key: string | symbol,
 		handler: CelosiaRouterExtensionHandler,
 	): void {
@@ -92,7 +112,12 @@ export class ExtensionsRegistryClass {
 		this.celosiaRouterExtensionsHandler.set(key, handler)
 	}
 
-	removeCelosiaRouterExtension(key: string | symbol): void {
+	/**
+	 * Remove an extension for CelosiaRouter.
+	 *
+	 * Throws `InvalidExtensionError` when a key has not been registered.
+	 */
+	public removeCelosiaRouterExtension(key: string | symbol): void {
 		if (!this.celosiaRouterExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
@@ -101,11 +126,21 @@ export class ExtensionsRegistryClass {
 		this.celosiaRouterExtensionsHandler.delete(key)
 	}
 
-	getCelosiaRouterExtension(key: string | symbol): CelosiaRouterExtensionHandler | undefined {
+	/**
+	 * Get a registered extension for CelosiaRouter.
+	 */
+	public getCelosiaRouterExtension(
+		key: string | symbol,
+	): CelosiaRouterExtensionHandler | undefined {
 		return this.celosiaRouterExtensionsHandler.get(key)
 	}
 
-	registerCelosiaRequestExtension(
+	/**
+	 * Register a new extension for CelosiaRequest.
+	 *
+	 * Throws `DuplicateExtensionError` when a key has been registered.
+	 */
+	public registerCelosiaRequestExtension(
 		key: string | symbol,
 		handler: CelosiaRequestExtensionHandler,
 	): void {
@@ -117,7 +152,12 @@ export class ExtensionsRegistryClass {
 		this.celosiaRequestExtensionsHandler.set(key, handler)
 	}
 
-	removeCelosiaRequestExtension(key: string | symbol): void {
+	/**
+	 * Remove an extension for CelosiaRequest.
+	 *
+	 * Throws `InvalidExtensionError` when a key has not been registered.
+	 */
+	public removeCelosiaRequestExtension(key: string | symbol): void {
 		if (!this.celosiaRequestExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
@@ -126,11 +166,21 @@ export class ExtensionsRegistryClass {
 		this.celosiaRequestExtensionsHandler.delete(key)
 	}
 
-	getCelosiaRequestExtension(key: string | symbol): CelosiaRequestExtensionHandler | undefined {
+	/**
+	 * Get a registered extension for CelosiaRequest.
+	 */
+	public getCelosiaRequestExtension(
+		key: string | symbol,
+	): CelosiaRequestExtensionHandler | undefined {
 		return this.celosiaRequestExtensionsHandler.get(key)
 	}
 
-	registerCelosiaResponseExtension(
+	/**
+	 * Register a new extension for CelosiaResponse.
+	 *
+	 * Throws `DuplicateExtensionError` when a key has been registered.
+	 */
+	public registerCelosiaResponseExtension(
 		key: string | symbol,
 		handler: CelosiaResponseExtensionHandler,
 	): void {
@@ -142,7 +192,12 @@ export class ExtensionsRegistryClass {
 		this.celosiaResponseExtensionsHandler.set(key, handler)
 	}
 
-	removeCelosiaResponseExtension(key: string | symbol): void {
+	/**
+	 * Remove an extension for CelosiaResponse.
+	 *
+	 * Throws `InvalidExtensionError` when a key has not been registered.
+	 */
+	public removeCelosiaResponseExtension(key: string | symbol): void {
 		if (!this.celosiaResponseExtensionsHandler.has(key))
 			throw new InvalidExtensionError(
 				`Cannot remove key "${key.toString()}" because key doesn't exist.`,
@@ -151,7 +206,12 @@ export class ExtensionsRegistryClass {
 		this.celosiaResponseExtensionsHandler.delete(key)
 	}
 
-	getCelosiaResponseExtension(key: string | symbol): CelosiaResponseExtensionHandler | undefined {
+	/**
+	 * Get a registered extension for CelosiaResponse.
+	 */
+	public getCelosiaResponseExtension(
+		key: string | symbol,
+	): CelosiaResponseExtensionHandler | undefined {
 		return this.celosiaResponseExtensionsHandler.get(key)
 	}
 }
