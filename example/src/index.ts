@@ -13,6 +13,7 @@ import {
 	Globals,
 	Injectable,
 	NextFunction,
+	QueryParserMode,
 	SendRequestId,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
@@ -139,6 +140,10 @@ class UserController extends BaseController {
 	public override get query() {
 		return z.object({
 			a: z.string(),
+			b: z.object({
+				c: z.string(),
+				f: z.coerce.number(),
+			}),
 		})
 	}
 }
@@ -147,7 +152,7 @@ const instance = new CelosiaInstance({
 	strict: true,
 	// jsonBodyParserOptions: { enabled: false },
 	// urlencodedBodyParserOptions: { enabled: false },
-	// queryParserOptions: { enabled: false },
+	queryParserOptions: { mode: QueryParserMode.Extended },
 	// cookieParserOptions: { enabled: false },
 })
 

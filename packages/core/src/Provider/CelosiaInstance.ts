@@ -5,6 +5,7 @@ import { Server } from 'http'
 import cookieParser, { CookieParseOptions } from 'cookie-parser'
 
 import { OptionsJson, OptionsUrlencoded } from 'body-parser'
+import qs from 'qs'
 
 import {
 	BaseMiddleware,
@@ -70,6 +71,11 @@ export interface QueryParserOptions {
 	 * Mode to use when parsing query.
 	 */
 	mode?: QueryParserMode
+
+	/**
+	 * Options passed to `qs` package for extended mode.
+	 */
+	extendedOptions?: qs.IParseOptions<qs.BooleanOptional>
 }
 
 export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
@@ -135,13 +141,16 @@ class CelosiaInstance<Strict extends boolean> {
 		}
 
 		if (this.options.queryParserOptions?.enabled ?? true) {
-			this.express.set(
-				'query parser',
+			if (
 				(this.options.queryParserOptions?.mode ?? QueryParserMode.Simple) ==
-					QueryParserMode.Simple
-					? 'simple'
-					: 'extended',
-			)
+				QueryParserMode.Simple
+			) {
+				this.express.set('query parser', 'simple')
+			} else {
+				this.express.set('query parser fn', (str: string) => {
+					return qs.parse(str, this.options.queryParserOptions?.extendedOptions)
+				})
+			}
 		} else {
 			this.express.set('query parser', false)
 		}
