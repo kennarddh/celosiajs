@@ -10,7 +10,7 @@
 		"clean": "lerna run clean",
 		"build": "lerna run build",
 		"build:watch": "lerna run --parallel build:watch",
-		"publish": "npm run build && lerna publish",
+		"publish:build": "npm run build && lerna publish",
 		"lint:check": "eslint --cache --flag unstable_ts_config",
 		"lint:fix": "eslint --cache --fix --flag unstable_ts_config",
 		"prettier:check": "prettier -c \"./**/*.{ts,json,md,prettierrc}\"",
