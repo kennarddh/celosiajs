@@ -39,8 +39,8 @@
 	],
 	"author": "kennarddh",
 	"license": "MIT",
-	"dependencies": {
-		"@celosiajs/core": "^0.0.1-alpha.22"
+	"peerDependencies": {
+		"@celosiajs/core": "0.0.1-alpha.22"
 	},
 	"gitHead": "e8a2714bfc1869b0ba10c8d36ac88110f699eac4"
 }
