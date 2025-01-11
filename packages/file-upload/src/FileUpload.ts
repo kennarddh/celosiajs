@@ -292,7 +292,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('close', () => {
 			if (errorOccured) return
 
-			const body = ParseParts<string | UploadedFile>(parts)
+			const body = ParseParts<string | UploadedFile>(parts, this.options.parser)
 
 			request.body = body
 
