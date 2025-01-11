@@ -3,6 +3,10 @@ import { NextFunction, Request, Response } from 'express'
 import { CelosiaRequest, CelosiaResponse } from '../..'
 
 const InjectProperties = (req: Request, res: Response, next: NextFunction) => {
+	req.__CELOSIAJS__ = {
+		postValidationQuery: {},
+	}
+
 	req.celosiaInstance = req.app.celosiaInstance
 	res.celosiaInstance = req.app.celosiaInstance
 

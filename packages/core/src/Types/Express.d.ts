@@ -6,6 +6,13 @@ declare global {
 			celosiaInstance: CelosiaInstance<boolean>
 			celosiaRequest: CelosiaRequest
 			celosiaResponse: CelosiaResponse
+
+			/**
+			 * Internal to CelosiaJS. Do NOT use.
+			 */
+			__CELOSIAJS__: {
+				postValidationQuery: QueryString.ParsedQs
+			}
 		}
 
 		interface Response {

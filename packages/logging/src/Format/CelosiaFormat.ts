@@ -9,45 +9,42 @@ const CelosiaFormat: (opts: {
 	inspectOptions?: InspectOptions
 	levelPadLength?: number
 	timestamp?: boolean
-}) => Format = format(
-	(
-		info,
-		{
-			inspectOptions,
-			timestamp = true,
-			levelPadLength = 7,
-		}: {
-			inspectOptions?: InspectOptions
-			levelPadLength?: number
-			timestamp?: boolean
-		},
-	) => {
-		let message = ''
+}) => Format = format((info, opts) => {
+	let message = ''
 
-		if (timestamp) {
-			const timestampString = new Date().toLocaleString()
+	const {
+		inspectOptions,
+		timestamp = true,
+		levelPadLength = 7,
+	} = opts as {
+		inspectOptions?: InspectOptions
+		levelPadLength?: number
+		timestamp?: boolean
+	}
 
-			message += `[${timestampString}]`
-		}
+	if (timestamp) {
+		const timestampString = new Date().toLocaleString()
 
-		message += `${message ? ' ' : ''}[${info.level.padEnd(levelPadLength, ' ')}]`
+		message += `[${timestampString}]`
+	}
 
-		if (info.source) message += ` [${info.source}]`
+	message += `${message ? ' ' : ''}[${info.level.padEnd(levelPadLength, ' ')}]`
 
-		message += `: ${info.message}`
+	if (info.source) message += ` [${info.source as string}]`
 
-		if (info.ms) {
-			message += ` ${info.ms}`
-		}
+	message += `: ${info.message as string}`
 
-		for (const splat of info[SPLAT] ?? []) {
-			message += `\n${util.inspect(splat, inspectOptions)}`
-		}
+	if (info.ms) {
+		message += ` ${info.ms as string}`
+	}
 
-		info[MESSAGE] = message
+	for (const splat of (info[SPLAT] ?? []) as string[]) {
+		message += `\n${util.inspect(splat, inspectOptions)}`
+	}
 
-		return info
-	},
-)
+	info[MESSAGE] = message
+
+	return info
+})
 
 export default CelosiaFormat

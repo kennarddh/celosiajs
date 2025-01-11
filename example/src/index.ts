@@ -95,7 +95,7 @@ class GetController extends BaseController {
 
 	public async index(
 		_: EmptyObject,
-		__: IControllerRequest<TestController>,
+		__: IControllerRequest<GetController>,
 		response: CelosiaResponse,
 	) {
 		this.logger.info('Get request')
@@ -128,15 +128,28 @@ class UserController extends BaseController {
 
 	public async index(
 		_: EmptyObject,
-		__: IControllerRequest<UserController>,
+		request: IControllerRequest<UserController>,
 		response: CelosiaResponse,
 	) {
+		this.logger.info('User request', { query: request.query, requestId: request.id })
 		const name = this.userService.getNameLowercase()
 		response.status(200).json({ name })
 	}
+
+	public override get query() {
+		return z.object({
+			a: z.string(),
+		})
+	}
 }
 
-const instance = new CelosiaInstance({ strict: true })
+const instance = new CelosiaInstance({
+	strict: true,
+	// jsonBodyParserOptions: { enabled: false },
+	// urlencodedBodyParserOptions: { enabled: false },
+	// queryParserOptions: { enabled: false },
+	// cookieParserOptions: { enabled: false },
+})
 
 instance.useMiddlewares(new SendRequestId())
 
@@ -147,6 +160,14 @@ router.post('/test', [], new TestController())
 router.get('/', [], new GetController())
 router.post('/middleware-error', [new MiddlewareErrorController()], new TestController())
 router.get('/user', [], new UserController())
+
+router.group(
+	'/caseSensitive',
+	{ strict: true, caseSensitive: true, strictTrailingSlashes: true },
+	router => {
+		router.get('/user', [], new UserController())
+	},
+)
 
 instance.useRouters(router)
 

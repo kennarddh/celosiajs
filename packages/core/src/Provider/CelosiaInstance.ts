@@ -10,12 +10,14 @@ import {
 	BaseMiddleware,
 	CelosiaRequest,
 	CelosiaRouter,
+	CelosiaRouterOptions,
 	ExtensionsRegistry,
 	Globals,
 	IListenOptions,
 	InvalidExtensionError,
 	NoInputMiddleware,
 } from '..'
+import InjectDefaultCookie from './Middlewares/InjectDefaultCookie'
 import InjectProperties from './Middlewares/InjectProperties'
 import ParseJson from './Middlewares/ParseJson'
 import ParseUrlencoded from './Middlewares/ParseUrlencoded'
@@ -93,6 +95,11 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	 * Options supplied for `bodyParser.urlencoded`.
 	 */
 	urlencodedBodyParserOptions?: IUrlencodedBodyParserOptions
+
+	/**
+	 * Options supplied for the root router.
+	 */
+	rootRouterOptions?: Omit<CelosiaRouterOptions, 'mergeParams'>
 }
 
 class CelosiaInstance<Strict extends boolean> {
@@ -113,6 +120,14 @@ class CelosiaInstance<Strict extends boolean> {
 
 		// Settings
 		this.express.disable('x-powered-by')
+
+		if (this.options.rootRouterOptions?.caseSensitive !== undefined) {
+			this.express.set('case sensitive routing', this.options.rootRouterOptions.caseSensitive)
+		}
+
+		if (this.options.rootRouterOptions?.strictTrailingSlashes !== undefined) {
+			this.express.set('strict routing', this.options.rootRouterOptions.strictTrailingSlashes)
+		}
 
 		if (this.options.queryParserOptions?.enabled ?? true) {
 			this.express.set(
@@ -142,6 +157,8 @@ class CelosiaInstance<Strict extends boolean> {
 
 		if (this.options.cookieParserOptions?.enabled ?? true) {
 			this.express.use(cookieParser())
+		} else {
+			this.express.use(InjectDefaultCookie)
 		}
 	}
 

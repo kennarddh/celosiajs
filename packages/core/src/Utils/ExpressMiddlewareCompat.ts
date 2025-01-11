@@ -18,7 +18,7 @@ const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler): new () => B
 			response: CelosiaResponse,
 			next: INextFunction,
 		) {
-			expressMiddleware(
+			await expressMiddleware(
 				request.expressRequest,
 				response.expressResponse,
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any

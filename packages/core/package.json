@@ -40,7 +40,8 @@
 	"author": "kennarddh",
 	"license": "MIT",
 	"peerDependencies": {
-		"winston": "^3.0.0"
+		"winston": "^3.0.0",
+		"zod": "^3.0.0"
 	},
 	"dependencies": {
 		"@types/express": "^5.0.0",
@@ -48,8 +49,7 @@
 		"body-parser": "^2.0.2",
 		"cookie-parser": "^1.4.7",
 		"express": "^5.0.1",
-		"tiny-typed-emitter": "^2.1.0",
-		"zod": "^3.24.1"
+		"tiny-typed-emitter": "^2.1.0"
 	},
 	"devDependencies": {
 		"@types/cookie-parser": "^1.4.8"

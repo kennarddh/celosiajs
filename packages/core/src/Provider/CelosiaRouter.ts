@@ -17,24 +17,79 @@ import {
 	ValidateMiddlewares,
 } from '..'
 
-export interface CelosiaRouterConstructorOptions<Strict extends boolean = true> {
+// TODO: Make descendant routers inherit their parent options.
+
+// https://github.com/pillarjs/router
+/**
+ * Descendant routers will not inherit their parent's options.
+ */
+export interface CelosiaRouterOptions {
+	/**
+	 * When `false` trailing slashes are optional.
+	 *
+	 * @default false
+	 */
+	strictTrailingSlashes?: boolean
+
+	/**
+	 * When `true` the routing will be case sensitive.
+	 *
+	 * @default false
+	 */
+	caseSensitive?: boolean
+
+	/**
+	 * When `true` any `req.params` passed to the router will be merged into the router's `req.params`.
+	 *
+	 * @default false
+	 */
+	mergeParams?: boolean
+}
+
+/**
+ * Descendant routers will not inherit their parent's options.
+ */
+export interface CelosiaRouterConstructorOptions<Strict extends boolean = true>
+	extends CelosiaRouterOptions {
 	strict: Strict
 }
 
+/**
+ * Group router will only their direct parent's options.
+ */
 export type CelosiaRouterGroupCallback<Strict extends boolean> = (
 	router: CelosiaRouter<Strict>,
 ) => void
 
+/**
+ * Descendant routers will not inherit their parent's options.
+ */
 class CelosiaRouter<Strict extends boolean = true> {
+	protected _celosiaRouterOptions: CelosiaRouterConstructorOptions<Strict>
 	protected _isStrict: Strict
-	private _expressRouter = express.Router()
+	private _expressRouter
 
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRouter<Strict> | null = null
 
 	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
 
 	constructor(options: CelosiaRouterConstructorOptions<Strict>) {
+		this._celosiaRouterOptions = options
+
 		this._isStrict = options.strict
+
+		this._expressRouter = express.Router({
+			strict: options.strictTrailingSlashes,
+			caseSensitive: options.caseSensitive,
+			mergeParams: options.mergeParams,
+		})
+	}
+
+	/**
+	 * Returns the options used to initialize this instance.
+	 */
+	public get celosiaRouterOptions() {
+		return this._celosiaRouterOptions
 	}
 
 	/**
@@ -164,26 +219,69 @@ class CelosiaRouter<Strict extends boolean = true> {
 	public group(path: string, callback: CelosiaRouterGroupCallback<Strict>): void
 
 	/**
+	 * Group routes by a path, creating another router.
+	 */
+	public group(
+		path: string,
+		options: CelosiaRouterConstructorOptions<Strict>,
+		callback: CelosiaRouterGroupCallback<Strict>,
+	): void
+
+	/**
 	 * Group routes, creating another router.
 	 */
 	public group(callback: CelosiaRouterGroupCallback<Strict>): void
 
+	/**
+	 * Group routes, creating another router.
+	 */
 	public group(
-		callbackOrPath: CelosiaRouterGroupCallback<Strict> | string,
+		// eslint-disable-next-line @typescript-eslint/unified-signatures
+		options: CelosiaRouterConstructorOptions<Strict>,
+		callback: CelosiaRouterGroupCallback<Strict>,
+	): void
+
+	public group(
+		callbackOrPathOrOptions:
+			| CelosiaRouterGroupCallback<Strict>
+			| string
+			| CelosiaRouterConstructorOptions<Strict>,
+		callbackOrOptions?:
+			| CelosiaRouterGroupCallback<Strict>
+			| CelosiaRouterConstructorOptions<Strict>,
 		callback?: CelosiaRouterGroupCallback<Strict>,
 	) {
-		const router = new CelosiaRouter({ strict: this.isStrict })
+		let router: CelosiaRouter<Strict>
 
-		if (typeof callbackOrPath === 'string') {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			callback!(router)
-		} else {
-			callbackOrPath(router)
-		}
+		if (typeof callbackOrPathOrOptions === 'string') {
+			if (typeof callbackOrOptions === 'function') {
+				router = new CelosiaRouter(this.celosiaRouterOptions)
 
-		if (typeof callbackOrPath === 'string') {
-			this.useRouters(callbackOrPath, router)
+				callbackOrOptions(router)
+			} else {
+				router = new CelosiaRouter({
+					...this.celosiaRouterOptions,
+					...callbackOrOptions,
+				})
+
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				callback!(router)
+			}
+
+			this.useRouters(callbackOrPathOrOptions, router)
 		} else {
+			if (typeof callbackOrPathOrOptions === 'function') {
+				router = new CelosiaRouter(this.celosiaRouterOptions)
+
+				callbackOrPathOrOptions(router)
+			} else {
+				router = new CelosiaRouter({
+					...this.celosiaRouterOptions,
+					...callbackOrPathOrOptions,
+				})
+				;(callbackOrOptions as CelosiaRouterGroupCallback<Strict>)(router)
+			}
+
 			this.useRouters(router)
 		}
 	}
@@ -783,7 +881,12 @@ class CelosiaRouter<Strict extends boolean = true> {
 				return
 			}
 
-			const parsedBody = await controller.body.safeParseAsync(request.body)
+			let parsedBody
+
+			if (request.method !== 'GET') {
+				parsedBody = await controller.body.safeParseAsync(request.body)
+			}
+
 			const parsedQuery = await controller.query.safeParseAsync(request.query)
 			const parsedParams = await controller.params.safeParseAsync(request.params)
 			const parsedCookies = await controller.cookies.safeParseAsync(request.cookies)
@@ -798,7 +901,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				others?: string[]
 			} = { parsing: {} }
 
-			if (!parsedBody.success) {
+			if (parsedBody && !parsedBody.success) {
 				errors.parsing.body = parsedBody.error.format()
 			}
 
@@ -815,12 +918,10 @@ class CelosiaRouter<Strict extends boolean = true> {
 			}
 
 			if (
-				!(
-					parsedBody.success &&
-					parsedQuery.success &&
-					parsedParams.success &&
-					parsedCookies.success
-				)
+				!(parsedBody?.success ?? true) ||
+				!parsedQuery.success ||
+				!parsedParams.success ||
+				!parsedCookies.success
 			) {
 				response.status(422).json({
 					data: {},
@@ -831,8 +932,10 @@ class CelosiaRouter<Strict extends boolean = true> {
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			request.body = parsedBody.data
-			request.query = parsedQuery.data
+			request.body = parsedBody?.data
+
+			// Cannot modify query directly, as now Request.query is a getter not a property.
+			request.__CELOSIAJS__.postValidationQuery = parsedQuery.data
 			request.params = parsedParams.data
 			request.cookies = parsedCookies.data
 
