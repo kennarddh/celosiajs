@@ -7,12 +7,12 @@ import {
 	CelosiaRequest,
 	CelosiaResponse,
 	CelosiaRouter,
+	ControllerRequest,
 	DependencyInjection,
 	EmptyObject,
 	Globals,
-	IControllerRequest,
-	INextFunction,
 	Injectable,
+	NextFunction,
 	SendRequestId,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
@@ -45,7 +45,7 @@ class Middleware1 extends BaseMiddleware {
 		_: EmptyObject,
 		__: CelosiaRequest,
 		___: CelosiaResponse,
-		next: INextFunction,
+		next: NextFunction,
 	): void {
 		console.log('middleware')
 		next()
@@ -61,7 +61,7 @@ class MiddlewareErrorController extends BaseMiddleware {
 		_: EmptyObject,
 		__: CelosiaRequest,
 		___: CelosiaResponse,
-		____: INextFunction,
+		____: NextFunction,
 	): void {
 		throw new Error('x')
 	}
@@ -74,7 +74,7 @@ class TestController extends BaseController {
 
 	public async index(
 		_: EmptyObject,
-		request: IControllerRequest<TestController>,
+		request: ControllerRequest<TestController>,
 		response: CelosiaResponse,
 	) {
 		console.log('controller body', request.body)
@@ -95,7 +95,7 @@ class GetController extends BaseController {
 
 	public async index(
 		_: EmptyObject,
-		__: IControllerRequest<GetController>,
+		__: ControllerRequest<GetController>,
 		response: CelosiaResponse,
 	) {
 		this.logger.info('Get request')
@@ -128,7 +128,7 @@ class UserController extends BaseController {
 
 	public async index(
 		_: EmptyObject,
-		request: IControllerRequest<UserController>,
+		request: ControllerRequest<UserController>,
 		response: CelosiaResponse,
 	) {
 		this.logger.info('User request', { query: request.query, requestId: request.id })

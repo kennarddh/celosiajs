@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 
-import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '..'
+import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunction } from '..'
 
 /**
  * A compatibility layer for using express' middleware.
@@ -16,7 +16,7 @@ const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler): new () => B
 			_: EmptyObject,
 			request: CelosiaRequest,
 			response: CelosiaResponse,
-			next: INextFunction,
+			next: NextFunction,
 		) {
 			await expressMiddleware(
 				request.expressRequest,

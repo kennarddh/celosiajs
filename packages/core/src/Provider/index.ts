@@ -2,10 +2,10 @@ export {
 	default as CelosiaInstance,
 	QueryParserMode,
 	type CelosiaInstanceConstructorOptions,
-	type IJSONBodyParserOptions,
-	type IUrlencodedBodyParserOptions,
-	type ICookieParserOptions,
-	type IQueryParserOptions,
+	type JSONBodyParserOptions,
+	type UrlencodedBodyParserOptions,
+	type CookieParserOptions,
+	type QueryParserOptions,
 } from './CelosiaInstance'
 export { default as CelosiaRequest } from './CelosiaRequest'
 export { default as CelosiaResponse } from './CelosiaResponse'

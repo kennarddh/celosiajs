@@ -8,7 +8,7 @@ import {
 	CelosiaResponse,
 	type DeepPartial,
 	type EmptyObject,
-	type INextFunction,
+	type NextFunction,
 } from '@celosiajs/core'
 
 import ParseParts from './ParseParts'
@@ -17,14 +17,14 @@ import {
 	ExceededLimitKind,
 	FileUploadErrorInfo,
 	FileUploadErrorKind,
-	IFileUploadOptions,
-	IUploadedFile,
+	FileUploadOptions,
+	UploadedFile,
 } from './Types'
 
 class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
-	public options: IFileUploadOptions
+	public options: FileUploadOptions
 
-	constructor(options: DeepPartial<IFileUploadOptions> = {}) {
+	constructor(options: DeepPartial<FileUploadOptions> = {}) {
 		super('FileUpload')
 
 		this.options = {
@@ -49,7 +49,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 					request: CelosiaRequest,
 					response: CelosiaResponse,
 					info: ExceededLimitInfo,
-					options: IFileUploadOptions,
+					options: FileUploadOptions,
 				) => {
 					switch (info.kind) {
 						case ExceededLimitKind.FieldNameTruncated: {
@@ -146,7 +146,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 					request: CelosiaRequest,
 					response: CelosiaResponse,
 					info: FileUploadErrorInfo,
-					__: IFileUploadOptions,
+					__: FileUploadOptions,
 				) => {
 					this.logger.error(
 						'FileUpload error',
@@ -168,7 +168,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		_: EmptyObject,
 		request: CelosiaRequest,
 		response: CelosiaResponse,
-		next: INextFunction,
+		next: NextFunction,
 	) {
 		if (!request.header('content-type')?.startsWith('multipart/form-data')) return next()
 
@@ -190,7 +190,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 			},
 		})
 
-		const parts: [string, string | IUploadedFile][] = []
+		const parts: [string, string | UploadedFile][] = []
 
 		let errorOccured = false
 
@@ -292,7 +292,7 @@ class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
 		busboy.on('close', () => {
 			if (errorOccured) return
 
-			const body = ParseParts<string | IUploadedFile>(parts)
+			const body = ParseParts<string | UploadedFile>(parts)
 
 			request.body = body
 

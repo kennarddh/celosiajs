@@ -13,8 +13,8 @@ import {
 	CelosiaRouterOptions,
 	ExtensionsRegistry,
 	Globals,
-	IListenOptions,
 	InvalidExtensionError,
+	ListenOptions,
 	NoInputMiddleware,
 } from '..'
 import InjectDefaultCookie from './Middlewares/InjectDefaultCookie'
@@ -34,21 +34,21 @@ export enum QueryParserMode {
 	Extended,
 }
 
-export interface IJSONBodyParserOptions extends OptionsJson {
+export interface JSONBodyParserOptions extends OptionsJson {
 	/**
 	 * Whether this parser is enabled.
 	 */
 	enabled?: boolean
 }
 
-export interface IUrlencodedBodyParserOptions extends OptionsUrlencoded {
+export interface UrlencodedBodyParserOptions extends OptionsUrlencoded {
 	/**
 	 * Whether this parser is enabled.
 	 */
 	enabled?: boolean
 }
 
-export interface ICookieParserOptions extends CookieParseOptions {
+export interface CookieParserOptions extends CookieParseOptions {
 	/**
 	 * Whether this parser is enabled.
 	 */
@@ -60,7 +60,7 @@ export interface ICookieParserOptions extends CookieParseOptions {
 	secret?: string | string[]
 }
 
-export interface IQueryParserOptions {
+export interface QueryParserOptions {
 	/**
 	 * Whether this parser is enabled.
 	 */
@@ -84,22 +84,22 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	/**
 	 * Options for query parser.
 	 */
-	queryParserOptions?: IQueryParserOptions
+	queryParserOptions?: QueryParserOptions
 
 	/**
 	 * Options supplied for `cookieParser`.
 	 */
-	cookieParserOptions?: ICookieParserOptions
+	cookieParserOptions?: CookieParserOptions
 
 	/**
 	 * Options supplied for `bodyParser.json`.
 	 */
-	jsonBodyParserOptions?: IJSONBodyParserOptions
+	jsonBodyParserOptions?: JSONBodyParserOptions
 
 	/**
 	 * Options supplied for `bodyParser.urlencoded`.
 	 */
-	urlencodedBodyParserOptions?: IUrlencodedBodyParserOptions
+	urlencodedBodyParserOptions?: UrlencodedBodyParserOptions
 
 	/**
 	 * Options supplied for the root router.
@@ -238,7 +238,7 @@ class CelosiaInstance<Strict extends boolean> {
 	/**
 	 * Listen for connections.
 	 */
-	public listen(options: IListenOptions): Promise<void> {
+	public listen(options: ListenOptions): Promise<void> {
 		if (this._server !== null) throw new Error('Server already running')
 
 		return new Promise((resolve, reject) => {

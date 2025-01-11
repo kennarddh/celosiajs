@@ -4,9 +4,9 @@ import { z } from 'zod'
 import { BaseController, BaseMiddleware, CelosiaRequest, DeepRequired, EmptyObject } from '../'
 import InvariantOf from './InvariantOf'
 
-export type INextFunction<Output = undefined> = (output?: Output) => void
+export type NextFunction<Output = undefined> = (output?: Output) => void
 
-export interface IListenOptions {
+export interface ListenOptions {
 	port?: number
 	host?: string
 	backlog?: number
@@ -17,7 +17,7 @@ export type MiddlewareArray = BaseMiddleware<any, any, any, any>[]
 export type NoInputMiddleware = BaseMiddleware<CelosiaRequest>
 
 // & EmptyObject is used so that `{ x: string } extends EmptyObject` become true, because EmptyObject has it's own brand symbol.
-export type IControllerRequest<Controller extends BaseController<any, any, any>> = CelosiaRequest<
+export type ControllerRequest<Controller extends BaseController<any, any, any>> = CelosiaRequest<
 	{} extends DeepRequired<z.infer<Controller['body']>>
 		? EmptyObject
 		: z.infer<Controller['body']> & EmptyObject,
@@ -32,7 +32,7 @@ export type IControllerRequest<Controller extends BaseController<any, any, any>>
 		: z.infer<Controller['cookies']> & EmptyObject
 >
 
-export type IControllerResponse<Controller extends BaseController<any, any, any>> =
+export type ControllerResponse<Controller extends BaseController<any, any, any>> =
 	Controller extends BaseController<any, any, infer Response> ? Response : never
 
 export type ValidateMiddlewares<
@@ -44,8 +44,8 @@ export type ValidateMiddlewares<
 	BaseMiddleware<infer Request, infer Response, infer RequiredInput, infer Output>,
 	...infer Tail extends MiddlewareArray,
 ]
-	? IControllerRequest<Controller> extends Request
-		? Response extends IControllerResponse<Controller>
+	? ControllerRequest<Controller> extends Request
+		? Response extends ControllerResponse<Controller>
 			? RequiredInput extends Input
 				? ValidateMiddlewares<Controller, Tail, Input & Output, [...Results, T[0]]>
 				: ValidateMiddlewares<
@@ -55,8 +55,8 @@ export type ValidateMiddlewares<
 						[
 							...Results,
 							BaseMiddleware<
-								IControllerRequest<Controller>,
-								IControllerResponse<Controller>,
+								ControllerRequest<Controller>,
+								ControllerResponse<Controller>,
 								InvariantOf<Input>,
 								Output
 							>,
@@ -69,8 +69,8 @@ export type ValidateMiddlewares<
 					[
 						...Results,
 						BaseMiddleware<
-							InvariantOf<IControllerRequest<Controller>>,
-							InvariantOf<IControllerResponse<Controller>>,
+							InvariantOf<ControllerRequest<Controller>>,
+							InvariantOf<ControllerResponse<Controller>>,
 							Input,
 							Output
 						>,
@@ -83,8 +83,8 @@ export type ValidateMiddlewares<
 				[
 					...Results,
 					BaseMiddleware<
-						InvariantOf<IControllerRequest<Controller>>,
-						InvariantOf<IControllerResponse<Controller>>,
+						InvariantOf<ControllerRequest<Controller>>,
+						InvariantOf<ControllerResponse<Controller>>,
 						Input,
 						Output
 					>,

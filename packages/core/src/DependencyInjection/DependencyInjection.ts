@@ -12,7 +12,7 @@ export enum DependencyScope {
 
 export type Provider<T> = new (...args: any[]) => T
 
-export interface IRegisteredDependency<T> {
+export interface RegisteredDependency<T> {
 	key: symbol
 	provider: Provider<T>
 	scope: DependencyScope
@@ -38,7 +38,7 @@ export const Injectable = (
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class DependencyInjection {
-	private static providers = new Map<symbol, IRegisteredDependency<any>>()
+	private static providers = new Map<symbol, RegisteredDependency<any>>()
 	private static singletonCache = new Map<symbol, any>()
 
 	private constructor() {}

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-explicit-any */
 import { Logger } from 'winston'
 
-import { CelosiaRequest, CelosiaResponse, EmptyObject, Globals, INextFunction } from '.'
+import { CelosiaRequest, CelosiaResponse, EmptyObject, Globals, NextFunction } from '.'
 
 abstract class BaseMiddleware<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
@@ -19,7 +19,7 @@ abstract class BaseMiddleware<
 		data: Input,
 		request: Request,
 		response: Response,
-		next: INextFunction<Output | undefined>,
+		next: NextFunction<Output | undefined>,
 	): any | Promise<any>
 }
 

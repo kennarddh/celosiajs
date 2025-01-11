@@ -7,7 +7,7 @@ export * from './Service'
 export * from './DependencyInjection'
 export * from './Middlewares'
 
-export { default as Globals, type IGlobals } from './Globals'
+export { default as Globals, type CelosiaGlobals } from './Globals'
 export { default as BaseController } from './BaseController'
 export { default as BaseMiddleware } from './BaseMiddleware'
 export {

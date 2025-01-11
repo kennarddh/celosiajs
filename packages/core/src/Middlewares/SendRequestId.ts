@@ -1,4 +1,4 @@
-import { CelosiaRequest, CelosiaResponse, EmptyObject, INextFunction } from '..'
+import { CelosiaRequest, CelosiaResponse, EmptyObject, NextFunction } from '..'
 /**
  * BaseMiddleware import is not imported from root.
  * Because if it is imported from root it will cause cyclical import.
@@ -16,7 +16,7 @@ class SendRequestId extends BaseMiddleware {
 		_: EmptyObject,
 		request: CelosiaRequest,
 		response: CelosiaResponse,
-		next: INextFunction,
+		next: NextFunction,
 	) {
 		response.header('Request-Id', request.id)
 

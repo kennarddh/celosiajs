@@ -1,10 +1,10 @@
 import { Logger, createLogger } from 'winston'
 
-export interface IGlobals {
+export interface CelosiaGlobals {
 	logger: Logger
 }
 
-const Globals: IGlobals = {
+const Globals: CelosiaGlobals = {
 	// Noop silent logger as default.
 	logger: createLogger({ silent: true }),
 }

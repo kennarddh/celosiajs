@@ -1,7 +1,7 @@
 export {
 	default as DependencyInjection,
 	type Provider,
-	type IRegisteredDependency,
+	type RegisteredDependency,
 	DependencyScope,
 	Injectable,
 } from './DependencyInjection'

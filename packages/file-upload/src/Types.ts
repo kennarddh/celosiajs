@@ -43,7 +43,7 @@ export type ExceededLimitInfo =
 	| { kind: ExceededLimitKind.Files }
 	| { kind: ExceededLimitKind.Fields }
 
-export interface IFileUploadLimitsOptions {
+export interface FileUploadLimitsOptions {
 	/**
 	 * Max field name size (in bytes). Default: 100.
 	 */
@@ -80,7 +80,7 @@ export interface IFileUploadLimitsOptions {
 	headerPairs: number
 }
 
-export interface IFileUploadOptions {
+export interface FileUploadOptions {
 	/**
 	 * highWaterMark to use for the parser stream. Default: node's stream.Writable default.
 	 */
@@ -109,7 +109,7 @@ export interface IFileUploadOptions {
 	/**
 	 *  Various limits on incoming data.
 	 */
-	limits: IFileUploadLimitsOptions
+	limits: FileUploadLimitsOptions
 
 	/**
 	 * Ignore limits. Will truncate the data if it's over the configured limit. Default: false.
@@ -123,7 +123,7 @@ export interface IFileUploadOptions {
 		request: CelosiaRequest,
 		response: CelosiaResponse,
 		info: ExceededLimitInfo,
-		options: IFileUploadOptions,
+		options: FileUploadOptions,
 	) => void
 
 	/**
@@ -133,21 +133,21 @@ export interface IFileUploadOptions {
 		request: CelosiaRequest,
 		response: CelosiaResponse,
 		info: FileUploadErrorInfo,
-		options: IFileUploadOptions,
+		options: FileUploadOptions,
 	) => void
 
-	parser: Partial<IParsePartsOptions>
+	parser: Partial<ParsePartsOptions>
 }
 
-export type IUploadedFile = z.infer<typeof ZodActualUploadedFileType>
+export type UploadedFile = z.infer<typeof ZodActualUploadedFileType>
 
-export enum IDuplicateStrategy {
+export enum DuplicateStrategy {
 	Combine,
 	First,
 	Last,
 }
 
-export interface IParsePartsOptions {
+export interface ParsePartsOptions {
 	allowDots: boolean
 	allowEmptyArrays: boolean
 	allowPrototypes: boolean
@@ -156,7 +156,7 @@ export interface IParsePartsOptions {
 	comma: boolean
 	decodeDotInKeys: boolean
 	depth: number
-	duplicateStrategy: IDuplicateStrategy
+	duplicateStrategy: DuplicateStrategy
 	parameterLimit: number
 	parseArrays: boolean
 	plainObjects: boolean
@@ -164,10 +164,10 @@ export interface IParsePartsOptions {
 	strictNullHandling: boolean
 }
 
-export type IParsedPartsValue<T> = T | IParsedParts<T> | IParsedPartsArray<T>
+export type ParsedPartsValue<T> = T | ParsedParts<T> | ParsedPartsArray<T>
 
-export interface IParsedParts<T> {
-	[x: string]: IParsedPartsValue<T>
+export interface ParsedParts<T> {
+	[x: string]: ParsedPartsValue<T>
 }
 
-export type IParsedPartsArray<T> = IParsedPartsValue<T>[]
+export type ParsedPartsArray<T> = ParsedPartsValue<T>[]

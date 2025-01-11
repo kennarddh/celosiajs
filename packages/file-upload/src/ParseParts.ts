@@ -10,9 +10,9 @@
 /**
  * Taken mostly from qs library with some modification
  */
-import { IDuplicateStrategy, IParsePartsOptions, IParsedParts } from './Types'
+import { DuplicateStrategy, ParsePartsOptions, ParsedParts } from './Types'
 
-const defaultOptions: IParsePartsOptions = {
+const defaultOptions: ParsePartsOptions = {
 	allowDots: false,
 	allowEmptyArrays: false,
 	allowPrototypes: false,
@@ -21,7 +21,7 @@ const defaultOptions: IParsePartsOptions = {
 	comma: false,
 	decodeDotInKeys: false,
 	depth: 5,
-	duplicateStrategy: IDuplicateStrategy.Combine,
+	duplicateStrategy: DuplicateStrategy.Combine,
 	parameterLimit: 1000,
 	parseArrays: true,
 	plainObjects: false,
@@ -31,7 +31,7 @@ const defaultOptions: IParsePartsOptions = {
 
 const arrayToIndexedObject = (
 	source: (string | undefined)[],
-	options: IParsePartsOptions,
+	options: ParsePartsOptions,
 ): Record<string, string | null | undefined> =>
 	source.reduce(
 		(acc, value, index) => {
@@ -42,7 +42,7 @@ const arrayToIndexedObject = (
 		options.plainObjects ? { __proto__: null } : {},
 	)
 
-const merge = (target: any, source: any, options: IParsePartsOptions) => {
+const merge = (target: any, source: any, options: ParsePartsOptions) => {
 	/* eslint no-param-reassign: 0 */
 	if (!source) return target
 
@@ -108,7 +108,7 @@ const merge = (target: any, source: any, options: IParsePartsOptions) => {
 	}, mergeTarget)
 }
 
-const parseArrayValue = (val: any, options: IParsePartsOptions) => {
+const parseArrayValue = (val: any, options: ParsePartsOptions) => {
 	if (val && typeof val === 'string' && options.comma && val.includes(',')) {
 		return val.split(',')
 	}
@@ -116,7 +116,7 @@ const parseArrayValue = (val: any, options: IParsePartsOptions) => {
 	return val
 }
 
-const parseValues = (input: [string, any][], options: IParsePartsOptions) => {
+const parseValues = (input: [string, any][], options: ParsePartsOptions) => {
 	const obj = { __proto__: null }
 
 	for (const [key, rawValue] of input) {
@@ -127,9 +127,9 @@ const parseValues = (input: [string, any][], options: IParsePartsOptions) => {
 		}
 
 		const existing = Object.prototype.hasOwnProperty.call(obj, key)
-		if (existing && options.duplicateStrategy === IDuplicateStrategy.Combine) {
+		if (existing && options.duplicateStrategy === DuplicateStrategy.Combine) {
 			;(obj as any)[key] = [].concat((obj as any)[key], value)
-		} else if (!existing || options.duplicateStrategy === IDuplicateStrategy.Last) {
+		} else if (!existing || options.duplicateStrategy === DuplicateStrategy.Last) {
 			;(obj as any)[key] = value
 		}
 	}
@@ -137,7 +137,7 @@ const parseValues = (input: [string, any][], options: IParsePartsOptions) => {
 	return obj
 }
 
-const parseObject = (chain: any[], val: any, options: IParsePartsOptions) => {
+const parseObject = (chain: any[], val: any, options: ParsePartsOptions) => {
 	let leaf = parseArrayValue(val, options)
 
 	for (let i = chain.length - 1; i >= 0; --i) {
@@ -184,7 +184,7 @@ const parseObject = (chain: any[], val: any, options: IParsePartsOptions) => {
 	return leaf
 }
 
-const parseKeys = (givenKey: string | undefined, val: any, options: IParsePartsOptions) => {
+const parseKeys = (givenKey: string | undefined, val: any, options: ParsePartsOptions) => {
 	if (!givenKey) return
 
 	// Transform dot notation to bracket notation
@@ -248,7 +248,7 @@ const parseKeys = (givenKey: string | undefined, val: any, options: IParsePartsO
 	return parseObject(keys, val, options)
 }
 
-const normalizeParseOptions = (opts?: Partial<IParsePartsOptions>) => {
+const normalizeParseOptions = (opts?: Partial<ParsePartsOptions>) => {
 	if (!opts) return defaultOptions
 
 	const allowDots =
@@ -261,15 +261,15 @@ const normalizeParseOptions = (opts?: Partial<IParsePartsOptions>) => {
 	}
 }
 
-type ICleanUpIO = undefined | string | ICleanUpIOObject | ICleanUpIOArray
+type CleanUpIO = undefined | string | CleanUpIOObject | CleanUpIOArray
 
-interface ICleanUpIOObject {
-	[x: string]: ICleanUpIO
+interface CleanUpIOObject {
+	[x: string]: CleanUpIO
 }
 
-type ICleanUpIOArray = ICleanUpIO[]
+type CleanUpIOArray = CleanUpIO[]
 
-const cleanUp = (input: ICleanUpIO): ICleanUpIO => {
+const cleanUp = (input: CleanUpIO): CleanUpIO => {
 	if (Array.isArray(input)) {
 		// Remove every empty element.
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -285,10 +285,7 @@ const cleanUp = (input: ICleanUpIO): ICleanUpIO => {
 	return input
 }
 
-const ParseParts = <T>(
-	input: [string, T][],
-	opts?: Partial<IParsePartsOptions>,
-): IParsedParts<T> => {
+const ParseParts = <T>(input: [string, T][], opts?: Partial<ParsePartsOptions>): ParsedParts<T> => {
 	const options = normalizeParseOptions(opts)
 
 	const tempObj = parseValues(input, options)
@@ -303,9 +300,9 @@ const ParseParts = <T>(
 		obj = merge(obj, newObj, options)
 	}
 
-	if (options.allowSparse) return obj as IParsedParts<T>
+	if (options.allowSparse) return obj as ParsedParts<T>
 
-	return cleanUp(obj as ICleanUpIO) as IParsedParts<T>
+	return cleanUp(obj as CleanUpIO) as ParsedParts<T>
 }
 
 export default ParseParts

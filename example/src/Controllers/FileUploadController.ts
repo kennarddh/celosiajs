@@ -1,4 +1,4 @@
-import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
+import { BaseController, CelosiaResponse, ControllerRequest, EmptyObject } from '@celosiajs/core'
 import { ZodUploadedFileType } from '@celosiajs/file-upload'
 
 import { z } from 'zod'
@@ -10,7 +10,7 @@ class FileUploadController extends BaseController {
 
 	public async index(
 		_: EmptyObject,
-		request: IControllerRequest<FileUploadController>,
+		request: ControllerRequest<FileUploadController>,
 		response: CelosiaResponse,
 	) {
 		console.log('controller body', request.body)
