@@ -6,10 +6,13 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunct
  * A compatibility layer for using express' middleware.
  * deferToNext in the expressMiddleware NextFunction is ignored
  */
-const ExpressMiddlewareCompat = (expressMiddleware: RequestHandler): new () => BaseMiddleware => {
+const ExpressMiddlewareCompat = (
+	loggingSource: string,
+	expressMiddleware: RequestHandler,
+): new () => BaseMiddleware => {
 	return class extends BaseMiddleware {
 		constructor() {
-			super('ExpressMidlewareCompat')
+			super(loggingSource)
 		}
 
 		public override async index(
