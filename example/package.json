@@ -15,7 +15,6 @@
 	"license": "MIT",
 	"dependencies": {
 		"@celosiajs/core": "file:../packages/core",
-		"@celosiajs/extensions": "file:../packages/extensions",
 		"@celosiajs/file-upload": "file:../packages/file-upload",
 		"@celosiajs/logging": "file:../packages/logging",
 		"winston": "^3.14.2",
