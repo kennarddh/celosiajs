@@ -1,6 +1,6 @@
 {
 	"name": "@celosiajs/core",
-	"version": "0.0.1-alpha.26",
+	"version": "0.0.1-alpha.27",
 	"description": "CelosiaJS Core. A framework for REST API based on Express.js",
 	"type": "module",
 	"exports": {
@@ -45,6 +45,7 @@
 		"zod": "^3.0.0"
 	},
 	"dependencies": {
+		"@types/cookie-parser": "^1.4.8",
 		"@types/express": "^5.0.0",
 		"@types/qs": "^6.9.17",
 		"@types/range-parser": "^1.2.7",
@@ -52,8 +53,7 @@
 		"cookie-parser": "^1.4.7",
 		"express": "^5.0.1",
 		"qs": "^6.13.0",
-		"tiny-typed-emitter": "^2.1.0",
-		"@types/cookie-parser": "^1.4.8"
+		"tiny-typed-emitter": "^2.1.0"
 	},
 	"gitHead": "97fad62c931d69fda943088a4db252a60df057ff"
 }
