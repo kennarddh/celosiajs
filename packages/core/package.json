@@ -52,8 +52,7 @@
 		"body-parser": "^2.0.2",
 		"cookie-parser": "^1.4.7",
 		"express": "^5.0.1",
-		"qs": "^6.13.0",
-		"tiny-typed-emitter": "^2.1.0"
+		"qs": "^6.13.0"
 	},
 	"gitHead": "97fad62c931d69fda943088a4db252a60df057ff"
 }
