@@ -43,5 +43,5 @@
 	"peerDependencies": {
 		"winston": "^3.0.0"
 	},
-	"gitHead": "e8a2714bfc1869b0ba10c8d36ac88110f699eac4"
+	"gitHead": "97fad62c931d69fda943088a4db252a60df057ff"
 }
