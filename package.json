@@ -9,10 +9,11 @@
 	"scripts": {
 		"clean": "lerna run clean",
 		"build": "lerna run build",
+		"build:clean": "lerna run clean && lerna run build",
 		"build:watch": "lerna run --parallel build:watch",
-		"publish:build": "npm run build && lerna publish",
-		"lint:check": "eslint --cache --flag unstable_ts_config",
-		"lint:fix": "eslint --cache --fix --flag unstable_ts_config",
+		"publish:build": "npm run build:clean && lerna publish",
+		"lint:check": "eslint --cache",
+		"lint:fix": "eslint --cache --fix",
 		"prettier:check": "prettier -c \"./**/*.{ts,json,md,prettierrc}\"",
 		"prettier:fix": "prettier -w \"./**/*.{ts,json,md,prettierrc}\"",
 		"types:check": "tsc --noEmit",
@@ -44,7 +45,6 @@
 	"devDependencies": {
 		"@eslint/js": "^9.17.0",
 		"@eslint/json": "^0.9.0",
-		"@microsoft/api-extractor": "^7.49.1",
 		"@trivago/prettier-plugin-sort-imports": "^5.2.1",
 		"@types/eslint": "^9.6.1",
 		"@types/eslint__js": "^8.42.3",
@@ -52,6 +52,7 @@
 		"@types/node": "^22.10.5",
 		"@typescript-eslint/utils": "^8.19.1",
 		"concurrently": "^9.1.2",
+		"esbuild": "^0.24.2",
 		"eslint": "^9.17.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-import-resolver-typescript": "^3.7.0",
@@ -63,7 +64,6 @@
 		"lerna": "^8.1.9",
 		"prettier": "^3.4.2",
 		"rimraf": "^6.0.1",
-		"tsup": "^8.3.5",
 		"tsx": "^4.19.2",
 		"typescript": "^5.7.3",
 		"typescript-eslint": "^8.19.1"

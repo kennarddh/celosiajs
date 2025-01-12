@@ -7,10 +7,3 @@ export type { default as StrictOmit } from './StrictOmit'
 
 export * from './Types'
 export * from './Utils'
-
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace X2345 {
-		interface Celo2siaInstance<Strict extends boolean> {}
-	}
-}

@@ -3,6 +3,7 @@ import QueryString from 'qs'
 import { CelosiaInstance, CelosiaRequest, CelosiaResponse } from '..'
 
 declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace Express {
 		interface Request {
 			/**

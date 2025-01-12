@@ -15,7 +15,7 @@ export default tsEslint.config(
 	...tsEslint.configs.strictTypeChecked,
 	...tsEslint.configs.stylisticTypeChecked,
 	prettierRecommended,
-	{ ignores: ['**/dist/**/*', '**/.tsup/**/*'] },
+	{ ignores: ['**/dist/**/*'] },
 	{
 		languageOptions: {
 			parser: tsEslint.parser as FlatConfig.Parser,

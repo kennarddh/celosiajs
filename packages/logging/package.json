@@ -13,9 +13,10 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "npx tsup --config ../../tsup.config.ts",
-		"build:watch": "npx tsup --config ../../tsup.watch.config.ts",
-		"clean": "rimraf ./dist ./.tsup"
+		"build": "tsx ../../scripts/build.ts && tsc",
+		"build:watch": "concurrently \"tsx ../../scripts/buildWatch.ts\" \"tsc -w\"",
+		"build:clean": "npm run clean && npm run build",
+		"clean": "rimraf ./dist ./tsconfig.tsbuildinfo"
 	},
 	"repository": {
 		"type": "git",

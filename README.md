@@ -13,4 +13,4 @@ A framework for REST API based on Express.js
 - Request/response interceptor?
 - Remove tight coupling with winston
 - A way to get every endpoints path, method, router stack, and middlewares
-- CLI to auto generate file (controller, service, etc) 
+- CLI to auto generate file (controller, service, etc)

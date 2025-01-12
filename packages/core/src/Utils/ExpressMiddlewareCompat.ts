@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RequestHandler } from 'express'
 
 import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunction } from '..'
@@ -6,12 +7,10 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunct
  * A compatibility layer for using express' middleware.
  * deferToNext in the expressMiddleware NextFunction is ignored
  */
-const ExpressMiddlewareCompat = <
-	T extends BaseMiddleware<any, any, any, any> = BaseMiddleware<any, any, any, any>,
->(
+const ExpressMiddlewareCompat = (
 	loggingSource: string,
 	expressMiddleware: RequestHandler,
-): new () => T => {
+): new () => BaseMiddleware<any, any, any, any> => {
 	return class extends BaseMiddleware {
 		constructor() {
 			super(loggingSource)
@@ -25,8 +24,8 @@ const ExpressMiddlewareCompat = <
 		) {
 			await expressMiddleware(
 				request.expressRequest,
+
 				response.expressResponse,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(errorOrDeferToNext?: any) => {
 					// If value is truthy
 					if (!errorOrDeferToNext) return next()
@@ -39,7 +38,7 @@ const ExpressMiddlewareCompat = <
 				},
 			)
 		}
-	} as new () => T
+	} as new () => BaseMiddleware<any, any, any, any>
 }
 
 export default ExpressMiddlewareCompat
