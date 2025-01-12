@@ -7,10 +7,13 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunct
  * A compatibility layer for using express' middleware.
  * deferToNext in the expressMiddleware NextFunction is ignored
  */
-const ExpressMiddlewareCompat = (
+const ExpressMiddlewareCompat = <
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+	T extends BaseMiddleware<any, any, any, any> = BaseMiddleware<any, any, any, any>,
+>(
 	loggingSource: string,
 	expressMiddleware: RequestHandler,
-): new () => BaseMiddleware<any, any, any, any> => {
+): new () => T => {
 	return class extends BaseMiddleware {
 		constructor() {
 			super(loggingSource)
@@ -24,7 +27,6 @@ const ExpressMiddlewareCompat = (
 		) {
 			await expressMiddleware(
 				request.expressRequest,
-
 				response.expressResponse,
 				(errorOrDeferToNext?: any) => {
 					// If value is truthy
@@ -38,7 +40,7 @@ const ExpressMiddlewareCompat = (
 				},
 			)
 		}
-	} as new () => BaseMiddleware<any, any, any, any>
+	} as new () => T
 }
 
 export default ExpressMiddlewareCompat
