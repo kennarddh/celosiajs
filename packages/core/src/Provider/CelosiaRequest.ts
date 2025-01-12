@@ -107,7 +107,7 @@ class CelosiaRequest<
 	 * Request query.
 	 */
 	public get query(): Query {
-		return this.expressRequest.__CELOSIAJS__.postValidationQuery as Query
+		return this.expressRequest.query as Query
 	}
 
 	/**

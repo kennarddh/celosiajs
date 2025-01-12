@@ -936,6 +936,13 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 			// Cannot modify query directly, as now Request.query is a getter not a property.
 			request.__CELOSIAJS__.postValidationQuery = parsedQuery.data
+
+			Object.defineProperty(request, 'query', {
+				configurable: true,
+				enumerable: true,
+				get: () => request.__CELOSIAJS__.postValidationQuery,
+			})
+
 			request.params = parsedParams.data
 			request.cookies = parsedCookies.data
 
