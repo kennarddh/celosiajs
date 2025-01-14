@@ -7,7 +7,7 @@ import { CelosiaRequest, CelosiaResponse, Globals } from '.'
 
 const emptyZodObject = z.object({})
 
-abstract class BaseController<
+abstract class Controller<
 	T extends Record<string, any> = {},
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
@@ -49,4 +49,4 @@ abstract class BaseController<
 	}
 }
 
-export default BaseController
+export default Controller

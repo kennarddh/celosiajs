@@ -8,8 +8,8 @@ export * from './DependencyInjection'
 export * from './Middlewares'
 
 export { default as Globals, type CelosiaGlobals } from './Globals'
-export { default as BaseController } from './BaseController'
-export { default as BaseMiddleware } from './BaseMiddleware'
+export { default as Controller } from './Controller'
+export { default as Middleware } from './Middleware'
 export {
 	default as ExtensionsRegistry,
 	ExtensionsRegistryClass,

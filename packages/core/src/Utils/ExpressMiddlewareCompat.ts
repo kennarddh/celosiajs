@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RequestHandler } from 'express'
 
-import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunction } from '..'
+import { CelosiaRequest, CelosiaResponse, EmptyObject, Middleware, NextFunction } from '..'
 
 /**
  * A compatibility layer for using express' middleware.
@@ -9,12 +9,12 @@ import { BaseMiddleware, CelosiaRequest, CelosiaResponse, EmptyObject, NextFunct
  */
 const ExpressMiddlewareCompat = <
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
-	T extends BaseMiddleware<any, any, any, any> = BaseMiddleware<any, any, any, any>,
+	T extends Middleware<any, any, any, any> = Middleware<any, any, any, any>,
 >(
 	loggingSource: string,
 	expressMiddleware: RequestHandler,
 ): new () => T => {
-	return class extends BaseMiddleware {
+	return class extends Middleware {
 		constructor() {
 			super(loggingSource)
 		}

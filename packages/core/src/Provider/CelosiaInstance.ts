@@ -8,7 +8,6 @@ import { OptionsJson, OptionsUrlencoded } from 'body-parser'
 import qs from 'qs'
 
 import {
-	BaseMiddleware,
 	CelosiaRequest,
 	CelosiaRouter,
 	CelosiaRouterOptions,
@@ -16,6 +15,7 @@ import {
 	Globals,
 	InvalidExtensionError,
 	ListenOptions,
+	Middleware,
 	NoInputMiddleware,
 } from '..'
 import InjectDefaultCookie from './Middlewares/InjectDefaultCookie'
@@ -338,7 +338,7 @@ class CelosiaInstance<Strict extends boolean> {
 			path === null
 				? middlewaresAndPath
 				: middlewaresAndPath.filter((_, index) => index !== 0)
-		) as BaseMiddleware[]
+		) as Middleware[]
 
 		middlewares.forEach(middleware => {
 			const handler = (request: Request, response: Response, next: NextFunction) => {

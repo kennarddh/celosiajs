@@ -1,9 +1,9 @@
-import { BaseController, CelosiaResponse, ControllerRequest, EmptyObject } from '@celosiajs/core'
+import { CelosiaResponse, Controller, ControllerRequest, EmptyObject } from '@celosiajs/core'
 import { ZodUploadedFileType } from '@celosiajs/file-upload'
 
 import { z } from 'zod'
 
-class FileUploadController extends BaseController {
+class FileUploadController extends Controller {
 	constructor() {
 		super('FileUploadController')
 	}

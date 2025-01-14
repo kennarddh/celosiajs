@@ -3,7 +3,7 @@ import { Logger } from 'winston'
 
 import { CelosiaRequest, CelosiaResponse, EmptyObject, Globals, NextFunction } from '.'
 
-abstract class BaseMiddleware<
+abstract class Middleware<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 	Input extends Record<string, any> = EmptyObject,
@@ -23,4 +23,4 @@ abstract class BaseMiddleware<
 	): any | Promise<any>
 }
 
-export default BaseMiddleware
+export default Middleware

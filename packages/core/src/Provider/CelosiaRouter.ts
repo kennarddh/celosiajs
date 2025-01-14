@@ -2,14 +2,14 @@
 import express, { NextFunction, Request, Response } from 'express'
 
 import {
-	BaseController,
-	BaseMiddleware,
 	CelosiaRequest,
+	Controller,
 	EmptyObject,
 	ExtensionsRegistry,
 	Globals,
 	InvalidExtensionError,
 	MergeMiddlewaresOutput,
+	Middleware,
 	MiddlewareArray,
 	NoInputMiddleware,
 	ValidateController,
@@ -184,7 +184,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 			path === null
 				? middlewaresAndPath
 				: middlewaresAndPath.filter((_, index) => index !== 0)
-		) as BaseMiddleware[]
+		) as Middleware[]
 
 		middlewares.forEach(middleware => {
 			const handler = async (request: Request, response: Response, next: NextFunction) => {
@@ -290,48 +290,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a get route to a controller with pre-validation middlewares.
 	 */
 	public get<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	/**
 	 * Register a get route to a controller.
 	 */
 	public get<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	public get(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.get(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -341,7 +337,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -357,48 +353,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a head route to a controller with pre-validation middlewares.
 	 */
 	public head<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	/**
 	 * Register a head route to a controller.
 	 */
 	public head<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	public head(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.head(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -408,7 +400,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -424,48 +416,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a post route to a controller with pre-validation middlewares.
 	 */
 	public post<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	/**
 	 * Register a post route to a controller.
 	 */
 	public post<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	public post(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.post(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -475,7 +463,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -491,48 +479,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a put route to a controller with pre-validation middlewares.
 	 */
 	public put<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	/**
 	 * Register a put route to a controller.
 	 */
 	public put<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	public put(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.put(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -542,7 +526,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -558,48 +542,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a patch route to a controller with pre-validation middlewares.
 	 */
 	public patch<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	/**
 	 * Register a patch route to a controller.
 	 */
 	public patch<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	public patch(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.patch(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -609,7 +589,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -625,48 +605,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a delete route to a controller with pre-validation middlewares.
 	 */
 	public delete<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	/**
 	 * Register a delete route to a controller.
 	 */
 	public delete<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	public delete(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.delete(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -676,7 +652,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -692,48 +668,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a options route to a controller with pre-validation middlewares.
 	 */
 	public options<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	/**
 	 * Register a options route to a controller.
 	 */
 	public options<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateControllerWithoutBody<Controller, Middlewares, Strict>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateControllerWithoutBody<C, Middlewares, Strict>,
 	): this
 
 	public options(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.options(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -743,7 +715,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -759,48 +731,44 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register a route which handles every methods to a controller with pre-validation middlewares.
 	 */
 	public all<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		PreValidationMiddlewares extends BaseMiddleware<CelosiaRequest, any, any, any>[],
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		PreValidationMiddlewares extends Middleware<CelosiaRequest, any, any, any>[],
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
 		preValidationMiddlewares: PreValidationMiddlewares &
-			ValidateMiddlewares<Controller, PreValidationMiddlewares>,
+			ValidateMiddlewares<C, PreValidationMiddlewares>,
 		middlewares: Middlewares &
-			ValidateMiddlewares<
-				Controller,
-				Middlewares,
-				MergeMiddlewaresOutput<PreValidationMiddlewares>
-			>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+			ValidateMiddlewares<C, Middlewares, MergeMiddlewaresOutput<PreValidationMiddlewares>>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	/**
 	 * Register a route which handles every methods to a controller.
 	 */
 	public all<
-		Controller extends BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		C extends Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		Middlewares extends MiddlewareArray,
 	>(
 		path: string,
-		middlewares: Middlewares & ValidateMiddlewares<Controller, Middlewares>,
-		controller: Controller & ValidateController<Controller, Middlewares>,
+		middlewares: Middlewares & ValidateMiddlewares<C, Middlewares>,
+		controller: C & ValidateController<C, Middlewares>,
 	): this
 
 	public all(
 		path: string,
-		preValidationMiddlewaresOrMiddlewares: BaseMiddleware[],
+		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| BaseMiddleware[]
-			| BaseController<any, CelosiaRequest<any, any, any, any>, any>,
-		controller?: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+			| Middleware[]
+			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
 			this._expressRouter.all(
 				path,
 				this.handler(
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseMiddleware[],
+					middlewaresOrController as Middleware[],
 					controller,
 				),
 			)
@@ -810,7 +778,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				this.handler(
 					[],
 					preValidationMiddlewaresOrMiddlewares,
-					middlewaresOrController as BaseController<
+					middlewaresOrController as Controller<
 						any,
 						CelosiaRequest<any, any, any, any>,
 						any
@@ -823,9 +791,9 @@ class CelosiaRouter<Strict extends boolean = true> {
 	}
 
 	private handler(
-		preValidationMiddlewares: BaseMiddleware[],
-		middlewares: BaseMiddleware[],
-		controller: BaseController<any, CelosiaRequest<any, any, any, any>, any>,
+		preValidationMiddlewares: Middleware[],
+		middlewares: Middleware[],
+		controller: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		return async (request: Request, response: Response) => {
 			let data = {}

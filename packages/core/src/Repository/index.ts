@@ -1,3 +1,3 @@
 export * from './Errors'
 
-export { default as BaseRepository } from './BaseRepository'
+export { default as Repository } from './Repository'

@@ -3,10 +3,10 @@ import busboyFactory from 'busboy'
 import { Readable, Writable } from 'stream'
 
 import {
-	BaseMiddleware,
 	CelosiaRequest,
 	CelosiaResponse,
 	type EmptyObject,
+	Middleware,
 	type NextFunction,
 } from '@celosiajs/core'
 
@@ -22,7 +22,7 @@ import {
 	UploadedFile,
 } from './Types'
 
-class FileUpload extends BaseMiddleware<CelosiaRequest, CelosiaResponse> {
+class FileUpload extends Middleware<CelosiaRequest, CelosiaResponse> {
 	public options: Required<FileUploadOptions>
 
 	constructor(options: FileUploadOptions = {}) {

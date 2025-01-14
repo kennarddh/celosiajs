@@ -1,20 +1,20 @@
 import {
-	BaseController,
-	BaseMiddleware,
-	BaseRepository,
-	BaseService,
 	CelosiaInstance,
 	CelosiaRequest,
 	CelosiaResponse,
 	CelosiaRouter,
+	Controller,
 	ControllerRequest,
 	DependencyInjection,
 	EmptyObject,
 	Globals,
 	Injectable,
+	Middleware,
 	NextFunction,
 	QueryParserMode,
+	Repository,
 	SendRequestId,
+	Service,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
 import { CelosiaFormat } from '@celosiajs/logging'
@@ -37,7 +37,7 @@ Globals.logger = logger
 
 const port = 9999
 
-class Middleware1 extends BaseMiddleware {
+class Middleware1 extends Middleware {
 	constructor() {
 		super('Middleware1')
 	}
@@ -53,7 +53,7 @@ class Middleware1 extends BaseMiddleware {
 	}
 }
 
-class MiddlewareErrorController extends BaseMiddleware {
+class MiddlewareErrorController extends Middleware {
 	constructor() {
 		super('MiddlewareErrorController')
 	}
@@ -68,7 +68,7 @@ class MiddlewareErrorController extends BaseMiddleware {
 	}
 }
 
-class TestController extends BaseController {
+class TestController extends Controller {
 	constructor() {
 		super('TestController')
 	}
@@ -89,7 +89,7 @@ class TestController extends BaseController {
 	}
 }
 
-class GetController extends BaseController {
+class GetController extends Controller {
 	constructor() {
 		super('GetController')
 	}
@@ -105,14 +105,14 @@ class GetController extends BaseController {
 }
 
 @Injectable()
-class UserRepository extends BaseRepository {
+class UserRepository extends Repository {
 	public getById(id: string) {
 		return { id, name: 'X' }
 	}
 }
 
 @Injectable()
-class UserService extends BaseService {
+class UserService extends Service {
 	constructor(private userRepository = DependencyInjection.get(UserRepository)) {
 		super('UserService')
 	}
@@ -122,7 +122,7 @@ class UserService extends BaseService {
 	}
 }
 
-class UserController extends BaseController {
+class UserController extends Controller {
 	constructor(private userService = DependencyInjection.get(UserService)) {
 		super('UserController')
 	}
@@ -156,7 +156,7 @@ interface User {
 
 type PartialUser = Partial<User>
 
-class UserMiddleware<Optional extends boolean> extends BaseMiddleware<
+class UserMiddleware<Optional extends boolean> extends Middleware<
 	CelosiaRequest,
 	CelosiaResponse,
 	EmptyObject,
@@ -180,7 +180,7 @@ class UserMiddleware<Optional extends boolean> extends BaseMiddleware<
 	}
 }
 
-class NeedUserController extends BaseController {
+class NeedUserController extends Controller {
 	constructor() {
 		super('NeedUserController')
 	}

@@ -2,7 +2,7 @@ import { Logger } from 'winston'
 
 import Globals from '../Globals'
 
-class BaseRepository {
+class Repository {
 	protected logger: Logger
 
 	constructor(protected loggingSource: string) {
@@ -10,4 +10,4 @@ class BaseRepository {
 	}
 }
 
-export default BaseRepository
+export default Repository

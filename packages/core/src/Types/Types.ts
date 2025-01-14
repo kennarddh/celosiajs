@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
-import { BaseController, BaseMiddleware, CelosiaRequest, DeepRequired, EmptyObject } from '../'
+import { CelosiaRequest, Controller, DeepRequired, EmptyObject, Middleware } from '../'
 import InvariantOf from './InvariantOf'
 
 export type NextFunction<Output = undefined> = (output?: Output) => void
@@ -12,79 +12,75 @@ export interface ListenOptions {
 	backlog?: number
 }
 
-export type MiddlewareArray = BaseMiddleware<any, any, any, any>[]
+export type MiddlewareArray = Middleware<any, any, any, any>[]
 
-export type NoInputMiddleware = BaseMiddleware<CelosiaRequest>
+export type NoInputMiddleware = Middleware<CelosiaRequest>
 
 // & EmptyObject is used so that `{ x: string } extends EmptyObject` become true, because EmptyObject has it's own brand symbol.
-export type ControllerRequest<Controller extends BaseController<any, any, any>> = CelosiaRequest<
-	{} extends DeepRequired<z.infer<Controller['body']>>
+export type ControllerRequest<C extends Controller<any, any, any>> = CelosiaRequest<
+	{} extends DeepRequired<z.infer<C['body']>> ? EmptyObject : z.infer<C['body']> & EmptyObject,
+	{} extends DeepRequired<z.infer<C['query']>> ? EmptyObject : z.infer<C['query']> & EmptyObject,
+	{} extends DeepRequired<z.infer<C['params']>>
 		? EmptyObject
-		: z.infer<Controller['body']> & EmptyObject,
-	{} extends DeepRequired<z.infer<Controller['query']>>
+		: z.infer<C['params']> & EmptyObject,
+	{} extends DeepRequired<z.infer<C['cookies']>>
 		? EmptyObject
-		: z.infer<Controller['query']> & EmptyObject,
-	{} extends DeepRequired<z.infer<Controller['params']>>
-		? EmptyObject
-		: z.infer<Controller['params']> & EmptyObject,
-	{} extends DeepRequired<z.infer<Controller['cookies']>>
-		? EmptyObject
-		: z.infer<Controller['cookies']> & EmptyObject
+		: z.infer<C['cookies']> & EmptyObject
 >
 
-export type ControllerResponse<Controller extends BaseController<any, any, any>> =
-	Controller extends BaseController<any, any, infer Response> ? Response : never
+export type ControllerResponse<C extends Controller<any, any, any>> =
+	C extends Controller<any, any, infer Response> ? Response : never
 
 export type ValidateMiddlewares<
-	Controller extends BaseController<any, any, any>,
+	C extends Controller<any, any, any>,
 	T extends MiddlewareArray,
 	Input extends Record<string, any> = EmptyObject,
 	Results extends MiddlewareArray = [],
 > = T extends [
-	BaseMiddleware<infer Request, infer Response, infer RequiredInput, infer Output>,
+	Middleware<infer Request, infer Response, infer RequiredInput, infer Output>,
 	...infer Tail extends MiddlewareArray,
 ]
-	? ControllerRequest<Controller> extends Request
-		? Response extends ControllerResponse<Controller>
+	? ControllerRequest<C> extends Request
+		? Response extends ControllerResponse<C>
 			? RequiredInput extends Input
-				? ValidateMiddlewares<Controller, Tail, Input & Output, [...Results, T[0]]>
+				? ValidateMiddlewares<C, Tail, Input & Output, [...Results, T[0]]>
 				: ValidateMiddlewares<
-						Controller,
+						C,
 						Tail,
 						Input,
 						[
 							...Results,
-							BaseMiddleware<
-								ControllerRequest<Controller>,
-								ControllerResponse<Controller>,
+							Middleware<
+								ControllerRequest<C>,
+								ControllerResponse<C>,
 								InvariantOf<Input>,
 								Output
 							>,
 						]
 					>
 			: ValidateMiddlewares<
-					Controller,
+					C,
 					Tail,
 					Input,
 					[
 						...Results,
-						BaseMiddleware<
-							InvariantOf<ControllerRequest<Controller>>,
-							InvariantOf<ControllerResponse<Controller>>,
+						Middleware<
+							InvariantOf<ControllerRequest<C>>,
+							InvariantOf<ControllerResponse<C>>,
 							Input,
 							Output
 						>,
 					]
 				>
 		: ValidateMiddlewares<
-				Controller,
+				C,
 				Tail,
 				Input,
 				[
 					...Results,
-					BaseMiddleware<
-						InvariantOf<ControllerRequest<Controller>>,
-						InvariantOf<ControllerResponse<Controller>>,
+					Middleware<
+						InvariantOf<ControllerRequest<C>>,
+						InvariantOf<ControllerResponse<C>>,
 						Input,
 						Output
 					>,
@@ -95,30 +91,30 @@ export type ValidateMiddlewares<
 export type MergeMiddlewaresOutput<
 	T extends MiddlewareArray,
 	Input extends Record<string, any> = {},
-> = T extends [BaseMiddleware<any, any, any, infer Output>, ...infer Tail extends MiddlewareArray]
+> = T extends [Middleware<any, any, any, infer Output>, ...infer Tail extends MiddlewareArray]
 	? MergeMiddlewaresOutput<Tail, Output & Input>
 	: Input
 
 export type ValidateController<
-	Controller extends BaseController<any, any, any>,
+	C extends Controller<any, any, any>,
 	Middlewares extends MiddlewareArray | [],
 > =
-	Controller extends BaseController<infer Data, any, any>
+	C extends Controller<infer Data, any, any>
 		? MergeMiddlewaresOutput<Middlewares> extends Data
-			? Controller
+			? C
 			: never
 		: never
 
 export type ValidateControllerWithoutBody<
-	Controller extends BaseController<any, any, any>,
+	C extends Controller<any, any, any>,
 	Middlewares extends MiddlewareArray | [],
 	Strict extends boolean = true,
 > =
-	z.infer<Controller['body']> extends EmptyObject
-		? ValidateController<Controller, Middlewares>
+	z.infer<C['body']> extends EmptyObject
+		? ValidateController<C, Middlewares>
 		: Strict extends true
 			? never
-			: ValidateController<Controller, Middlewares>
+			: ValidateController<C, Middlewares>
 
 export type OutgoingHeaderValue = string | string[] | number
 export type IncomingHeaderValue = string | string[]

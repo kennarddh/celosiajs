@@ -1,16 +1,16 @@
 import { CelosiaRequest, CelosiaResponse, EmptyObject, NextFunction } from '..'
 /**
- * BaseMiddleware import is not imported from root.
+ * Middleware import is not imported from root.
  * Because if it is imported from root it will cause cyclical import.
- * Which will make this class defined before BaseMiddleware is defined.
+ * Which will make this class defined before Middleware is defined.
  * Leading to a runtime error.
  */
-import BaseMiddleware from '../BaseMiddleware'
+import Middleware from '../Middleware'
 
 /**
  * Add a `Request-Id` header to every response.
  */
-class SendRequestId extends BaseMiddleware {
+class SendRequestId extends Middleware {
 	constructor() {
 		super('SendRequestId')
 	}
