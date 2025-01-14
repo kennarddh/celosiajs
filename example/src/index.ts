@@ -148,6 +148,53 @@ class UserController extends BaseController {
 	}
 }
 
+interface User {
+	user: {
+		name: string
+	}
+}
+
+type PartialUser = Partial<User>
+
+class UserMiddleware<Optional extends boolean> extends BaseMiddleware<
+	CelosiaRequest,
+	CelosiaResponse,
+	EmptyObject,
+	Optional extends true ? PartialUser : User
+> {
+	constructor(private optional: Optional) {
+		super('UserMiddleware')
+	}
+
+	override index(
+		_: EmptyObject,
+		__: CelosiaRequest,
+		___: CelosiaResponse,
+		next: NextFunction<Optional extends true ? PartialUser : User>,
+	): void {
+		if (this.optional) {
+			next()
+		} else {
+			next({ user: { name: 'a' } })
+		}
+	}
+}
+
+class NeedUserController extends BaseController {
+	constructor() {
+		super('NeedUserController')
+	}
+
+	public async index(
+		data: User,
+		_: ControllerRequest<UserController>,
+		response: CelosiaResponse,
+	) {
+		this.logger.info('Incoming', { data })
+		response.status(200).json({ x: 'string' })
+	}
+}
+
 const instance = new CelosiaInstance({
 	strict: true,
 	// jsonBodyParserOptions: { enabled: false },
@@ -165,6 +212,7 @@ router.post('/test', [], new TestController())
 router.get('/', [], new GetController())
 router.post('/middleware-error', [new MiddlewareErrorController()], new TestController())
 router.get('/user', [], new UserController())
+router.get('/user', [new UserMiddleware(false)], new NeedUserController())
 
 router.group(
 	'/caseSensitive',
