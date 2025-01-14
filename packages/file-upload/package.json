@@ -43,10 +43,10 @@
 	"dependencies": {
 		"@celosiajs/core": "^0.0.1-alpha.27",
 		"@types/busboy": "^1.5.4",
+		"append-field": "^2.0.0",
 		"busboy": "^1.6.0"
 	},
 	"peerDependencies": {
-		"qs": "^6.13.0",
 		"zod": "^3.24.1"
 	},
 	"gitHead": "97fad62c931d69fda943088a4db252a60df057ff"

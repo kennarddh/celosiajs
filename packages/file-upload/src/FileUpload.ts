@@ -10,16 +10,14 @@ import {
 	type NextFunction,
 } from '@celosiajs/core'
 
-import QueryString from 'qs'
+import appendField from 'append-field'
 
-import ParseValues from './ParseValues'
 import {
 	ExceededLimitInfo,
 	ExceededLimitKind,
 	FileUploadErrorInfo,
 	FileUploadErrorKind,
 	FileUploadOptions,
-	UploadedFile,
 } from './Types'
 
 class FileUpload extends Middleware<CelosiaRequest, CelosiaResponse> {
@@ -195,7 +193,7 @@ class FileUpload extends Middleware<CelosiaRequest, CelosiaResponse> {
 			},
 		})
 
-		const parts: [string, string | UploadedFile][] = []
+		const body: object = {}
 
 		let errorOccured = false
 
@@ -243,20 +241,17 @@ class FileUpload extends Middleware<CelosiaRequest, CelosiaResponse> {
 
 				const buffer = Buffer.concat(buffers)
 
-				parts.push([
-					name,
-					{
-						encoding,
-						fileName: filename,
-						mimeType,
-						buffer,
-					},
-				])
+				appendField(body, name, {
+					encoding,
+					fileName: filename,
+					mimeType,
+					buffer,
+				})
 			})
 		})
 
 		busboy.on('field', (name, value, info) => {
-			parts.push([name, value])
+			appendField(body, name, value)
 
 			if (!this.options.ignoreLimits) {
 				if (info.nameTruncated) {
@@ -296,12 +291,6 @@ class FileUpload extends Middleware<CelosiaRequest, CelosiaResponse> {
 
 		busboy.on('close', () => {
 			if (errorOccured) return
-
-			const body = QueryString.parse(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-				ParseValues(parts, this.options.parser) as any,
-				this.options.parser,
-			)
 
 			request.body = body
 
