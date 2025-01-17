@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
+		"target": "ES2024",
+		"module": "ES2022",
 		"moduleResolution": "Bundler",
 		"allowJs": false,
 		"esModuleInterop": true,
@@ -29,7 +29,8 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"emitDeclarationOnly": true,
-		"declaration": true
+		"declaration": true,
+		"lib": ["ES2023"]
 	},
 	"references": [
 		{ "path": "./scripts/tsconfig.json" },
