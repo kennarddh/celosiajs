@@ -12,8 +12,8 @@ export default tsEslint.config(
 	eslintPluginImportX.flatConfigs.recommended,
 	eslintPluginImportX.flatConfigs.typescript,
 	security.configs.recommended,
-	...tsEslint.configs.strictTypeChecked,
-	...tsEslint.configs.stylisticTypeChecked,
+	tsEslint.configs.strictTypeChecked,
+	tsEslint.configs.stylisticTypeChecked,
 	prettierRecommended,
 	{ ignores: ['**/dist/**/*'] },
 	{
@@ -24,7 +24,6 @@ export default tsEslint.config(
 				sourceType: 'module',
 				tsconfigRootDir: import.meta.dirname,
 				projectService: true,
-				extraFileExtensions: ['.json'],
 			},
 			globals: {
 				...globals.node,
