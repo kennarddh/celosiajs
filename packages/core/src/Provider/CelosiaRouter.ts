@@ -39,7 +39,7 @@ export interface CelosiaRouterOptions {
 	caseSensitive?: boolean
 
 	/**
-	 * When `true` any `req.params` passed to the router will be merged into the router's `req.params`.
+	 * When `true` any `request.params` passed to the router will be merged into the router's `request.params`.
 	 *
 	 * @default false
 	 */

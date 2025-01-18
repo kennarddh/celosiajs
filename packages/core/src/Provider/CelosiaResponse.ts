@@ -82,14 +82,13 @@ class CelosiaResponse<Body = JSON> {
 
 	/**
 	 * Set the response HTTP status code to `statusCode` and send its string representation as the response body.
-	 * @link http://expressjs.com/4x/api.html#res.sendStatus
 	 *
 	 * Examples:
 	 *
-	 *    res.sendStatus(200); // equivalent to res.status(200).send('OK')
-	 *    res.sendStatus(403); // equivalent to res.status(403).send('Forbidden')
-	 *    res.sendStatus(404); // equivalent to res.status(404).send('Not Found')
-	 *    res.sendStatus(500); // equivalent to res.status(500).send('Internal Server Error')
+	 *    response.sendStatus(200); // equivalent to response.status(200).send('OK')
+	 *    response.sendStatus(403); // equivalent to response.status(403).send('Forbidden')
+	 *    response.sendStatus(404); // equivalent to response.status(404).send('Not Found')
+	 *    response.sendStatus(500); // equivalent to response.status(500).send('Internal Server Error')
 	 */
 	public sendStatus(statusCode: number): this {
 		this.expressResponse.sendStatus(statusCode)
@@ -102,10 +101,10 @@ class CelosiaResponse<Body = JSON> {
 	 *
 	 * Examples:
 	 *
-	 *     res.send(new Buffer('wahoo'));
-	 *     res.send({ some: 'json' });
-	 *     res.send('<p>some html</p>');
-	 *     res.status(404).send('Sorry, cant find that');
+	 *     response.send(new Buffer('wahoo'));
+	 *     response.send({ some: 'json' });
+	 *     response.send('<p>some html</p>');
+	 *     response.status(404).send('Sorry, cant find that');
 	 */
 	public send(body?: Body): this {
 		this.expressResponse.send(body)
@@ -118,10 +117,10 @@ class CelosiaResponse<Body = JSON> {
 	 *
 	 * Examples:
 	 *
-	 *     res.json(null);
-	 *     res.json({ user: 'tj' });
-	 *     res.status(500).json('oh noes!');
-	 *     res.status(404).json('I dont have that');
+	 *     response.json(null);
+	 *     response.json({ user: 'tj' });
+	 *     response.status(500).json('oh noes!');
+	 *     response.status(404).json('I dont have that');
 	 */
 	public json(json: Body extends JSON ? Body : never): this {
 		this.expressResponse.json(json)
@@ -134,7 +133,7 @@ class CelosiaResponse<Body = JSON> {
 	 *
 	 * Automatically sets the _Content-Type_ response header field.
 	 * The callback `fn(err)` is invoked when the transfer is complete
-	 * or when an error occurs. Be sure to check `res.headersSent`
+	 * or when an error occurs. Be sure to check `response.headersSent`
 	 * if you wish to attempt responding, as the header and some data
 	 * may have already been transferred.
 	 *
@@ -146,28 +145,6 @@ class CelosiaResponse<Body = JSON> {
 	 *   - `dotfiles` serve dotfiles, defaulting to false; can be `"allow"` to send them
 	 *
 	 * Other options are passed along to `send`.
-	 *
-	 * Examples:
-	 *
-	 *  The following example illustrates how `res.sendFile()` may
-	 *  be used as an alternative for the `static()` middleware for
-	 *  dynamic situations. The code backing `res.sendFile()` is actually
-	 *  the same code, so HTTP cache support etc is identical.
-	 *
-	 *     app.get('/user/:uid/photos/:file', function(req, res){
-	 *       var uid = req.params.uid
-	 *         , file = req.params.file;
-	 *
-	 *       req.user.mayViewFilesFrom(uid, function(yes){
-	 *         if (yes) {
-	 *           res.sendFile('/uploads/' + uid + '/' + file);
-	 *         } else {
-	 *           res.send(403, 'Sorry! you cant see that.');
-	 *         }
-	 *       });
-	 *     });
-	 *
-	 * @api public
 	 */
 	public async sendFile(path: string, options?: SendFileOptions): Promise<void> {
 		return new Promise((resolve, reject) => {
@@ -194,12 +171,12 @@ class CelosiaResponse<Body = JSON> {
 	 * Optionally providing an alternate attachment `filename`,
 	 * and optional callback `fn(err)`. The callback is invoked
 	 * when the data transfer is complete, or when an error has
-	 * ocurred. Be sure to check `res.headersSent` if you plan to respond.
+	 * ocurred. Be sure to check `response.headersSent` if you plan to respond.
 	 *
 	 * The optional options argument passes through to the underlying
-	 * res.sendFile() call, and takes the exact same parameters.
+	 * response.sendFile() call, and takes the exact same parameters.
 	 *
-	 * This method uses `res.sendfile()`.
+	 * This method uses `response.sendFile()`.
 	 */
 	public async download(
 		path: string,
@@ -242,11 +219,11 @@ class CelosiaResponse<Body = JSON> {
 	 *
 	 * Examples:
 	 *
-	 *     res.type('.html');
-	 *     res.type('html');
-	 *     res.type('json');
-	 *     res.type('application/json');
-	 *     res.type('png');
+	 *     response.contentType('.html');
+	 *     response.contentType('html');
+	 *     response.contentType('json');
+	 *     response.contentType('application/json');
+	 *     response.contentType('png');
 	 */
 	public contentType(type: string): this {
 		this.expressResponse.contentType(type)
@@ -266,9 +243,9 @@ class CelosiaResponse<Body = JSON> {
 	 *
 	 * Examples:
 	 *
-	 *    res.header('Foo', ['bar', 'baz']);
-	 *    res.header('Accept', 'application/json');
-	 *    res.header({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
+	 *    response.header('Foo', ['bar', 'baz']);
+	 *    response.header('Accept', 'application/json');
+	 *    response.header({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
 	 */
 	public header(name: string): OutgoingHeaderValue | undefined
 	public header(name: string, value: OutgoingHeaderValue | undefined): this
@@ -323,10 +300,10 @@ class CelosiaResponse<Body = JSON> {
 	 * Examples:
 	 *
 	 *    // "Remember Me" for 15 minutes
-	 *    res.cookie('rememberme', '1', { expires: new Date(Date.now() + 900000), httpOnly: true });
+	 *    response.cookie('rememberme', '1', { expires: new Date(Date.now() + 900000), httpOnly: true });
 	 *
 	 *    // save as above
-	 *    res.cookie('rememberme', '1', { maxAge: 900000, httpOnly: true })
+	 *    response.cookie('rememberme', '1', { maxAge: 900000, httpOnly: true })
 	 */
 	public cookie(name: string, value: string, options?: CookieOptions): this {
 		if (options) this.expressResponse.cookie(name, value, options)
@@ -344,22 +321,22 @@ class CelosiaResponse<Body = JSON> {
 	 *
 	 * Examples:
 	 *
-	 *    res.location('/foo/bar').;
-	 *    res.location('http://example.com');
-	 *    res.location('../login'); // /blog/post/1 -> /blog/login
+	 *    response.location('/foo/bar').;
+	 *    response.location('http://example.com');
+	 *    response.location('../login'); // /blog/post/1 -> /blog/login
 	 *
 	 * Mounting:
 	 *
-	 *   When an application is mounted and `res.location()`
+	 *   When an application is mounted and `response.location()`
 	 *   is given a path that does _not_ lead with "/" it becomes
 	 *   relative to the mount-point. For example if the application
 	 *   is mounted at "/blog", the following would become "/blog/login".
 	 *
-	 *      res.location('login');
+	 *      response.location('login');
 	 *
 	 *   While the leading slash would result in a location of "/login":
 	 *
-	 *      res.location('/login');
+	 *      response.location('/login');
 	 */
 	public location(url: string): this {
 		this.expressResponse.location(url)
@@ -371,18 +348,18 @@ class CelosiaResponse<Body = JSON> {
 	 * Redirect to the given `url` with optional response `status`
 	 * defaulting to 302.
 	 *
-	 * The resulting `url` is determined by `res.location()`, so
+	 * The resulting `url` is determined by `response.location()`, so
 	 * it will play nicely with mounted apps, relative paths,
 	 * `"back"` etc.
 	 *
 	 * Examples:
 	 *
-	 *    res.redirect('back');
-	 *    res.redirect('/foo/bar');
-	 *    res.redirect('http://example.com');
-	 *    res.redirect(301, 'http://example.com');
-	 *    res.redirect('http://example.com', 301);
-	 *    res.redirect('../login'); // /blog/post/1 -> /blog/login
+	 *    response.redirect('back');
+	 *    response.redirect('/foo/bar');
+	 *    response.redirect('http://example.com');
+	 *    response.redirect(301, 'http://example.com');
+	 *    response.redirect('http://example.com', 301);
+	 *    response.redirect('../login'); // /blog/post/1 -> /blog/login
 	 */
 	public redirect(url: string): this
 	public redirect(status: number, url: string): this
@@ -586,7 +563,7 @@ class CelosiaResponse<Body = JSON> {
 	 * Adds the field to the Vary response header, if it is not there already.
 	 * Examples:
 	 *
-	 *     res.vary('User-Agent');
+	 *     response.vary('User-Agent');
 	 */
 	public vary(field: string): this {
 		this.expressResponse.vary(field)

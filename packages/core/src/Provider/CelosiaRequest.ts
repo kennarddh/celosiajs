@@ -160,13 +160,13 @@ class CelosiaRequest<
 	 *
 	 * Examples:
 	 *
-	 *     req.header('Content-Type');
+	 *     request.header('Content-Type');
 	 *     // => "text/plain"
 	 *
-	 *     req.header('content-type');
+	 *     request.header('content-type');
 	 *     // => "text/plain"
 	 *
-	 *     req.header('Something');
+	 *     request.header('Something');
 	 *     // => undefined
 	 */
 	public header(name: 'set-cookie'): string[] | undefined
@@ -189,27 +189,27 @@ class CelosiaRequest<
 	 * Examples:
 	 *
 	 *     // Accept: text/html
-	 *     req.accepts('html');
+	 *     request.accepts('html');
 	 *     // => "html"
 	 *
 	 *     // Accept: text/*, application/json
-	 *     req.accepts('html');
+	 *     request.accepts('html');
 	 *     // => "html"
-	 *     req.accepts('text/html');
+	 *     request.accepts('text/html');
 	 *     // => "text/html"
-	 *     req.accepts('json, text');
+	 *     request.accepts('json, text');
 	 *     // => "json"
-	 *     req.accepts('application/json');
+	 *     request.accepts('application/json');
 	 *     // => "application/json"
 	 *
 	 *     // Accept: text/*, application/json
-	 *     req.accepts('image/png');
-	 *     req.accepts('png');
+	 *     request.accepts('image/png');
+	 *     request.accepts('png');
 	 *     // => false
 	 *
 	 *     // Accept: text/*;q=.5, application/json
-	 *     req.accepts(['html', 'json']);
-	 *     req.accepts('html, json');
+	 *     request.accepts(['html', 'json']);
+	 *     request.accepts('html, json');
 	 *     // => "json"
 	 */
 	public accepts(): string[]
@@ -320,15 +320,15 @@ class CelosiaRequest<
 	 * parts of the host. This can be changed by setting "subdomain offset".
 	 *
 	 * For example, if the domain is "tobi.ferrets.example.com":
-	 * If "subdomain offset" is not set, req.subdomains is `["ferrets", "tobi"]`.
-	 * If "subdomain offset" is 3, req.subdomains is `["tobi"]`.
+	 * If "subdomain offset" is not set, request.subdomains is `["ferrets", "tobi"]`.
+	 * If "subdomain offset" is 3, request.subdomains is `["tobi"]`.
 	 */
 	public get subdomains(): string[] {
 		return this.expressRequest.subdomains
 	}
 
 	/**
-	 * Short-hand for `url.parse(req.url).pathname`.
+	 * Short-hand for `url.parse(request.url).pathname`.
 	 */
 	public get path(): string {
 		return this.expressRequest.path
@@ -535,7 +535,7 @@ class CelosiaRequest<
 	 * }
 	 * ```
 	 *
-	 * Ensure that you set `process.env.HOST` to the server's host name, or consider replacing this part entirely. If using `req.headers.host`, ensure proper
+	 * Ensure that you set `process.env.HOST` to the server's host name, or consider replacing this part entirely. If using `request.headers.host`, ensure proper
 	 * validation is used, as clients may specify a custom `Host` header.
 	 */
 	public get url(): string | undefined {
