@@ -293,7 +293,7 @@ class CelosiaRequest<
 	 * "trust proxy" is `true` return
 	 * the upstream addr.
 	 *
-	 * Value may be undefined if the `req.socket` is destroyed
+	 * Value may be undefined if the `request.socket` is destroyed
 	 * (for example, if the client disconnected).
 	 */
 	public get ip(): string | undefined {

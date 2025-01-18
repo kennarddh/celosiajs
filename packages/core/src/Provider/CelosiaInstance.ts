@@ -111,12 +111,30 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	 * Options supplied for the root router.
 	 */
 	rootRouterOptions?: Omit<CelosiaRouterOptions, 'mergeParams'>
+
+	/**
+	 * Options for trust proxy.
+	 *
+	 * When setting to `true`, make sure the last reverse proxy trusted is removing/overwriting all of the following HTTP headers: `X-Forwarded-For`, `X-Forwarded-Host`, and `X-Forwarded-Proto`, otherwise it may be possible for the client to provide any value.
+	 * A string can be a single ip address, subnet, or comma separated subnets.
+	 * Pre-configured subnet names:
+	 *   `loopback` - 127.0.0.1/8, ::1/128
+	 *   `linklocal` - 169.254.0.0/16, fe80::/10
+	 *   `uniquelocal` - 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, fc00::/7
+	 *
+	 * An array can be passed instead of comma separated subnets.
+	 * When a number is used, this will use the address that is at most `n` number of hops away from the application.
+	 * `request.socket.remoteAddress` is the first hop, and the rest are looked for in the `X-Forwarded-For` header from right to left. A value of `0` means that the first untrusted address would be `request.socket.remoteAddress`, i.e. there is no reverse proxy.
+	 *
+	 * A custom function which receive ip as parameter and returns boolean can be passed.
+	 */
+	trustProxy?: boolean | string | string[] | ((ip: string) => boolean) | number
 }
 
 class CelosiaInstance<Strict extends boolean> {
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
 
-	protected readonly express: ReturnType<typeof express>
+	protected readonly _express: ReturnType<typeof express>
 	protected _server: Server | null = null
 	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
 	protected _options: CelosiaInstanceConstructorOptions<Strict>
@@ -125,19 +143,29 @@ class CelosiaInstance<Strict extends boolean> {
 	constructor(options: CelosiaInstanceConstructorOptions<Strict>) {
 		this._options = options
 
-		this.express = express()
+		this._express = express()
 
-		this.express.celosiaInstance = this
+		this._express.celosiaInstance = this
 
 		// Settings
-		this.express.disable('x-powered-by')
+		this._express.disable('x-powered-by')
+
+		if (this.options.trustProxy !== undefined) {
+			this._express.set('trust proxy', this.options.trustProxy)
+		}
 
 		if (this.options.rootRouterOptions?.caseSensitive !== undefined) {
-			this.express.set('case sensitive routing', this.options.rootRouterOptions.caseSensitive)
+			this._express.set(
+				'case sensitive routing',
+				this.options.rootRouterOptions.caseSensitive,
+			)
 		}
 
 		if (this.options.rootRouterOptions?.strictTrailingSlashes !== undefined) {
-			this.express.set('strict routing', this.options.rootRouterOptions.strictTrailingSlashes)
+			this._express.set(
+				'strict routing',
+				this.options.rootRouterOptions.strictTrailingSlashes,
+			)
 		}
 
 		if (this.options.queryParserOptions?.enabled ?? true) {
@@ -145,37 +173,44 @@ class CelosiaInstance<Strict extends boolean> {
 				(this.options.queryParserOptions?.mode ?? QueryParserMode.Simple) ==
 				QueryParserMode.Simple
 			) {
-				this.express.set('query parser', 'simple')
+				this._express.set('query parser', 'simple')
 			} else {
-				this.express.set('query parser fn', (str: string) => {
+				this._express.set('query parser fn', (str: string) => {
 					return qs.parse(str, this.options.queryParserOptions?.extendedOptions)
 				})
 			}
 		} else {
-			this.express.set('query parser', false)
+			this._express.set('query parser', false)
 		}
 
-		this.express.use(InjectProperties)
+		this._express.use(InjectProperties)
 
 		if (this.options.urlencodedBodyParserOptions?.enabled ?? true) {
 			const { enabled: _, ...restOptions } = this.options.urlencodedBodyParserOptions ?? {}
 
-			this.express.use(ParseUrlencoded(restOptions))
+			this._express.use(ParseUrlencoded(restOptions))
 		}
 
 		if (this.options.jsonBodyParserOptions?.enabled ?? true) {
 			const { enabled: _, ...restOptions } = this.options.jsonBodyParserOptions ?? {}
 
-			this.express.use(ParseJson(restOptions))
+			this._express.use(ParseJson(restOptions))
 		}
 
 		if (this.options.cookieParserOptions?.enabled ?? true) {
 			const { enabled: _, secret, ...restOptions } = this.options.cookieParserOptions ?? {}
 
-			this.express.use(cookieParser(secret, restOptions))
+			this._express.use(cookieParser(secret, restOptions))
 		} else {
-			this.express.use(InjectDefaultCookie)
+			this._express.use(InjectDefaultCookie)
 		}
+	}
+
+	/**
+	 * Returns express instance.
+	 */
+	public get express() {
+		return this._express
 	}
 
 	/**
@@ -229,7 +264,7 @@ class CelosiaInstance<Strict extends boolean> {
 
 		this.hasErrorHandlerAdded = true
 
-		this.express.use(
+		this._express.use(
 			(error: Error, request: Request, response: Response, __: NextFunction): void => {
 				this.logger.error(
 					'Global error handler',
@@ -252,7 +287,7 @@ class CelosiaInstance<Strict extends boolean> {
 
 		return new Promise((resolve, reject) => {
 			// https://stackoverflow.com/a/69324331/14813577
-			this._server = this.express.listen(
+			this._server = this._express.listen(
 				options.port ?? 0,
 				options.host ?? '127.0.0.1',
 				options.backlog ?? 511,
@@ -308,8 +343,8 @@ class CelosiaInstance<Strict extends boolean> {
 		) as CelosiaRouter[]
 
 		routers.forEach(router => {
-			if (path === null) this.express.use(router.expressRouter)
-			else this.express.use(path, router.expressRouter)
+			if (path === null) this._express.use(router.expressRouter)
+			else this._express.use(path, router.expressRouter)
 		})
 
 		return this
@@ -355,8 +390,8 @@ class CelosiaInstance<Strict extends boolean> {
 				}
 			}
 
-			if (path === null) this.express.use(handler)
-			else this.express.use(path, handler)
+			if (path === null) this._express.use(handler)
+			else this._express.use(path, handler)
 		})
 
 		return this
