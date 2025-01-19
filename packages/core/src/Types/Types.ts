@@ -100,7 +100,7 @@ export type ValidateController<
 	Middlewares extends MiddlewareArray | [],
 > =
 	C extends Controller<infer Data, any, any>
-		? MergeMiddlewaresOutput<Middlewares> extends Data
+		? MergeMiddlewaresOutput<Middlewares> & EmptyObject extends Data
 			? C
 			: never
 		: never
