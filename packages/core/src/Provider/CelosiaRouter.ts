@@ -849,12 +849,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				return
 			}
 
-			let parsedBody
-
-			if (request.method !== 'GET') {
-				parsedBody = await controller.body.safeParseAsync(request.body)
-			}
-
+			const parsedBody = await controller.body.safeParseAsync(request.body)
 			const parsedQuery = await controller.query.safeParseAsync(request.query)
 			const parsedParams = await controller.params.safeParseAsync(request.params)
 			const parsedCookies = await controller.cookies.safeParseAsync(request.cookies)
@@ -869,7 +864,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 				others?: string[]
 			} = { parsing: {} }
 
-			if (parsedBody && !parsedBody.success) {
+			if (!parsedBody.success) {
 				errors.parsing.body = parsedBody.error.format()
 			}
 
@@ -886,7 +881,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 			}
 
 			if (
-				!(parsedBody?.success ?? true) ||
+				!parsedBody.success ||
 				!parsedQuery.success ||
 				!parsedParams.success ||
 				!parsedCookies.success
@@ -900,10 +895,10 @@ class CelosiaRouter<Strict extends boolean = true> {
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			request.body = parsedBody?.data
+			request.body = parsedBody.data
 
 			// Cannot modify query directly, as now Request.query is a getter not a property.
-			request.__CELOSIAJS__.postValidationQuery = parsedQuery.data
+			request.__CELOSIAJS__.postValidationQuery = parsedQuery.data ?? {}
 
 			Object.defineProperty(request, 'query', {
 				configurable: true,
@@ -911,8 +906,8 @@ class CelosiaRouter<Strict extends boolean = true> {
 				get: () => request.__CELOSIAJS__.postValidationQuery,
 			})
 
-			request.params = parsedParams.data
-			request.cookies = parsedCookies.data
+			request.params = parsedParams.data ?? {}
+			request.cookies = parsedCookies.data ?? {}
 
 			for (const middleware of middlewares) {
 				try {
