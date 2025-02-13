@@ -5,7 +5,7 @@ import { ZodTypeAny, z } from 'zod'
 
 import { CelosiaRequest, CelosiaResponse, Globals } from '.'
 
-const emptyOptionalZodObject = z.object({}).optional() as ZodTypeAny
+const emptyZodObject = z.object({})
 
 abstract class Controller<
 	T extends Record<string, any> = {},
@@ -24,28 +24,28 @@ abstract class Controller<
 	 * Request's body validation.
 	 */
 	public get body(): ZodTypeAny {
-		return emptyOptionalZodObject
+		return z.object({}).optional() as ZodTypeAny
 	}
 
 	/**
 	 * Request's query validation.
 	 */
 	public get query() {
-		return emptyOptionalZodObject
+		return emptyZodObject
 	}
 
 	/**
 	 * Request's params validation.
 	 */
 	public get params() {
-		return emptyOptionalZodObject
+		return emptyZodObject
 	}
 
 	/**
 	 * Request's cookies validation.
 	 */
 	public get cookies() {
-		return emptyOptionalZodObject
+		return emptyZodObject
 	}
 }
 
