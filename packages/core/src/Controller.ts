@@ -5,7 +5,7 @@ import { ZodTypeAny, z } from 'zod'
 
 import { CelosiaRequest, CelosiaResponse, Globals } from '.'
 
-const emptyOptionalZodObject = z.object({}).optional()
+const emptyOptionalZodObject = z.object({}).optional() as ZodTypeAny
 
 abstract class Controller<
 	T extends Record<string, any> = {},
