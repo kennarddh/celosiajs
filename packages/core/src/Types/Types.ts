@@ -239,10 +239,8 @@ export interface CookieOptions {
 	priority?: 'low' | 'medium' | 'high'
 }
 
-export interface QueryParams {
-	[key: string]: string | QueryParams | QueryParams[]
-}
+export type QueryParams = Record<string, any>
 
-export type PathParams = Record<string, string>
+export type PathParams = Record<string, any>
 
-export type CookiesObject = Record<string, string>
+export type CookiesObject = Record<string, any>
