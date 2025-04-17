@@ -843,7 +843,11 @@ class CelosiaRouter<Strict extends boolean = true> {
 			if (response.writableEnded) {
 				this.logger.warn(
 					"A pre validation middleware calls next after writing response. Request won't be processed further.",
-					{ requestId: request.celosiaRequest.id, url: request.url },
+					{
+						requestId: request.celosiaRequest.id,
+						url: request.url,
+						method: request.method,
+					},
 				)
 
 				return
@@ -959,6 +963,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 					{
 						requestId: request.celosiaRequest.id,
 						url: request.url,
+						method: request.method,
 					},
 				)
 
