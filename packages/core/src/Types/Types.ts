@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any */
-import { z } from 'zod'
+import z from 'zod/v4'
 
 import { CelosiaRequest, Controller, DeepRequired, EmptyObject, Middleware } from '../'
 import InvariantOf from './InvariantOf'
@@ -110,8 +110,12 @@ export type ValidateControllerWithoutBody<
 	Middlewares extends MiddlewareArray | [],
 	Strict extends boolean = true,
 > =
-	z.infer<C['body']> extends EmptyObject
-		? ValidateController<C, Middlewares>
+	z.infer<C['body']> extends unknown
+		? unknown extends z.infer<C['body']>
+			? ValidateController<C, Middlewares>
+			: Strict extends true
+				? never
+				: ValidateController<C, Middlewares>
 		: Strict extends true
 			? never
 			: ValidateController<C, Middlewares>

@@ -225,24 +225,23 @@ class CelosiaInstance<Strict extends boolean> {
 	 * Register by using `ExtensionsRegistry.registerCelosiaInstanceExtension`.
 	 */
 	public get extensions(): CelosiaJS.CelosiaInstance<Strict> {
-		if (this._cachedExtensionsProxy === null)
-			this._cachedExtensionsProxy = new Proxy(
-				{},
-				{
-					get: (_, property, __) => {
-						const extensionHandler =
-							ExtensionsRegistry.getCelosiaInstanceExtension(property)
+		this._cachedExtensionsProxy ??= new Proxy(
+			{},
+			{
+				get: (_, property, __) => {
+					const extensionHandler =
+						ExtensionsRegistry.getCelosiaInstanceExtension(property)
 
-						if (extensionHandler === undefined)
-							throw new InvalidExtensionError(
-								`Use of unregistered extension "${property.toString()}".`,
-							)
+					if (extensionHandler === undefined)
+						throw new InvalidExtensionError(
+							`Use of unregistered extension "${property.toString()}".`,
+						)
 
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-						return (...args: any[]) => extensionHandler(this, ...args)
-					},
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+					return (...args: any[]) => extensionHandler(this, ...args)
 				},
-			) as CelosiaJS.CelosiaInstance<Strict>
+			},
+		) as CelosiaJS.CelosiaInstance<Strict>
 
 		return this._cachedExtensionsProxy
 	}

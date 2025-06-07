@@ -28,24 +28,23 @@ class CelosiaResponse<Body = JSON> {
 	 * Register by using `ExtensionsRegistry.registerCelosiaResponseExtension`.
 	 */
 	public get extensions(): CelosiaJS.CelosiaResponse<Body> {
-		if (this._cachedExtensionsProxy === null)
-			this._cachedExtensionsProxy = new Proxy(
-				{},
-				{
-					get: (_, property, __) => {
-						const extensionHandler =
-							ExtensionsRegistry.getCelosiaResponseExtension(property)
+		this._cachedExtensionsProxy ??= new Proxy(
+			{},
+			{
+				get: (_, property, __) => {
+					const extensionHandler =
+						ExtensionsRegistry.getCelosiaResponseExtension(property)
 
-						if (extensionHandler === undefined)
-							throw new InvalidExtensionError(
-								`Use of unregistered extension "${property.toString()}".`,
-							)
+					if (extensionHandler === undefined)
+						throw new InvalidExtensionError(
+							`Use of unregistered extension "${property.toString()}".`,
+						)
 
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-						return (...args: any[]) => extensionHandler(this, ...args)
-					},
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+					return (...args: any[]) => extensionHandler(this, ...args)
 				},
-			) as CelosiaJS.CelosiaResponse<Body>
+			},
+		) as CelosiaJS.CelosiaResponse<Body>
 
 		return this._cachedExtensionsProxy
 	}
@@ -552,9 +551,7 @@ class CelosiaResponse<Body = JSON> {
 	 */
 	public sendInternalServerError(): this {
 		return this.status(500).json({
-			errors: {
-				others: ['Internal server error'],
-			},
+			errors: { others: ['Internal server error'] },
 			data: {},
 		} as Body extends JSON ? Body : never)
 	}

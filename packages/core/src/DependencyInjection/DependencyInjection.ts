@@ -30,8 +30,8 @@ export const Injectable = (
 	return (constructor: Provider<any>) => {
 		const anyConstructor = constructor as any
 
-		if (!key) {
-			if (!anyConstructor[providerKeySymbol]) anyConstructor[providerKeySymbol] = Symbol()
+		if (key === undefined && anyConstructor[providerKeySymbol] === undefined) {
+			anyConstructor[providerKeySymbol] = Symbol()
 		}
 
 		const resolvedKey = key ?? (anyConstructor[providerKeySymbol] as symbol)
@@ -65,11 +65,7 @@ class DependencyInjection {
 		if (DependencyInjection.providers.has(resolvedKey))
 			throw new Error(`Provider for ${resolvedKey.description} already exist`)
 
-		DependencyInjection.providers.set(resolvedKey, {
-			key: resolvedKey,
-			provider,
-			scope,
-		})
+		DependencyInjection.providers.set(resolvedKey, { key: resolvedKey, provider, scope })
 	}
 
 	/**

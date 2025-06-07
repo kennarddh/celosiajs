@@ -1,4 +1,4 @@
-import { ZodEffects, z } from 'zod'
+import z, { ZodType } from 'zod/v4'
 
 export const ZodActualUploadedFileType = z.object({
 	fileName: z.string(),
@@ -8,22 +8,18 @@ export const ZodActualUploadedFileType = z.object({
 })
 
 // To hide individual property's error. Because the internal working of the system should not be shown to the client.
-const ZodUploadedFileType = z.any().superRefine(async (data, ctx) => {
-	if (data === undefined) {
-		return ctx.addIssue({
-			code: z.ZodIssueCode.custom,
-			message: 'Required',
-		})
+const ZodUploadedFileType = z.any().check(async ctx => {
+	if (ctx.value === undefined) {
+		ctx.issues.push({ code: 'custom', message: 'Required', input: ctx.value })
+
+		return
 	}
 
-	const result = await ZodActualUploadedFileType.safeParseAsync(data)
+	const result = await ZodActualUploadedFileType.safeParseAsync(ctx.value)
 
 	if (!result.success) {
-		ctx.addIssue({
-			code: z.ZodIssueCode.custom,
-			message: `Invalid file`,
-		})
+		ctx.issues.push({ code: 'custom', message: `Invalid file`, input: ctx.value })
 	}
-}) as ZodEffects<z.ZodAny, z.infer<typeof ZodActualUploadedFileType>>
+}) as ZodType<z.infer<typeof ZodActualUploadedFileType>>
 
 export default ZodUploadedFileType

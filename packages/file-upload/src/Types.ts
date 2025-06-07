@@ -3,7 +3,7 @@ import busboy from 'busboy'
 import { CelosiaRequest, CelosiaResponse } from '@celosiajs/core'
 
 import QueryString from 'qs'
-import { z } from 'zod'
+import z from 'zod/v4'
 
 import { ZodActualUploadedFileType } from './ZodUploadedFileType'
 

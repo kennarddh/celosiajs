@@ -1,7 +1,7 @@
 import { CelosiaResponse, Controller, ControllerRequest, EmptyObject } from '@celosiajs/core'
 import { ZodUploadedFileType } from '@celosiajs/file-upload'
 
-import { z } from 'zod'
+import z from 'zod/v4'
 
 class FileUploadController extends Controller {
 	constructor() {

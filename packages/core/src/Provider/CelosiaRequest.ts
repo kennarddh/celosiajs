@@ -46,24 +46,22 @@ class CelosiaRequest<
 	 * Register by using `ExtensionsRegistry.registerCelosiaRequestExtension`.
 	 */
 	public get extensions(): CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies> {
-		if (this._cachedExtensionsProxy === null)
-			this._cachedExtensionsProxy = new Proxy(
-				{},
-				{
-					get: (_, property, __) => {
-						const extensionHandler =
-							ExtensionsRegistry.getCelosiaRequestExtension(property)
+		this._cachedExtensionsProxy ??= new Proxy(
+			{},
+			{
+				get: (_, property, __) => {
+					const extensionHandler = ExtensionsRegistry.getCelosiaRequestExtension(property)
 
-						if (extensionHandler === undefined)
-							throw new InvalidExtensionError(
-								`Use of unregistered extension "${property.toString()}".`,
-							)
+					if (extensionHandler === undefined)
+						throw new InvalidExtensionError(
+							`Use of unregistered extension "${property.toString()}".`,
+						)
 
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-						return (...args: any[]) => extensionHandler(this, ...args)
-					},
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+					return (...args: any[]) => extensionHandler(this, ...args)
 				},
-			) as CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies>
+			},
+		) as CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies>
 
 		return this._cachedExtensionsProxy
 	}

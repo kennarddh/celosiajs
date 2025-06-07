@@ -21,7 +21,7 @@ import { CelosiaFormat } from '@celosiajs/logging'
 
 import * as winston from 'winston'
 
-import { z } from 'zod'
+import z from 'zod/v4'
 
 import FileUploadController from './Controllers/FileUploadController'
 
@@ -83,9 +83,7 @@ class TestController extends Controller {
 	}
 
 	public override get body() {
-		return z.object({
-			str: z.string(),
-		})
+		return z.object({ str: z.string() })
 	}
 }
 
@@ -138,20 +136,12 @@ class UserController extends Controller {
 	}
 
 	public override get query() {
-		return z.object({
-			a: z.string(),
-			b: z.object({
-				c: z.string(),
-				f: z.coerce.number(),
-			}),
-		})
+		return z.object({ a: z.string(), b: z.object({ c: z.string(), f: z.coerce.number() }) })
 	}
 }
 
 interface User {
-	user: {
-		name: string
-	}
+	user: { name: string }
 }
 
 type PartialUser = Partial<User>

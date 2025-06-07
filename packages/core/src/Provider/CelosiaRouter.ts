@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { NextFunction, Request, Response } from 'express'
 
+import z from 'zod/v4'
+import { $ZodErrorTree } from 'zod/v4/core'
+
 import {
 	CelosiaRequest,
 	Controller,
@@ -97,24 +100,22 @@ class CelosiaRouter<Strict extends boolean = true> {
 	 * Register by using `ExtensionsRegistry.registerCelosiaRouterExtension`.
 	 */
 	public get extensions(): CelosiaJS.CelosiaRouter<Strict> {
-		if (this._cachedExtensionsProxy === null)
-			this._cachedExtensionsProxy = new Proxy(
-				{},
-				{
-					get: (_, property, __) => {
-						const extensionHandler =
-							ExtensionsRegistry.getCelosiaRouterExtension(property)
+		this._cachedExtensionsProxy ??= new Proxy(
+			{},
+			{
+				get: (_, property, __) => {
+					const extensionHandler = ExtensionsRegistry.getCelosiaRouterExtension(property)
 
-						if (extensionHandler === undefined)
-							throw new InvalidExtensionError(
-								`Use of unregistered extension "${property.toString()}".`,
-							)
+					if (extensionHandler === undefined)
+						throw new InvalidExtensionError(
+							`Use of unregistered extension "${property.toString()}".`,
+						)
 
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-						return (...args: any[]) => extensionHandler(this, ...args)
-					},
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+					return (...args: any[]) => extensionHandler(this, ...args)
 				},
-			) as CelosiaJS.CelosiaRouter<Strict>
+			},
+		) as CelosiaJS.CelosiaRouter<Strict>
 
 		return this._cachedExtensionsProxy
 	}
@@ -259,10 +260,7 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 				callbackOrOptions(router)
 			} else {
-				router = new CelosiaRouter({
-					...this.celosiaRouterOptions,
-					...callbackOrOptions,
-				})
+				router = new CelosiaRouter({ ...this.celosiaRouterOptions, ...callbackOrOptions })
 
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				callback!(router)
@@ -860,28 +858,28 @@ class CelosiaRouter<Strict extends boolean = true> {
 
 			const errors: {
 				parsing: {
-					body?: Record<string, string[]>
-					query?: Record<string, string[]>
-					params?: Record<string, string[]>
-					cookies?: Record<string, string[]>
+					body?: $ZodErrorTree<any>
+					query?: $ZodErrorTree<any>
+					params?: $ZodErrorTree<any>
+					cookies?: $ZodErrorTree<any>
 				}
 				others?: string[]
 			} = { parsing: {} }
 
 			if (!parsedBody.success) {
-				errors.parsing.body = parsedBody.error.format()
+				errors.parsing.body = z.treeifyError(parsedBody.error)
 			}
 
 			if (!parsedQuery.success) {
-				errors.parsing.query = parsedQuery.error.format()
+				errors.parsing.query = z.treeifyError(parsedQuery.error)
 			}
 
 			if (!parsedParams.success) {
-				errors.parsing.params = parsedParams.error.format()
+				errors.parsing.params = z.treeifyError(parsedParams.error)
 			}
 
 			if (!parsedCookies.success) {
-				errors.parsing.cookies = parsedCookies.error.format()
+				errors.parsing.cookies = z.treeifyError(parsedCookies.error)
 			}
 
 			if (
@@ -890,15 +888,11 @@ class CelosiaRouter<Strict extends boolean = true> {
 				!parsedParams.success ||
 				!parsedCookies.success
 			) {
-				response.status(422).json({
-					data: {},
-					errors,
-				})
+				response.status(422).json({ data: {}, errors })
 
 				return
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			request.body = parsedBody.data
 
 			// Cannot modify query directly, as now Request.query is a getter not a property.
