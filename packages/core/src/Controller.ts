@@ -2,6 +2,7 @@
 import z, { ZodType } from 'zod/v4'
 
 import { CelosiaRequest, CelosiaResponse, LoggerBase } from '.'
+import { Logger } from 'winston'
 
 const emptyZodObject = z.object({})
 
@@ -10,6 +11,8 @@ abstract class Controller<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 > extends LoggerBase {
+	declare protected logger: Logger
+
 	constructor(loggingSource: string) {
 		super(loggingSource)
 	}

@@ -1,6 +1,10 @@
+import { Logger } from 'winston'
+
 import LoggerBase from 'LoggerBase'
 
-class Service extends LoggerBase {
+abstract class Service extends LoggerBase {
+	declare protected logger: Logger
+
 	constructor(loggingSource: string) {
 		super(loggingSource)
 	}

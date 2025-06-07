@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-parameters */
+import { Logger } from 'winston'
+
 import { CelosiaRequest, CelosiaResponse, EmptyObject, LoggerBase, NextFunction } from '.'
 
 abstract class Middleware<
@@ -7,6 +9,8 @@ abstract class Middleware<
 	Input extends Record<string, any> = EmptyObject,
 	Output extends Record<string, any> | EmptyObject = EmptyObject,
 > extends LoggerBase {
+	declare protected logger: Logger
+
 	constructor(loggingSource: string) {
 		super(loggingSource)
 	}
