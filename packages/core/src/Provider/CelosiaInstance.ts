@@ -14,10 +14,10 @@ import {
 	ExtensionsRegistry,
 	InvalidExtensionError,
 	ListenOptions,
-	LoggerBase,
 	Middleware,
 	NoInputMiddleware,
 } from '..'
+import LoggerBase from '../LoggerBase'
 import InjectDefaultCookie from './Middlewares/InjectDefaultCookie'
 import InjectProperties from './Middlewares/InjectProperties'
 import ParseJson from './Middlewares/ParseJson'
