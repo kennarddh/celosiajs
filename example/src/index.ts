@@ -111,7 +111,7 @@ class UserRepository extends Repository {
 
 @Injectable()
 class UserService extends Service {
-	constructor(private userRepository = DependencyInjection.get(UserRepository)) {
+	constructor(private userRepository = DI.get(UserRepository)) {
 		super('UserService')
 	}
 
@@ -121,7 +121,7 @@ class UserService extends Service {
 }
 
 class UserController extends Controller {
-	constructor(private userService = DependencyInjection.get(UserService)) {
+	constructor(private userService = DI.get(UserService)) {
 		super('UserController')
 	}
 
