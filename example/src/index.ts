@@ -5,7 +5,7 @@ import {
 	CelosiaRouter,
 	Controller,
 	ControllerRequest,
-	DependencyInjection,
+	DI,
 	EmptyObject,
 	Globals,
 	Injectable,

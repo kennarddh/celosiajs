@@ -7,6 +7,10 @@ abstract class Middleware<
 	Input extends Record<string, any> = EmptyObject,
 	Output extends Record<string, any> | EmptyObject = EmptyObject,
 > extends LoggerBase {
+	constructor(loggingSource: string) {
+		super(loggingSource)
+	}
+
 	public abstract index(
 		data: Input,
 		request: Request,

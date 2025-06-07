@@ -10,6 +10,10 @@ abstract class Controller<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 > extends LoggerBase {
+	constructor(loggingSource: string) {
+		super(loggingSource)
+	}
+
 	public abstract index(data: T, request: Request, response: Response): void
 
 	/**
