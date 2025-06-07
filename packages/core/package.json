@@ -45,13 +45,13 @@
 		"zod": "^3.0.0"
 	},
 	"dependencies": {
-		"@types/cookie-parser": "^1.4.8",
-		"@types/express": "^5.0.0",
-		"@types/qs": "^6.9.18",
+		"@types/cookie-parser": "^1.4.9",
+		"@types/express": "^5.0.2",
+		"@types/qs": "^6.14.0",
 		"@types/range-parser": "^1.2.7",
-		"body-parser": "^2.0.2",
+		"body-parser": "^2.2.0",
 		"cookie-parser": "^1.4.7",
-		"express": "^5.0.1",
+		"express": "^5.1.0",
 		"qs": "^6.14.0"
 	},
 	"gitHead": "2d0fb8ba356b43dbca67dbfe244d0f8242dae8fb"
