@@ -1,13 +1,5 @@
-import { Logger } from 'winston'
+import LoggerBase from 'LoggerBase'
 
-import Globals from '../Globals'
+class Service extends LoggerBase {}
 
-class BaseService {
-	protected logger: Logger
-
-	constructor(protected loggingSource: string) {
-		this.logger = Globals.logger.child({ source: loggingSource })
-	}
-}
-
-export default BaseService
+export default Service

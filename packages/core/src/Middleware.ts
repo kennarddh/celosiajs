@@ -1,20 +1,12 @@
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-explicit-any */
-import { Logger } from 'winston'
-
-import { CelosiaRequest, CelosiaResponse, EmptyObject, Globals, NextFunction } from '.'
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-parameters */
+import { CelosiaRequest, CelosiaResponse, EmptyObject, LoggerBase, NextFunction } from '.'
 
 abstract class Middleware<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 	Input extends Record<string, any> = EmptyObject,
 	Output extends Record<string, any> | EmptyObject = EmptyObject,
-> {
-	protected logger: Logger
-
-	constructor(protected loggingSource: string) {
-		this.logger = Globals.logger.child({ source: loggingSource })
-	}
-
+> extends LoggerBase {
 	public abstract index(
 		data: Input,
 		request: Request,

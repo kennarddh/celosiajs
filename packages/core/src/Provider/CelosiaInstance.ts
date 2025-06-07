@@ -12,9 +12,9 @@ import {
 	CelosiaRouter,
 	CelosiaRouterOptions,
 	ExtensionsRegistry,
-	Globals,
 	InvalidExtensionError,
 	ListenOptions,
+	LoggerBase,
 	Middleware,
 	NoInputMiddleware,
 } from '..'
@@ -131,16 +131,17 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	trustProxy?: boolean | string | string[] | ((ip: string) => boolean) | number
 }
 
-class CelosiaInstance<Strict extends boolean> {
+class CelosiaInstance<Strict extends boolean> extends LoggerBase {
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
 
 	protected readonly _express: ReturnType<typeof express>
 	protected _server: Server | null = null
-	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
 	protected _options: CelosiaInstanceConstructorOptions<Strict>
 	protected hasErrorHandlerAdded = false
 
 	constructor(options: CelosiaInstanceConstructorOptions<Strict>) {
+		super('CelosiaJS')
+
 		this._options = options
 
 		this._express = express()

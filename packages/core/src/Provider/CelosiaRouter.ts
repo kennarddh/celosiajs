@@ -9,8 +9,8 @@ import {
 	Controller,
 	EmptyObject,
 	ExtensionsRegistry,
-	Globals,
 	InvalidExtensionError,
+	LoggerBase,
 	MergeMiddlewaresOutput,
 	Middleware,
 	MiddlewareArray,
@@ -67,16 +67,16 @@ export type CelosiaRouterGroupCallback<Strict extends boolean> = (
 /**
  * Descendant routers will not inherit their parent's options.
  */
-class CelosiaRouter<Strict extends boolean = true> {
+class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 	protected _celosiaRouterOptions: CelosiaRouterConstructorOptions<Strict>
 	protected _isStrict: Strict
 	private _expressRouter
 
 	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRouter<Strict> | null = null
 
-	protected logger = Globals.logger.child({ source: 'CelosiaJS' })
-
 	constructor(options: CelosiaRouterConstructorOptions<Strict>) {
+		super('CelosiaJS')
+
 		this._celosiaRouterOptions = options
 
 		this._isStrict = options.strict

@@ -1,13 +1,5 @@
-import { Logger } from 'winston'
+import LoggerBase from 'LoggerBase'
 
-import Globals from '../Globals'
-
-class Repository {
-	protected logger: Logger
-
-	constructor(protected loggingSource: string) {
-		this.logger = Globals.logger.child({ source: loggingSource })
-	}
-}
+class Repository extends LoggerBase {}
 
 export default Repository

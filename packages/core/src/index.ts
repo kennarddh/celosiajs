@@ -7,6 +7,7 @@ export * from './Service'
 export * from './DependencyInjection'
 export * from './Middlewares'
 
+export { default as LoggerBase } from './LoggerBase'
 export { default as Globals, type CelosiaGlobals } from './Globals'
 export { default as Controller } from './Controller'
 export { default as Middleware } from './Middleware'
