@@ -83,7 +83,7 @@ export interface ResponseOptions {
 	/**
 	 * Customize `CelosiaResponse.sendInternalServerError` response.
 	 */
-	internalServerError?: JSON
+	internalServerErrorResponse?: JSON
 }
 
 export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
