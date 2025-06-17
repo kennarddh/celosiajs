@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-parameters */
+/* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any */
+import { Logger } from 'winston'
+
 import z, { ZodType } from 'zod/v4'
 
 import { CelosiaRequest, CelosiaResponse, LoggerBase } from '.'
-import { Logger } from 'winston'
 
 const emptyZodObject = z.object({})
 
@@ -13,6 +14,7 @@ abstract class Controller<
 > extends LoggerBase {
 	declare protected logger: Logger
 
+	// eslint-disable-next-line @typescript-eslint/no-useless-constructor
 	constructor(loggingSource: string) {
 		super(loggingSource)
 	}
