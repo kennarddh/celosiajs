@@ -551,7 +551,7 @@ class CelosiaResponse<Body = JSON> {
 	 */
 	public sendInternalServerError(): this {
 		return this.status(500).json(
-			(this.instance.options.responseOptions?.internalServerError ?? {
+			(this.instance.options.response?.internalServerError ?? {
 				errors: { others: ['Internal server error'] },
 				data: {},
 			}) as Body extends JSON ? Body : never,

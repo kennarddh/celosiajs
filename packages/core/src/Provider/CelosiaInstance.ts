@@ -98,27 +98,27 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	/**
 	 * Options for query parser.
 	 */
-	queryParserOptions?: QueryParserOptions
+	queryParser?: QueryParserOptions
 
 	/**
 	 * Options supplied for `cookieParser`.
 	 */
-	cookieParserOptions?: CookieParserOptions
+	cookieParser?: CookieParserOptions
 
 	/**
 	 * Options supplied for `bodyParser.json`.
 	 */
-	jsonBodyParserOptions?: JSONBodyParserOptions
+	jsonBodyParser?: JSONBodyParserOptions
 
 	/**
 	 * Options supplied for `bodyParser.urlencoded`.
 	 */
-	urlencodedBodyParserOptions?: UrlencodedBodyParserOptions
+	urlencodedBodyParser?: UrlencodedBodyParserOptions
 
 	/**
 	 * Options supplied for the root router.
 	 */
-	rootRouterOptions?: Omit<CelosiaRouterOptions, 'mergeParams'>
+	rootRouter?: Omit<CelosiaRouterOptions, 'mergeParams'>
 
 	/**
 	 * Options for trust proxy.
@@ -138,7 +138,10 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	 */
 	trustProxy?: boolean | string | string[] | ((ip: string) => boolean) | number
 
-	responseOptions?: ResponseOptions
+	/**
+	 * Options for response.
+	 */
+	response?: ResponseOptions
 }
 
 class CelosiaInstance<Strict extends boolean> extends LoggerBase {
@@ -165,29 +168,22 @@ class CelosiaInstance<Strict extends boolean> extends LoggerBase {
 			this._express.set('trust proxy', this.options.trustProxy)
 		}
 
-		if (this.options.rootRouterOptions?.caseSensitive !== undefined) {
-			this._express.set(
-				'case sensitive routing',
-				this.options.rootRouterOptions.caseSensitive,
-			)
+		if (this.options.rootRouter?.caseSensitive !== undefined) {
+			this._express.set('case sensitive routing', this.options.rootRouter.caseSensitive)
 		}
 
-		if (this.options.rootRouterOptions?.strictTrailingSlashes !== undefined) {
-			this._express.set(
-				'strict routing',
-				this.options.rootRouterOptions.strictTrailingSlashes,
-			)
+		if (this.options.rootRouter?.strictTrailingSlashes !== undefined) {
+			this._express.set('strict routing', this.options.rootRouter.strictTrailingSlashes)
 		}
 
-		if (this.options.queryParserOptions?.enabled ?? true) {
+		if (this.options.queryParser?.enabled ?? true) {
 			if (
-				(this.options.queryParserOptions?.mode ?? QueryParserMode.Simple) ==
-				QueryParserMode.Simple
+				(this.options.queryParser?.mode ?? QueryParserMode.Simple) == QueryParserMode.Simple
 			) {
 				this._express.set('query parser', 'simple')
 			} else {
 				this._express.set('query parser fn', (str: string) => {
-					return qs.parse(str, this.options.queryParserOptions?.extendedOptions)
+					return qs.parse(str, this.options.queryParser?.extendedOptions)
 				})
 			}
 		} else {
@@ -196,20 +192,20 @@ class CelosiaInstance<Strict extends boolean> extends LoggerBase {
 
 		this._express.use(InjectProperties)
 
-		if (this.options.urlencodedBodyParserOptions?.enabled ?? true) {
-			const { enabled: _, ...restOptions } = this.options.urlencodedBodyParserOptions ?? {}
+		if (this.options.urlencodedBodyParser?.enabled ?? true) {
+			const { enabled: _, ...restOptions } = this.options.urlencodedBodyParser ?? {}
 
 			this._express.use(ParseUrlencoded(restOptions))
 		}
 
-		if (this.options.jsonBodyParserOptions?.enabled ?? true) {
-			const { enabled: _, ...restOptions } = this.options.jsonBodyParserOptions ?? {}
+		if (this.options.jsonBodyParser?.enabled ?? true) {
+			const { enabled: _, ...restOptions } = this.options.jsonBodyParser ?? {}
 
 			this._express.use(ParseJson(restOptions))
 		}
 
-		if (this.options.cookieParserOptions?.enabled ?? true) {
-			const { enabled: _, secret, ...restOptions } = this.options.cookieParserOptions ?? {}
+		if (this.options.cookieParser?.enabled ?? true) {
+			const { enabled: _, secret, ...restOptions } = this.options.cookieParser ?? {}
 
 			this._express.use(cookieParser(secret, restOptions))
 		} else {
