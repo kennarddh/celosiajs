@@ -547,13 +547,15 @@ class CelosiaResponse<Body = JSON> {
 	}
 
 	/**
-	 * Send a json containing "Internal Server Error" response with 500 status code
+	 * Send a json containing "Internal Server Error" or the predefined error in `CelosiaInstance` creation response with 500 status code
 	 */
 	public sendInternalServerError(): this {
-		return this.status(500).json({
-			errors: { others: ['Internal server error'] },
-			data: {},
-		} as Body extends JSON ? Body : never)
+		return this.status(500).json(
+			(this.instance.options.responseOptions?.internalServerError ?? {
+				errors: { others: ['Internal server error'] },
+				data: {},
+			}) as Body extends JSON ? Body : never,
+		)
 	}
 
 	/**

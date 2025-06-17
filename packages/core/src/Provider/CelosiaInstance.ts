@@ -13,6 +13,7 @@ import {
 	CelosiaRouterOptions,
 	ExtensionsRegistry,
 	InvalidExtensionError,
+	JSON,
 	ListenOptions,
 	Middleware,
 	NoInputMiddleware,
@@ -78,6 +79,13 @@ export interface QueryParserOptions {
 	extendedOptions?: qs.IParseOptions<qs.BooleanOptional>
 }
 
+export interface ResponseOptions {
+	/**
+	 * Customize `CelosiaResponse.sendInternalServerError` response.
+	 */
+	internalServerError?: JSON
+}
+
 export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true> {
 	strict: Strict
 
@@ -129,6 +137,8 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	 * A custom function which receive ip as parameter and returns boolean can be passed.
 	 */
 	trustProxy?: boolean | string | string[] | ((ip: string) => boolean) | number
+
+	responseOptions?: ResponseOptions
 }
 
 class CelosiaInstance<Strict extends boolean> extends LoggerBase {
