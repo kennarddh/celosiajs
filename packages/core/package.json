@@ -1,6 +1,6 @@
 {
 	"name": "@celosiajs/core",
-	"version": "0.0.1-alpha.38",
+	"version": "0.0.1-alpha.39",
 	"description": "CelosiaJS Core. A framework for REST API based on Express.js",
 	"type": "module",
 	"exports": {
