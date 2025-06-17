@@ -2,7 +2,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 
 import z from 'zod/v4'
-import { $ZodFlattenedError } from 'zod/v4/core'
+import { $ZodErrorTree } from 'zod/v4/core'
 
 import {
 	CelosiaRequest,
@@ -858,28 +858,28 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 
 			const errors: {
 				parsing: {
-					body?: $ZodFlattenedError<any>
-					query?: $ZodFlattenedError<any>
-					params?: $ZodFlattenedError<any>
-					cookies?: $ZodFlattenedError<any>
+					body?: $ZodErrorTree<any>
+					query?: $ZodErrorTree<any>
+					params?: $ZodErrorTree<any>
+					cookies?: $ZodErrorTree<any>
 				}
 				others?: string[]
 			} = { parsing: {} }
 
 			if (!parsedBody.success) {
-				errors.parsing.body = z.flattenError(parsedBody.error)
+				errors.parsing.body = z.treeifyError(parsedBody.error)
 			}
 
 			if (!parsedQuery.success) {
-				errors.parsing.query = z.flattenError(parsedQuery.error)
+				errors.parsing.query = z.treeifyError(parsedQuery.error)
 			}
 
 			if (!parsedParams.success) {
-				errors.parsing.params = z.flattenError(parsedParams.error)
+				errors.parsing.params = z.treeifyError(parsedParams.error)
 			}
 
 			if (!parsedCookies.success) {
-				errors.parsing.cookies = z.flattenError(parsedCookies.error)
+				errors.parsing.cookies = z.treeifyError(parsedCookies.error)
 			}
 
 			if (

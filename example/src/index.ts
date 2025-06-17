@@ -198,10 +198,10 @@ class NeedUserController extends Controller {
 
 const instance = new CelosiaInstance({
 	strict: true,
-	// jsonBodyParserOptions: { enabled: false },
-	// urlencodedBodyParserOptions: { enabled: false },
-	queryParserOptions: { mode: QueryParserMode.Extended },
-	// cookieParserOptions: { enabled: false },
+	// jsonBodyParser: { enabled: false },
+	// urlencodedBodyParser: { enabled: false },
+	queryParser: { mode: QueryParserMode.Extended },
+	// cookieParser: { enabled: false },
 })
 
 instance.useMiddlewares(new SendRequestId())
