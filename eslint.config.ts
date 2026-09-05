@@ -3,10 +3,11 @@ import { importX } from 'eslint-plugin-import-x'
 import prettier from 'eslint-plugin-prettier'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
 import security from 'eslint-plugin-security'
+import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 import tsEslint from 'typescript-eslint'
 
-export default tsEslint.config(
+export default defineConfig(
 	js.configs.recommended,
 	importX.flatConfigs.recommended,
 	importX.flatConfigs.typescript,

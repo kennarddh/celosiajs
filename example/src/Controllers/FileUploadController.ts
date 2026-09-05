@@ -13,7 +13,7 @@ class FileUploadController extends Controller {
 		request: ControllerRequest<FileUploadController>,
 		response: CelosiaResponse,
 	) {
-		console.log('controller body', request.body)
+		console.log('controller body', request.body.files)
 		response.status(200).json({ hi: true })
 	}
 

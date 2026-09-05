@@ -300,13 +300,11 @@ class CelosiaInstance<Strict extends boolean> extends LoggerBase {
 				// TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71488
 				// https://expressjs.com/en/guide/migrating-5.html#app.listen
 				// Wait for the express' typing package to be update to reflect the latest changes in listen's callback in v5
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-				((error?: Error) => {
+				(error?: Error) => {
 					if (error) return reject(error)
 
 					resolve()
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				}) as any,
+				},
 			)
 		})
 	}

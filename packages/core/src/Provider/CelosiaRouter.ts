@@ -52,8 +52,9 @@ export interface CelosiaRouterOptions {
 /**
  * Descendant routers will not inherit their parent's options.
  */
-export interface CelosiaRouterConstructorOptions<Strict extends boolean = true>
-	extends CelosiaRouterOptions {
+export interface CelosiaRouterConstructorOptions<
+	Strict extends boolean = true,
+> extends CelosiaRouterOptions {
 	strict: Strict
 }
 
@@ -244,12 +245,9 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 
 	public group(
 		callbackOrPathOrOptions:
-			| CelosiaRouterGroupCallback<Strict>
-			| string
-			| CelosiaRouterConstructorOptions<Strict>,
+			CelosiaRouterGroupCallback<Strict> | string | CelosiaRouterConstructorOptions<Strict>,
 		callbackOrOptions?:
-			| CelosiaRouterGroupCallback<Strict>
-			| CelosiaRouterConstructorOptions<Strict>,
+			CelosiaRouterGroupCallback<Strict> | CelosiaRouterConstructorOptions<Strict>,
 		callback?: CelosiaRouterGroupCallback<Strict>,
 	) {
 		let router: CelosiaRouter<Strict>
@@ -316,8 +314,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -379,8 +376,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -442,8 +438,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -505,8 +500,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -568,8 +562,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -631,8 +624,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -694,8 +686,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -757,8 +748,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		path: string,
 		preValidationMiddlewaresOrMiddlewares: Middleware[],
 		middlewaresOrController:
-			| Middleware[]
-			| Controller<any, CelosiaRequest<any, any, any, any>, any>,
+			Middleware[] | Controller<any, CelosiaRequest<any, any, any, any>, any>,
 		controller?: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		if (controller) {
@@ -893,6 +883,7 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 				return
 			}
 
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			request.body = parsedBody.data
 
 			// Cannot modify query directly, as now Request.query is a getter not a property.

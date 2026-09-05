@@ -38,7 +38,7 @@ Globals.logger = logger
 const port = 9999
 
 @Injectable()
-class ServiceX extends Service {
+class _ServiceX extends Service {
 	constructor() {
 		super('ServiceX')
 	}

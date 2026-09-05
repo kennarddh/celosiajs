@@ -2,8 +2,12 @@
 	"compilerOptions": {
 		"composite": true,
 		"outDir": "./dist/",
-		"baseUrl": "src",
-		"emitDeclarationOnly": false
+		"rootDir": "./src/",
+		"declarationDir": "./dist",
+		"emitDeclarationOnly": true,
+		"paths": {
+			"*": ["./src/*"]
+		}
 	},
 	"include": ["src"],
 	"exclude": ["dist"],

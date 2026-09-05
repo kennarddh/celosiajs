@@ -1,6 +1,6 @@
 import { Logger } from 'winston'
 
-import Globals from 'Globals'
+import Globals from './Globals'
 
 abstract class LoggerBase {
 	protected logger: Logger

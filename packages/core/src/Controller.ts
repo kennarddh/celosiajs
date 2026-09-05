@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any */
 import { Logger } from 'winston'
 
-import z, { ZodType } from 'zod/v4'
+import z from 'zod/v4'
 
 import { CelosiaRequest, CelosiaResponse, LoggerBase } from '.'
 
@@ -24,8 +24,8 @@ abstract class Controller<
 	/**
 	 * Request's body validation.
 	 */
-	public get body(): ZodType {
-		return z.object({}).optional()
+	public get body(): z.ZodType<any, any, any> {
+		return emptyZodObject.optional()
 	}
 
 	/**
