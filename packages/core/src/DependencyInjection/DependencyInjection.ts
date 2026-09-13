@@ -97,6 +97,40 @@ class DependencyInjection {
 	}
 
 	/**
+	 * Lazily resolve a dependency.
+	 *
+	 * Returns a proxy that defers resolution until a property or method is accessed.
+	 * Use this to break circular dependencies between services.
+	 */
+	public static lazy<T extends object>(key: string | symbol | Provider<T>): T {
+		let instance: T | null = null
+
+		return new Proxy({} as T, {
+			get(_, prop, receiver) {
+				// Resolve once on first access
+				instance ??= DependencyInjection.get<T>(key)
+
+				const value = Reflect.get(instance, prop, receiver)
+
+				// Ensure `this` points to the real instance when methods are called
+				if (typeof value === 'function') {
+					return value.bind(instance)
+				}
+
+				return value
+			},
+			set(_, prop, value, receiver) {
+				instance ??= DependencyInjection.get<T>(key)
+				return Reflect.set(instance, prop, value, receiver)
+			},
+			has(_, prop) {
+				instance ??= DependencyInjection.get<T>(key)
+				return Reflect.has(instance, prop)
+			},
+		})
+	}
+
+	/**
 	 * Resolve dependency's symbol key based on class/symbol/string key.
 	 */
 	public static resolveKey<T>(key: string | symbol | Provider<T>): symbol {
