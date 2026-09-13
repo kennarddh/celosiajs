@@ -12,7 +12,6 @@ import {
 	Middleware,
 	NextFunction,
 	QueryParserMode,
-	Repository,
 	SendRequestId,
 	Service,
 } from '@celosiajs/core'
@@ -114,20 +113,13 @@ class GetController extends Controller {
 }
 
 @Injectable()
-class UserRepository extends Repository {
-	public getById(id: string) {
-		return { id, name: 'X' }
-	}
-}
-
-@Injectable()
 class UserService extends Service {
-	constructor(private userRepository = DI.get(UserRepository)) {
+	constructor() {
 		super('UserService')
 	}
 
 	public getNameLowercase() {
-		return this.userRepository.getById('1').name.toLowerCase()
+		return 'name'
 	}
 }
 
