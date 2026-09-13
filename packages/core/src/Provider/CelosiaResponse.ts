@@ -9,7 +9,7 @@ import {
 	DownloadOptions,
 	ExtensionsRegistry,
 	InvalidExtensionError,
-	JSON,
+	type JSON,
 	OutgoingHeaderValue,
 	OutgoingHeaders,
 	SendFileOptions,
@@ -122,7 +122,21 @@ class CelosiaResponse<Body = JSON> {
 	 *     response.status(404).json('I dont have that');
 	 */
 	public json(json: Body extends JSON ? Body : never): this {
-		this.expressResponse.json(json)
+		if (!this.expressResponse.getHeader('Content-Type')) {
+			this.expressResponse.setHeader('Content-Type', 'application/json; charset=utf-8')
+		}
+
+		// Special bigint serializer
+		const serialized = JSON.stringify(json, (_key, value) => {
+			if (typeof value === 'bigint') {
+				return value.toString()
+			}
+
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+			return value
+		})
+
+		this.expressResponse.send(serialized)
 
 		return this
 	}

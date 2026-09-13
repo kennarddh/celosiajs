@@ -1,4 +1,4 @@
-type JSON = null | string | number | boolean | JSONObject | JSONArray
+type JSON = null | string | number | boolean | bigint | JSONObject | JSONArray
 
 export interface JSONObject {
 	[x: string]: JSON

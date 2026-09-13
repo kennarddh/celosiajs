@@ -143,7 +143,7 @@ class UserController extends Controller {
 	) {
 		this.logger.info('User request', { query: request.query, requestId: request.id })
 		const name = this.userService.getNameLowercase()
-		response.status(200).json({ name })
+		response.status(200).json({ name, test: 1n })
 	}
 
 	public override get query() {
