@@ -24,7 +24,7 @@ export interface RegisteredDependency<T> {
  * @param key When not supplied, the class itself will be the key
  */
 export const Injectable = (
-	scope: DependencyScope = DependencyScope.Transient,
+	scope: DependencyScope = DependencyScope.Singleton,
 	key?: string | symbol,
 ) => {
 	return (constructor: Provider<any>) => {
