@@ -5,4 +5,5 @@ export {
 	type RegisteredDependency,
 	DependencyScope,
 	Injectable,
+	Token,
 } from './DependencyInjection'

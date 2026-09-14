@@ -19,13 +19,27 @@ export interface RegisteredDependency<T> {
 }
 
 /**
+ * A typed token for injecting interfaces or abstract values.
+ */
+export class Token<T> {
+	readonly key: symbol
+
+	// Phantom type: Only exists at compile-time to carry the type T!
+	declare readonly _type: T
+
+	constructor(description: string) {
+		this.key = Symbol(description)
+	}
+}
+
+/**
  * Mark a class as injectable and register it to DependencyInjection.
  *
  * @param key When not supplied, the class itself will be the key
  */
 export const Injectable = (
 	scope: DependencyScope = DependencyScope.Singleton,
-	key?: string | symbol,
+	key?: string | symbol | Token<any>,
 ) => {
 	return (constructor: Provider<any>) => {
 		const anyConstructor = constructor as any
@@ -49,6 +63,7 @@ export const Injectable = (
 class DependencyInjection {
 	private static providers = new Map<symbol, RegisteredDependency<any>>()
 	private static singletonCache = new Map<symbol, any>()
+	private static currentlyResolving = new Set<symbol>()
 
 	private constructor() {}
 
@@ -56,9 +71,9 @@ class DependencyInjection {
 	 * Register a dependency provider.
 	 */
 	public static registerProvider<T>(
-		key: string | symbol,
+		key: string | symbol | Token<T>,
 		provider: Provider<T>,
-		scope: DependencyScope = DependencyScope.Transient,
+		scope: DependencyScope = DependencyScope.Singleton,
 	) {
 		const resolvedKey = this.resolveKey(key)
 
@@ -69,12 +84,12 @@ class DependencyInjection {
 	}
 
 	/**
-	 * Get a dependency.
+	 * Get a dependency via string, symbol, class constructor or a typed Token.
 	 *
 	 * If the dependency provider's scope is transient, this will create a new instance and returns it.
 	 * If the dependency provider's scope is singleton, this will returns the already cached instance.
 	 */
-	public static get<T>(key: string | symbol | Provider<T>): T {
+	public static get<T>(key: Token<T> | Provider<T> | string | symbol): T {
 		const resolvedKey = this.resolveKey(key)
 
 		const registeredDependency = DependencyInjection.providers.get(resolvedKey)
@@ -86,11 +101,23 @@ class DependencyInjection {
 			if (DependencyInjection.singletonCache.has(resolvedKey))
 				return DependencyInjection.singletonCache.get(resolvedKey)
 
-			const instance = new registeredDependency.provider()
+			// Circular dependency check
+			if (DependencyInjection.currentlyResolving.has(resolvedKey)) {
+				throw new Error(
+					`Circular dependency detected while resolving "${resolvedKey.description ?? 'Unknown'}". ` +
+						`Use "DI.lazy()" to break the cycle.`,
+				)
+			}
 
-			DependencyInjection.singletonCache.set(resolvedKey, instance)
+			DependencyInjection.currentlyResolving.add(resolvedKey)
 
-			return instance
+			try {
+				const instance = new registeredDependency.provider()
+				DependencyInjection.singletonCache.set(resolvedKey, instance)
+				return instance
+			} finally {
+				DependencyInjection.currentlyResolving.delete(resolvedKey)
+			}
 		}
 
 		return new registeredDependency.provider()
@@ -102,7 +129,7 @@ class DependencyInjection {
 	 * Returns a proxy that defers resolution until a property or method is accessed.
 	 * Use this to break circular dependencies between services.
 	 */
-	public static lazy<T extends object>(key: string | symbol | Provider<T>): T {
+	public static lazy<T extends object>(key: string | symbol | Provider<T> | Token<T>): T {
 		let instance: T | null = null
 
 		return new Proxy({} as T, {
@@ -133,7 +160,8 @@ class DependencyInjection {
 	/**
 	 * Resolve dependency's symbol key based on class/symbol/string key.
 	 */
-	public static resolveKey<T>(key: string | symbol | Provider<T>): symbol {
+	public static resolveKey<T>(key: string | symbol | Provider<T> | Token<T>): symbol {
+		if (key instanceof Token) return key.key
 		if (typeof key === 'symbol') return key
 		if (typeof key === 'string') return Symbol.for(key)
 

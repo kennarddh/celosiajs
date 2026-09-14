@@ -14,6 +14,7 @@ import {
 	QueryParserMode,
 	SendRequestId,
 	Service,
+	Token,
 } from '@celosiajs/core'
 import { FileUpload } from '@celosiajs/file-upload'
 import { CelosiaFormat } from '@celosiajs/logging'
@@ -123,8 +124,24 @@ class UserService extends Service {
 	}
 }
 
+interface EmailSender {
+	sendEmail(to: string, body: string): Promise<void>
+}
+
+const IEmailSender = new Token<EmailSender>('EmailSender')
+
+@Injectable(DependencyScope.Singleton, IEmailSender)
+class SmtpEmailSender implements EmailSender {
+	async sendEmail(to: string, body: string) {
+		console.log('Sending email', { to, body })
+	}
+}
+
 class UserController extends Controller {
-	constructor(private userService = DI.get(UserService)) {
+	constructor(
+		private userService = DI.get(UserService),
+		private emailSender = DI.get(IEmailSender),
+	) {
 		super('UserController')
 	}
 
@@ -135,6 +152,7 @@ class UserController extends Controller {
 	) {
 		this.logger.info('User request', { query: request.query, requestId: request.id })
 		const name = this.userService.getNameLowercase()
+		await this.emailSender.sendEmail('test@test.com', 'test')
 		response.status(200).json({ name, test: 1n })
 	}
 
