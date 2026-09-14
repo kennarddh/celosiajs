@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any */
-import { Logger } from 'winston'
-
 import z from 'zod/v4'
 
 import { CelosiaRequest, CelosiaResponse, LoggerBase } from '.'
@@ -12,8 +10,6 @@ abstract class Controller<
 	Request extends CelosiaRequest<any, any, any, any> = CelosiaRequest<any, any, any, any>,
 	Response extends CelosiaResponse<any> = CelosiaResponse<any>,
 > extends LoggerBase {
-	declare protected logger: Logger
-
 	// eslint-disable-next-line @typescript-eslint/no-useless-constructor
 	constructor(loggingSource: string) {
 		super(loggingSource)

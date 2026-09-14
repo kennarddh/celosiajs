@@ -3,9 +3,9 @@ import { Logger } from 'winston'
 import Globals from './Globals'
 
 abstract class LoggerBase {
-	protected logger: Logger
+	public logger: Logger
 
-	constructor(protected loggingSource: string) {
+	constructor(public loggingSource: string) {
 		this.logger = Globals.logger.child({ source: loggingSource })
 	}
 }
