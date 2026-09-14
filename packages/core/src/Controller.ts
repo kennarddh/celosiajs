@@ -19,7 +19,7 @@ abstract class Controller<
 		super(loggingSource)
 	}
 
-	public abstract index(data: T, request: Request, response: Response): void
+	public abstract index(data: T, request: Request, response: Response): Promise<void>
 
 	/**
 	 * Request's body validation.

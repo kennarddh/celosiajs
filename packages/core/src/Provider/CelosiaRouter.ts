@@ -755,12 +755,14 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 		controller: Controller<any, CelosiaRequest<any, any, any, any>, any>,
 	) {
 		return async (request: Request, response: Response) => {
-			let data = {}
+			try {
+				let data = {}
 
-			for (const preValidationMiddleware of preValidationMiddlewares) {
-				try {
-					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
-						(resolve, reject) => {
+				for (const preValidationMiddleware of preValidationMiddlewares) {
+					try {
+						const output = await new Promise<
+							EmptyObject | Record<string, any> | undefined
+						>((resolve, reject) => {
 							try {
 								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = preValidationMiddleware.index(
@@ -782,97 +784,98 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
 								reject(error)
 							}
+						})
+
+						data = output ?? {}
+					} catch (error) {
+						this.logger.error(
+							'Unknown handler preValidationMiddleware error occured',
+							{ requestId: request.celosiaRequest.id },
+							error,
+						)
+
+						if (!response.writableEnded)
+							response.celosiaResponse.sendInternalServerError()
+
+						return
+					}
+				}
+
+				if (response.writableEnded) {
+					this.logger.warn(
+						"A pre validation middleware calls next after writing response. Request won't be processed further.",
+						{
+							requestId: request.celosiaRequest.id,
+							url: request.url,
+							method: request.method,
 						},
 					)
 
-					data = output ?? {}
-				} catch (error) {
-					this.logger.error(
-						'Unknown handler preValidationMiddleware error occured',
-						{ requestId: request.celosiaRequest.id },
-						error,
-					)
+					return
+				}
 
-					if (!response.writableEnded) response.celosiaResponse.sendInternalServerError()
+				const parsedBody = await controller.body.safeParseAsync(request.body)
+				const parsedQuery = await controller.query.safeParseAsync(request.query)
+				const parsedParams = await controller.params.safeParseAsync(request.params)
+				const parsedCookies = await controller.cookies.safeParseAsync(request.cookies)
+
+				const errors: {
+					parsing: {
+						body?: $ZodErrorTree<any>
+						query?: $ZodErrorTree<any>
+						params?: $ZodErrorTree<any>
+						cookies?: $ZodErrorTree<any>
+					}
+					others?: string[]
+				} = { parsing: {} }
+
+				if (!parsedBody.success) {
+					errors.parsing.body = z.treeifyError(parsedBody.error)
+				}
+
+				if (!parsedQuery.success) {
+					errors.parsing.query = z.treeifyError(parsedQuery.error)
+				}
+
+				if (!parsedParams.success) {
+					errors.parsing.params = z.treeifyError(parsedParams.error)
+				}
+
+				if (!parsedCookies.success) {
+					errors.parsing.cookies = z.treeifyError(parsedCookies.error)
+				}
+
+				if (
+					!parsedBody.success ||
+					!parsedQuery.success ||
+					!parsedParams.success ||
+					!parsedCookies.success
+				) {
+					response.status(422).json({ data: {}, errors })
 
 					return
 				}
-			}
 
-			if (response.writableEnded) {
-				this.logger.warn(
-					"A pre validation middleware calls next after writing response. Request won't be processed further.",
-					{
-						requestId: request.celosiaRequest.id,
-						url: request.url,
-						method: request.method,
-					},
-				)
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				request.body = parsedBody.data
 
-				return
-			}
+				// Cannot modify query directly, as now Request.query is a getter not a property.
+				request.__CELOSIAJS__.postValidationQuery = parsedQuery.data
 
-			const parsedBody = await controller.body.safeParseAsync(request.body)
-			const parsedQuery = await controller.query.safeParseAsync(request.query)
-			const parsedParams = await controller.params.safeParseAsync(request.params)
-			const parsedCookies = await controller.cookies.safeParseAsync(request.cookies)
+				Object.defineProperty(request, 'query', {
+					configurable: true,
+					enumerable: true,
+					get: () => request.__CELOSIAJS__.postValidationQuery,
+				})
 
-			const errors: {
-				parsing: {
-					body?: $ZodErrorTree<any>
-					query?: $ZodErrorTree<any>
-					params?: $ZodErrorTree<any>
-					cookies?: $ZodErrorTree<any>
-				}
-				others?: string[]
-			} = { parsing: {} }
+				request.params = parsedParams.data
+				request.cookies = parsedCookies.data
 
-			if (!parsedBody.success) {
-				errors.parsing.body = z.treeifyError(parsedBody.error)
-			}
-
-			if (!parsedQuery.success) {
-				errors.parsing.query = z.treeifyError(parsedQuery.error)
-			}
-
-			if (!parsedParams.success) {
-				errors.parsing.params = z.treeifyError(parsedParams.error)
-			}
-
-			if (!parsedCookies.success) {
-				errors.parsing.cookies = z.treeifyError(parsedCookies.error)
-			}
-
-			if (
-				!parsedBody.success ||
-				!parsedQuery.success ||
-				!parsedParams.success ||
-				!parsedCookies.success
-			) {
-				response.status(422).json({ data: {}, errors })
-
-				return
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			request.body = parsedBody.data
-
-			// Cannot modify query directly, as now Request.query is a getter not a property.
-			request.__CELOSIAJS__.postValidationQuery = parsedQuery.data
-
-			Object.defineProperty(request, 'query', {
-				configurable: true,
-				enumerable: true,
-				get: () => request.__CELOSIAJS__.postValidationQuery,
-			})
-
-			request.params = parsedParams.data
-			request.cookies = parsedCookies.data
-
-			for (const middleware of middlewares) {
-				try {
-					const output = await new Promise<EmptyObject | Record<string, any> | undefined>(
-						(resolve, reject) => {
+				for (const middleware of middlewares) {
+					try {
+						const output = await new Promise<
+							EmptyObject | Record<string, any> | undefined
+						>((resolve, reject) => {
 							try {
 								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 								const mightBePromise = middleware.index(
@@ -894,41 +897,64 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 								// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
 								reject(error)
 							}
+						})
+
+						data = { ...data, ...(output ?? {}) }
+					} catch (error) {
+						this.logger.error(
+							'Unknown handler middleware error occured',
+							{ requestId: request.celosiaRequest.id },
+							error,
+						)
+
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+						if (!response.writableEnded)
+							response.celosiaResponse.sendInternalServerError()
+
+						return
+					}
+				}
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (response.writableEnded) {
+					this.logger.warn(
+						"A middleware calls next after writing response. Request won't be processed further.",
+						{
+							requestId: request.celosiaRequest.id,
+							url: request.url,
+							method: request.method,
 						},
 					)
 
-					data = { ...data, ...(output ?? {}) }
-				} catch (error) {
-					this.logger.error(
-						'Unknown handler middleware error occured',
-						{ requestId: request.celosiaRequest.id },
-						error,
-					)
-
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-					if (!response.writableEnded) response.celosiaResponse.sendInternalServerError()
-
 					return
 				}
-			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (response.writableEnded) {
-				this.logger.warn(
-					"A middleware calls next after writing response. Request won't be processed further.",
+				await controller.index(data, request.celosiaRequest, response.celosiaResponse)
+			} catch (error) {
+				if (request.celosiaInstance.options.errorHandler) {
+					return request.celosiaInstance.options.errorHandler(
+						error,
+						request.celosiaRequest,
+						response.celosiaResponse,
+						controller,
+					)
+				}
+
+				this.logger.error(
+					`Unhandled error on [${request.method} ${request.originalUrl}]`,
 					{
 						requestId: request.celosiaRequest.id,
-						url: request.url,
-						method: request.method,
+						controller: controller.constructor.name,
 					},
+					error,
 				)
+
+				if (!response.writableEnded) {
+					response.celosiaResponse.sendInternalServerError()
+				}
 
 				return
 			}
-
-			controller.index(data, request.celosiaRequest, response.celosiaResponse)
-
-			return
 		}
 	}
 }

@@ -9,8 +9,10 @@ import qs from 'qs'
 
 import {
 	CelosiaRequest,
+	CelosiaResponse,
 	CelosiaRouter,
 	CelosiaRouterOptions,
+	Controller,
 	JSON,
 	ListenOptions,
 	Middleware,
@@ -140,6 +142,17 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 	 * Options for response.
 	 */
 	response?: ResponseOptions
+
+	/**
+	 * Custom global error handler for all routes.
+	 */
+	errorHandler?: (
+		error: unknown,
+		request: CelosiaRequest,
+		response: CelosiaResponse,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		controller: Controller<any, any, any>,
+	) => void
 }
 
 class CelosiaInstance<Strict extends boolean> extends LoggerBase {
