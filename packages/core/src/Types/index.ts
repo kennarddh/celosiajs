@@ -1,5 +1,4 @@
 import './Express'
-import './Globals'
 
 export type { default as JSON, JSONObject, JSONArray } from './JSON'
 export type { default as EmptyObject } from './EmptyObject'

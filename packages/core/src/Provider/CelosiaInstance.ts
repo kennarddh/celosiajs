@@ -11,8 +11,6 @@ import {
 	CelosiaRequest,
 	CelosiaRouter,
 	CelosiaRouterOptions,
-	ExtensionsRegistry,
-	InvalidExtensionError,
 	JSON,
 	ListenOptions,
 	Middleware,
@@ -145,8 +143,6 @@ export interface CelosiaInstanceConstructorOptions<Strict extends boolean = true
 }
 
 class CelosiaInstance<Strict extends boolean> extends LoggerBase {
-	protected _cachedExtensionsProxy: CelosiaJS.CelosiaInstance<Strict> | null = null
-
 	protected readonly _express: ReturnType<typeof express>
 	protected _server: Server | null = null
 	protected _options: CelosiaInstanceConstructorOptions<Strict>
@@ -225,32 +221,6 @@ class CelosiaInstance<Strict extends boolean> extends LoggerBase {
 	 */
 	public get options() {
 		return this._options
-	}
-
-	/**
-	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerCelosiaInstanceExtension`.
-	 */
-	public get extensions(): CelosiaJS.CelosiaInstance<Strict> {
-		this._cachedExtensionsProxy ??= new Proxy(
-			{},
-			{
-				get: (_, property, __) => {
-					const extensionHandler =
-						ExtensionsRegistry.getCelosiaInstanceExtension(property)
-
-					if (extensionHandler === undefined)
-						throw new InvalidExtensionError(
-							`Use of unregistered extension "${property.toString()}".`,
-						)
-
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-					return (...args: any[]) => extensionHandler(this, ...args)
-				},
-			},
-		) as CelosiaJS.CelosiaInstance<Strict>
-
-		return this._cachedExtensionsProxy
 	}
 
 	public get server() {

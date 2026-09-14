@@ -6,6 +6,7 @@ import {
 	Controller,
 	ControllerRequest,
 	DI,
+	DependencyScope,
 	EmptyObject,
 	Globals,
 	Injectable,
@@ -131,7 +132,7 @@ interface EmailSender {
 const IEmailSender = new Token<EmailSender>('EmailSender')
 
 @Injectable(DependencyScope.Singleton, IEmailSender)
-class SmtpEmailSender implements EmailSender {
+export class SmtpEmailSender implements EmailSender {
 	async sendEmail(to: string, body: string) {
 		console.log('Sending email', { to, body })
 	}

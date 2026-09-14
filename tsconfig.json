@@ -25,7 +25,6 @@
 		{ "path": "./scripts/tsconfig.json" },
 		{ "path": "./example/tsconfig.json" },
 		{ "path": "./packages/core/tsconfig.json" },
-		{ "path": "./packages/extensions/tsconfig.json" },
 		{ "path": "./packages/logging/tsconfig.json" },
 		{ "path": "./packages/file-upload/tsconfig.json" }
 	],

@@ -8,8 +8,6 @@ import {
 	CelosiaRequest,
 	Controller,
 	EmptyObject,
-	ExtensionsRegistry,
-	InvalidExtensionError,
 	LoggerBase,
 	MergeMiddlewaresOutput,
 	Middleware,
@@ -73,8 +71,6 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 	protected _isStrict: Strict
 	private _expressRouter
 
-	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRouter<Strict> | null = null
-
 	constructor(options: CelosiaRouterConstructorOptions<Strict>) {
 		super('CelosiaJS')
 
@@ -94,31 +90,6 @@ class CelosiaRouter<Strict extends boolean = true> extends LoggerBase {
 	 */
 	public get celosiaRouterOptions() {
 		return this._celosiaRouterOptions
-	}
-
-	/**
-	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerCelosiaRouterExtension`.
-	 */
-	public get extensions(): CelosiaJS.CelosiaRouter<Strict> {
-		this._cachedExtensionsProxy ??= new Proxy(
-			{},
-			{
-				get: (_, property, __) => {
-					const extensionHandler = ExtensionsRegistry.getCelosiaRouterExtension(property)
-
-					if (extensionHandler === undefined)
-						throw new InvalidExtensionError(
-							`Use of unregistered extension "${property.toString()}".`,
-						)
-
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-					return (...args: any[]) => extensionHandler(this, ...args)
-				},
-			},
-		) as CelosiaJS.CelosiaRouter<Strict>
-
-		return this._cachedExtensionsProxy
 	}
 
 	/**

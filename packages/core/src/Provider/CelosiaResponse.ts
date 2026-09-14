@@ -7,8 +7,6 @@ import { Socket } from 'net'
 import {
 	CookieOptions,
 	DownloadOptions,
-	ExtensionsRegistry,
-	InvalidExtensionError,
 	type JSON,
 	OutgoingHeaderValue,
 	OutgoingHeaders,
@@ -17,36 +15,9 @@ import {
 
 class CelosiaResponse<Body = JSON> {
 	protected _expressResponse: Response
-	protected _cachedExtensionsProxy: CelosiaJS.CelosiaResponse<Body> | null = null
 
 	constructor(expressResponse: Response) {
 		this._expressResponse = expressResponse
-	}
-
-	/**
-	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerCelosiaResponseExtension`.
-	 */
-	public get extensions(): CelosiaJS.CelosiaResponse<Body> {
-		this._cachedExtensionsProxy ??= new Proxy(
-			{},
-			{
-				get: (_, property, __) => {
-					const extensionHandler =
-						ExtensionsRegistry.getCelosiaResponseExtension(property)
-
-					if (extensionHandler === undefined)
-						throw new InvalidExtensionError(
-							`Use of unregistered extension "${property.toString()}".`,
-						)
-
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-					return (...args: any[]) => extensionHandler(this, ...args)
-				},
-			},
-		) as CelosiaJS.CelosiaResponse<Body>
-
-		return this._cachedExtensionsProxy
 	}
 
 	/**

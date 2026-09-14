@@ -5,16 +5,7 @@ import { IncomingHttpHeaders } from 'http'
 import { Socket } from 'net'
 import type RangeParser from 'range-parser'
 
-import {
-	CookiesObject,
-	EmptyObject,
-	ExtensionsRegistry,
-	IncomingHeaderValue,
-	InvalidExtensionError,
-	JSON,
-	PathParams,
-	QueryParams,
-} from '..'
+import { CookiesObject, EmptyObject, IncomingHeaderValue, JSON, PathParams, QueryParams } from '..'
 
 class CelosiaRequest<
 	Body extends EmptyObject | JSON = EmptyObject,
@@ -23,12 +14,6 @@ class CelosiaRequest<
 	Cookies extends EmptyObject | CookiesObject = EmptyObject,
 > {
 	protected _expressRequest: Request
-	protected _cachedExtensionsProxy: CelosiaJS.CelosiaRequest<
-		Body,
-		Query,
-		Params,
-		Cookies
-	> | null = null
 
 	/**
 	 * Unique request id. Can be used for tracking requests.
@@ -39,31 +24,6 @@ class CelosiaRequest<
 		this._expressRequest = expressRequest
 
 		this.id = expressRequest.celosiaInstance.generateRequestId(this)
-	}
-
-	/**
-	 * User-defined extensions method.
-	 * Register by using `ExtensionsRegistry.registerCelosiaRequestExtension`.
-	 */
-	public get extensions(): CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies> {
-		this._cachedExtensionsProxy ??= new Proxy(
-			{},
-			{
-				get: (_, property, __) => {
-					const extensionHandler = ExtensionsRegistry.getCelosiaRequestExtension(property)
-
-					if (extensionHandler === undefined)
-						throw new InvalidExtensionError(
-							`Use of unregistered extension "${property.toString()}".`,
-						)
-
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-					return (...args: any[]) => extensionHandler(this, ...args)
-				},
-			},
-		) as CelosiaJS.CelosiaRequest<Body, Query, Params, Cookies>
-
-		return this._cachedExtensionsProxy
 	}
 
 	/**
